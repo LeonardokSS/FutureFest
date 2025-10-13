@@ -1,0 +1,118 @@
+:root{
+  --primary:#198754;
+  --muted:#6c757d;
+  --dark:#11492f;
+}
+
+/* Base */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: #223;
+}
+
+/* Hero background geral */
+header {
+  background: linear-gradient(90deg, rgba(25,135,84,0.04), rgba(25,135,84,0.01));
+}
+
+/* Hero card verde arredondado */
+.hero-card {
+  background: linear-gradient(180deg, rgba(25,135,84,0.95), rgba(48,93,56,0.93));
+  color: #ffffff;
+  border-radius: 1rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Garantir contraste do título e lead dentro do hero */
+.hero-card .display-6 { color: #fff; margin-bottom: .75rem; }
+.hero-card .lead { color: rgba(255,255,255,0.92); }
+
+/* Card tweaks */
+.card-title { color: var(--primary); }
+.card { border: none; }
+
+/* Chatbox styling */
+.chatbox { min-height: 170px; max-height: 320px; overflow-y: auto; }
+
+/* Footer */
+footer { background: var(--dark); }
+
+/* Destaques de texto com fundo colorido */
+.text-bg-soft {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 0.45rem;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Paleta */
+.bg-soft-green { background: rgba(25,135,84,0.95); box-shadow: 0 2px 6px rgba(25,135,84,0.06); }
+.bg-soft-olive { background: rgba(48,93,56,0.95); box-shadow: 0 2px 6px rgba(48,93,56,0.06); }
+.bg-soft-amber { background: rgba(255,193,7,0.95); color:#1f2a1f; box-shadow: 0 2px 6px rgba(255,193,7,0.06); }
+.bg-soft-blue  { background: rgba(13,110,253,0.95); box-shadow: 0 2px 6px rgba(13,110,253,0.06); }
+
+/* Section heading accent - cor corrigida */
+.section-heading-accent {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  border-radius: 0.5rem;
+  background: linear-gradient(90deg, rgba(25,135,84,0.98), rgba(48,93,56,0.92));
+  color: #ffffff;
+  font-weight: 700;
+  box-shadow: 0 4px 18px rgba(16,77,45,0.06);
+}
+
+/* Cartões com faixa de fundo no topo do conteúdo */
+.card-accent-top {
+  position: relative;
+  overflow: visible;
+}
+.card-accent-top::before {
+  content: "";
+  position: absolute;
+  left: 1rem;
+  right: 1rem;
+  top: -14px;
+  height: 30px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(25,135,84,0.88), rgba(48,93,56,0.88));
+  box-shadow: 0 6px 18px rgba(16,77,45,0.06);
+  z-index: 0;
+}
+.card-accent-top .card-body { position: relative; z-index: 2; }
+
+/* Texto sobre imagem com fundo translúcido */  
+.caption-overlay {
+  display: inline-block;
+  padding: 0.45rem 0.8rem;
+  border-radius: 0.45rem;
+  background: rgba(0,0,0,0.45);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Destaque amarelo para "em energia" */
+.highlight-yellow {
+  display: inline-block;
+  background: linear-gradient(180deg, #fff7cc, #ffea7f);
+  color: #0b2f0b;
+  padding: 0.18rem 0.5rem;
+  border-radius: 0.45rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(33, 37, 41, 0.06);
+  line-height: 1;
+}
+
+/* Ajustes móveis */
+@media (max-width: 768px){
+  .card-accent-top::before { left: 0.75rem; right: 0.75rem; top: -12px; height: 26px; }
+  .text-bg-soft { padding: 0.2rem 0.5rem; font-size: 0.9rem; }
+  header .display-6 { font-size: 1.4rem; }
+}
+@media (max-width: 576px){
+  .highlight-yellow { padding: 0.12rem 0.35rem; border-radius: 0.35rem; font-size: 0.95rem; }
+  .hero-card { padding: 1rem; border-radius: 0.75rem; }
+}

@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BioEnergy - Transformando biomassa em energia</title>
+  <style>
+    
+    .logo{
+        width: 250px;
+        border-radius: 15px;
+    }
+    #textocard{
+      color: green;
+    }
+  </style>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="bg-light">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+    <div class="container">
+        
+        <img class="logo" src="/MELHOR_TENTATIVA/Captura de tela 2025-10-13 114133.png" alt="imagem logo tipo">
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link active" href="#home">HOME</a></li>
+          <li class="nav-item"><a class="nav-link" href="#sobre">SOBRE</a></li>
+          <li class="nav-item"><a class="nav-link" href="#chatbot">CHATBOT</a></li>
+          <li class="nav-item"><a class="nav-link" href="#servicos">SERVIÇOS</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+<header id="home" class="py-5">
+  <div class="container">
+    <div class="row g-4 align-items-center">
+      <div class="col-lg-7">
+        <div class="hero-card p-4 rounded-3 shadow-sm">
+          <h1 id="textoBiomassa" class="display-6 fw-bold mb-3">
+            <span class="text-bg-soft bg-transparent p-0 fw-bold">Transformando biomassa</span>
+            <span class="highlight-yellow">em energia</span>
+          </h1>
+          <p class="lead text-white-75 mb-3">
+            A BioEnergy é especialista em soluções para geração de energia limpa a partir de biomassa e resíduos orgânicos.
+            Atuamos com instalação e manutenção de equipamentos e capacitação técnica, ajudando produtores e indústrias a reduzir custos,
+            aumentar a eficiência e adotar práticas sustentáveis.
+          </p>
+          <a href="#servicos" class="btn btn-light btn-lg">Nossos serviços</a>
+        </div>
+      </div>
+
+      <div class="col-lg-5">
+        <div class="card shadow-sm card-accent-top">
+          <div class="card-body">
+            <h5 class="card-title text-success mb-3">Custo operacional</h5>
+            <canvas id="operationalCostChart" width="400" height="260"></canvas>
+            <p class="small text-muted mt-3 mb-0">Valores em mil reais; gráfico ilustrativo.</p>
+            <div class="text-end mt-2"><small class="text-muted">Made with Livegap Charts</small></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</header>
+
+
+
+  <!-- Sobre Nós e Chatbot -->
+  <section id="sobre" class="py-5">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-6">
+          <div class="card h-100 shadow-sm card-accent-top">
+            <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=0b9b29f9b1bf0d5f6f0ff2c7b7bea2b7" class="card-img-top" alt="Biomassa">
+            <div class="card-body">
+              <h5 class="card-title">
+                <span class="section-heading-accent">Sobre Nós</span>
+              </h5>
+              <p class="card-text">
+                <span class="text-bg-soft bg-soft-olive">B-corp</span>
+                A BioEnergy é uma B-corp que oferece soluções para geração de energia limpa a partir de resíduos orgânicos e biomassa.
+                Atuamos com tecnologias que transformam esses resíduos orgânicos e agroindustriais em energia, calor e bioprodutos.
+                Nosso objetivo é reduzir custos, aumentar a competitividade e minimizar impactos ambientais, promovendo práticas sustentáveis e eficientes.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title"><span class="text-bg-soft bg-soft-green">Chatbot</span></h5>
+              <div class="chatbox border rounded p-3 mb-3 flex-grow-1" style="background:#f8fff9;">
+                <div class="d-flex mb-3 align-items-start">
+                  <div class="me-2">
+                    <span class="text-bg-soft bg-soft-amber">Usuário</span>
+                  </div>
+                  <div class="flex-grow-1 ms-2">Olá! Tenho uma dúvida: como a empresa contribui com o meio ambiente?</div>
+                </div>
+
+                <div class="d-flex align-items-start">
+                  <div class="me-2">
+                    <span class="text-bg-soft bg-soft-blue">Chatbot</span>
+                  </div>
+                  <div class="flex-grow-1 ms-2">Olá! A BioEnergy tem um impacto ambiental significativo. Com base no número de 1.000 toneladas de resíduos orgânicos transformados em energia limpa e bioprodutos, evitamos a emissão de gases de efeito estufa e contribuímos para a sustentabilidade. Nossas parcerias com empresas e cooperativas locais fortalecem a economia circular.</div>
+                </div>
+              </div>
+              <a href="#servicos" class="mt-auto btn btn-outline-success">Veja mais opções de serviços disponíveis</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Serviços -->
+  <section id="servicos" class="py-5 bg-white">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-success mb-0"><span class="section-heading-accent">SERVIÇOS</span></h3>
+        <a class="text-success" href="#servicos">Veja mais opções de serviços disponíveis</a>
+      </div>
+
+      <div class="row g-4">
+        <!-- 6 serviços -->
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="position-relative">
+              <img src="https://via.placeholder.com/600x320?text=Serviço+1" class="card-img-top" alt="Serviço 1">
+              <div style="position:absolute; left:12px; top:12px;">
+                <span class="text-bg-soft bg-soft-green">Serviço 1</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Serviço 1</h5>
+              <p class="card-text">Descrição do serviço 1</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="position-relative">
+              <img src="https://via.placeholder.com/600x320?text=Serviço+2" class="card-img-top" alt="Serviço 2">
+              <div style="position:absolute; left:12px; top:12px;">
+                <span class="text-bg-soft bg-soft-olive">Serviço 2</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Serviço 2</h5>
+              <p class="card-text">Descrição do serviço 2</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="position-relative">
+              <img src="https://via.placeholder.com/600x320?text=Serviço+3" class="card-img-top" alt="Serviço 3">
+              <div style="position:absolute; left:12px; top:12px;">
+                <span class="text-bg-soft bg-soft-amber">Serviço 3</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Serviço 3</h5>
+              <p class="card-text">Descrição do serviço 3</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="position-relative">
+              <img src="https://via.placeholder.com/600x320?text=Serviço+4" class="card-img-top" alt="Serviço 4">
+              <div style="position:absolute; left:12px; top:12px;">
+                <span class="text-bg-soft bg-soft-blue">Serviço 4</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Serviço 4</h5>
+              <p class="card-text">Descrição do serviço 4</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="position-relative">
+              <img src="https://via.placeholder.com/600x320?text=Serviço+5" class="card-img-top" alt="Serviço 5">
+              <div style="position:absolute; left:12px; top:12px;">
+                <span class="text-bg-soft bg-soft-olive">Serviço 5</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Serviço 5</h5>
+              <p class="card-text">Descrição do serviço 5</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card h-100">
+            <div class="position-relative">
+              <img src="https://via.placeholder.com/600x320?text=Serviço+6" class="card-img-top" alt="Serviço 6">
+              <div style="position:absolute; left:12px; top:12px;">
+                <span class="text-bg-soft bg-soft-amber">Serviço 6</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <h5 class="card-title">Serviço 6</h5>
+              <p class="card-text">Descrição do serviço 6</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-dark text-light py-4">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-md-6">
+          <h6 class="text-success fw-bold">Contato</h6>
+          <p class="mb-1"><i class="bi bi-envelope"></i> bioenergy@gmail.com</p>
+          <p class="mb-1"><i class="bi bi-telephone"></i> +55 11 00000-0000</p>
+          <p class="mb-0"><i class="bi bi-whatsapp"></i> +55 11 00000-0000</p>
+        </div>
+
+        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+          <small>Copyright © 2025 BioEnergy. Todos os direitos reservados.</small>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Chart Initialization (suavizado e rótulo indicando ilustrativo) -->
+  <script>
+    const ctx = document.getElementById('operationalCostChart').getContext('2d');
+    const operationalCostChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['janeiro', 'fevereiro', 'março', 'abril', 'maio'],
+        datasets: [{
+          label: 'Custo operacional (mil) — valores ilustrativos',
+          data: [55, 52.5, 49.3, 49.2, 45.44, 39.7],
+          borderColor: 'rgba(25,135,84,0.45)',
+          backgroundColor: 'rgba(25,135,84,0.08)',
+          borderWidth: 2,
+          tension: 0.15,
+          pointBackgroundColor: 'rgba(255,255,255,0.9)',
+          pointBorderColor: 'rgba(25,135,84,0.45)',
+          pointRadius: 3,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          y: {
+            beginAtZero: false,
+            ticks: { color: '#556' }
+          },
+          x: { ticks: { color: '#556' } }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(0,0,0,0.75)',
+            titleColor: '#fff',
+            bodyColor: '#fff'
+          }
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
