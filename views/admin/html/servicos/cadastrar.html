@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cadastrar Serviço</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+  <!-- Navbar responsiva -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">Sistema</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+        aria-controls="navbarNav" aria-expanded="false" aria-label="Alternar navegação">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="/">Início</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/admin">Administradores</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/crud_servicos">Serviços</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Conteúdo principal -->
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h1 class="text-center mb-4">Cadastrar Serviço</h1>
+
+            <!-- Botões de navegação -->
+            <div class="d-flex justify-content-center gap-3 mb-4">
+              <a href="/" class="btn btn-primary">Página Inicial</a>
+              <a href="/admin" class="btn btn-secondary">Página dos Administradores</a>
+              <a href="/crud_servicos" class="btn btn-success">Lista de Serviços</a>
+            </div>
+
+            <!-- Formulário -->
+            <form action="/crud_servicos_cadastro" method="post" id="formServico">
+              <input type="hidden" name="id" id="id">
+
+              <!-- Usuário -->
+              <div class="mb-3">
+                <label for="usuario" class="form-label">Usuário:</label>
+                    <select name="usuario" id="usuario" class="form-select" required>
+                    <option value="">Selecione um usuário</option>
+                    </select>
+            </div>
+
+
+              <!-- Tipo de serviço -->
+              <div class="mb-3">
+                <label for="tipo" class="form-label">Tipo de Serviço:</label>
+                <select name="tipo" id="tipo" class="form-select" required>
+                  <option value="">Selecione o tipo</option>
+                  <option value="colheita">Colheita de Biomassa</option>
+                  <option value="transporte">Transporte de Biomassa</option>
+                  <option value="armazenamento">Armazenamento de Biomassa</option>
+                  <option value="secagem">Secagem de Biomassa</option>
+                  <option value="trituração">Trituração de Biomassa</option>
+                  <option value="processamento">Processamento de Biomassa</option>
+                </select>
+              </div>
+
+              <!-- Custo por hora -->
+              <div class="mb-3">
+                <label for="custoHora" class="form-label">Custo p/hora:</label>
+                <input type="number" step="0.01" name="custoHora" id="custoHora" class="form-control" required>
+              </div>
+
+              <!-- Custo total -->
+              <div class="mb-3">
+                <label for="custoTotal" class="form-label">Custo total:</label>
+                <input type="number" step="0.01" name="custoTotal" id="custoTotal" class="form-control" required>
+              </div>
+
+              <!-- Quantidade de dias -->
+              <div class="mb-3">
+                <label for="dias" class="form-label">Quantidade de Dias:</label>
+                <input type="number" name="dias" id="dias" class="form-control" required>
+              </div>
+
+              <!-- Disponível -->
+              <div class="mb-3">
+                <label for="disponivel" class="form-label">Disponível:</label>
+                <select name="disponivel" id="disponivel" class="form-select" required>
+                  <option value="">Selecione</option>
+                  <option value="Sim">Sim</option>
+                  <option value="Não">Não</option>
+                </select>
+              </div>
+
+              <button type="submit" class="btn btn-primary w-100">Salvar Serviço</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    fetch('/api/usuarios')
+      .then(response => response.json())
+      .then(usuarios => {
+        const select = document.getElementById("usuario")
+        usuarios.forEach(u => {
+          const option = document.createElement("option")
+          option.value = u.usuario   
+          option.textContent = u.usuario
+          select.appendChild(option)
+        })
+      })
+      .catch(err => console.error("Erro ao carregar usuários:", err))
+  })
+</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
