@@ -4,62 +4,9 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>BioEnergy - Transformando biomassa em energia</title>
-  <style>
-  html, body {
-    height: 100%;
-    margin: 0;
-  }
-  
-  body {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  /* Chatbox ocupa o espaço disponível, mas não estica além do limite */
-  #chatbox {
-    flex-grow: 1;
-    min-height: 200px;     /* altura mínima */
-    max-height: 60vh;      /* altura máxima relativa à tela */
-    overflow-y: auto;      /* rolagem interna */
-    background: #ffffff;
-  border: 1px solid #d1e7dd;
-}
+  <link rel="stylesheet" href="style.css">
 
-.message-bubble {
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  word-wrap: break-word;
-  flex: 1 1 auto;
-  max-width: 100%;
-}
 
-.user-bubble {
-  background: #fff3cd;
-  color: #664d03;
-}
-
-.bot-bubble {
-  background: #d1e7dd;
-  color: #0f5132;
-}
-
-/* Ajustes para telas maiores */
-@media (min-width: 768px) {
-  .message-bubble {
-    max-width: 75%;
-  }
-}
-
-.logo {
-  width: 250px;
-  border-radius: 15px;
-}
-
-#textocard {
-  color: green;
-}
-
-</style>
   <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
@@ -136,151 +83,242 @@
     <div class="container">
       <div class="row g-4">
         <div class="col-lg-6">
-          <div class="card h-100 shadow-sm card-accent-top">
-            <img src="https://images.unsplash.com/photo-1501004318641-b39e6451bec6?q=80&w=1400&auto=format&fit=crop&ixlib=rb-4.0.3&s=0b9b29f9b1bf0d5f6f0ff2c7b7bea2b7" class="card-img-top" alt="Biomassa">
-            <div class="card-body">
-              <h5 class="card-title">
-                <span class="section-heading-accent">Sobre Nós</span>
-              </h5>
-              <p class="card-text">
-                <span class="text-bg-soft bg-soft-olive">B-corp</span>
-                A BioEnergy é uma B-corp que oferece soluções para geração de energia limpa a partir de resíduos orgânicos e biomassa.
-                Atuamos com tecnologias que transformam esses resíduos orgânicos e agroindustriais em energia, calor e bioprodutos.
-                Nosso objetivo é reduzir custos, aumentar a competitividade e minimizar impactos ambientais, promovendo práticas sustentáveis e eficientes.
+          <!-- Seção Sobre Nós Melhorada -->
+          <div class="card h-100 sobre-card">
+            <div class="sobre-header">
+              <span class="sobre-badge">
+                <i class="bi bi-award-fill me-1"></i> B-Corp Certificada
+              </span>
+              <h4 class="fw-bold mb-0">Sobre Nós</h4>
+            </div>
+            <div class="sobre-content">
+              <p class="mb-3">
+                A BioEnergy é uma empresa certificada B-Corp que oferece soluções inovadoras para geração de energia limpa 
+                a partir de resíduos orgânicos e biomassa. Atuamos com tecnologias de ponta que transformam resíduos 
+                orgânicos e agroindustriais em energia, calor e bioprodutos de alto valor agregado.
               </p>
+              <p class="mb-0">
+                Nosso objetivo é reduzir custos operacionais, aumentar a competitividade dos nossos clientes e 
+                minimizar impactos ambientais, promovendo práticas sustentáveis e eficientes que contribuem para 
+                um futuro mais verde.
+              </p>
+              
+              <div class="sobre-features">
+                <div class="sobre-feature">
+                  <i class="bi bi-check-circle-fill"></i>
+                  <span>Soluções Sustentáveis</span>
+                </div>
+                <div class="sobre-feature">
+                  <i class="bi bi-check-circle-fill"></i>
+                  <span>Tecnologia de Ponta</span>
+                </div>
+                <div class="sobre-feature">
+                  <i class="bi bi-check-circle-fill"></i>
+                  <span>Redução de Custos</span>
+                </div>
+                <div class="sobre-feature">
+                  <i class="bi bi-check-circle-fill"></i>
+                  <span>Impacto Ambiental Positivo</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         <div class="col-lg-6">
-  <div class="card h-100 shadow-sm border-0" style="border-radius:12px; overflow:hidden;">
-
-      
-    
-  <div class="card h-100 shadow-sm border-0" style="border-radius:12px; overflow:hidden;">
-    <div class="card-body d-flex flex-column" style="background:#f0fdf4;">
-
-
-  <!-- Cabeçalho -->
-  <h5 class="card-title mb-3 text-success fw-bold">
-    <i class="bi bi-chat-dots-fill me-2"></i> Chatbot BioEnergy
-  </h5>
-
-  <!-- Caixa de chat -->
-  <div id="chatbox" class="chatbox border rounded p-3 mb-3 flex-grow-1 overflow-auto">
-    <!-- mensagens -->
-  </div>
-
-  <!-- Área de input -->
-  <div class="input-group">
-    <input id="user-input" type="text" class="form-control border-success" placeholder="Digite sua mensagem...">
-    <button id="send-btn" class="btn btn-success" type="button">Enviar</button>
-  </div>
-
-
-
-
-
-<!-- Botão extra -->
-<a href="#servicos" class="mt-3 btn btn-outline-success w-100">Veja mais opções de serviços disponíveis</a>
-
-</section>
+          <!-- Área do Chat Melhorada -->
+          <div class="card h-100 chat-container">
+            <div class="chat-header">
+              <i class="bi bi-robot"></i>
+              <h5 class="mb-0 fw-bold">Chatbot BioEnergy</h5>
+              <div class="chat-status">
+                <div class="status-dot"></div>
+                <span>Online</span>
+              </div>
+            </div>
+            
+            <div class="chat-body">
+              <div id="chatbox" class="chat-messages">
+                <!-- Mensagens serão inseridas aqui via JavaScript -->
+                <div class="message message-bot">
+                  <div class="message-content">
+                    Olá! Sou o assistente virtual da BioEnergy. Como posso ajudá-lo hoje?
+                  </div>
+                  <div class="message-time">Agora</div>
+                </div>
+              </div>
+              
+              <div class="chat-input-container">
+                <input id="user-input" type="text" class="chat-input" placeholder="Digite sua mensagem...">
+                <button id="send-btn" class="chat-send-btn" type="button">
+                  <i class="bi bi-send-fill"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Botão extra -->
+          <div class="services-extra">
+            <a href="#servicos" class="text-success text-decoration-none">
+              <i class="bi bi-arrow-right-circle"></i>
+              Veja mais opções de serviços disponíveis
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+<br>
   <!-- Serviços -->
-  <section id="servicos" class="py-5 bg-white">
+  <section id="servicos" class="py-5">
+    <br>
     <div class="container">
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold text-success mb-0"><span class="section-heading-accent">SERVIÇOS</span></h3>
-        <a class="text-success" href="#servicos">Veja mais opções de serviços disponíveis</a>
+      <div class="text-center mb-5">
+        <h2 class="fw-bold text-success display-5 mb-3">Nossos Serviços</h2>
+        <p class="lead text-muted">Soluções completas em energia sustentável para seu negócio</p>
       </div>
 
-      <div class="row g-4">
-        <!-- 6 serviços -->
+      <div class="row g-5">
+        <!-- Serviço 1 - Consultoria em Biomassa -->
         <div class="col-md-4">
-          <div class="card h-100">
-            <div class="position-relative">
-              <img src="https://via.placeholder.com/600x320?text=Serviço+1" class="card-img-top" alt="Serviço 1">
-              <div style="position:absolute; left:12px; top:12px;">
-                <span class="text-bg-soft bg-soft-green">Serviço 1</span>
+          <div class="card service-card h-100 border-0 shadow-lg">
+            <div class="card-icon-wrapper">
+              <i class="bi bi-gear-fill"></i>
+            </div>
+            <div class="card-body text-center p-5">
+              <h5 class="card-title fw-bold text-white mb-3">Consultoria em Biomassa</h5>
+              <p class="card-text text-light">
+                Análise técnica e econômica para implementação de soluções em biomassa, 
+                maximizando retorno e sustentabilidade.
+              </p>
+              <div class="service-features">
+                <span class="feature-badge">Análise Técnica</span>
+                <span class="feature-badge">Viabilidade Econômica</span>
+                <span class="feature-badge">Projetos Personalizados</span>
               </div>
             </div>
-            <div class="card-body">
-              <h5 class="card-title">Serviço 1</h5>
-              <p class="card-text">Descrição do serviço 1</p>
+            <div class="card-footer border-0 bg-transparent text-center pb-5">
+              <a href="#contact" class="btn btn-outline-light btn-lg">Solicitar Orçamento</a>
             </div>
           </div>
         </div>
 
+        <!-- Serviço 2 - Instalação de Equipamentos -->
         <div class="col-md-4">
-          <div class="card h-100">
-            <div class="position-relative">
-              <img src="https://via.placeholder.com/600x320?text=Serviço+2" class="card-img-top" alt="Serviço 2">
-              <div style="position:absolute; left:12px; top:12px;">
-                <span class="text-bg-soft bg-soft-olive">Serviço 2</span>
+          <div class="card service-card h-100 border-0 shadow-lg">
+            <div class="card-icon-wrapper">
+              <i class="bi bi-tools"></i>
+            </div>
+            <div class="card-body text-center p-5">
+              <h5 class="card-title fw-bold text-white mb-3">Instalação de Equipamentos</h5>
+              <p class="card-text text-light">
+                Instalação completa de sistemas de geração de energia a partir de biomassa 
+                com tecnologia de ponta e segurança.
+              </p>
+              <div class="service-features">
+                <span class="feature-badge">Tecnologia Avançada</span>
+                <span class="feature-badge">Instalação Rápida</span>
+                <span class="feature-badge">Garantia Extendida</span>
               </div>
             </div>
-            <div class="card-body">
-              <h5 class="card-title">Serviço 2</h5>
-              <p class="card-text">Descrição do serviço 2</p>
+            <div class="card-footer border-0 bg-transparent text-center pb-5">
+              <a href="#contact" class="btn btn-outline-light btn-lg">Solicitar Orçamento</a>
             </div>
           </div>
         </div>
 
+        <!-- Serviço 3 - Manutenção Especializada -->
         <div class="col-md-4">
-          <div class="card h-100">
-            <div class="position-relative">
-              <img src="https://via.placeholder.com/600x320?text=Serviço+3" class="card-img-top" alt="Serviço 3">
-              <div style="position:absolute; left:12px; top:12px;">
-                <span class="text-bg-soft bg-soft-amber">Serviço 3</span>
+          <div class="card service-card h-100 border-0 shadow-lg">
+            <div class="card-icon-wrapper">
+              <i class="bi bi-shield-check"></i>
+            </div>
+            <div class="card-body text-center p-5">
+              <h5 class="card-title fw-bold text-white mb-3">Manutenção Especializada</h5>
+              <p class="card-text text-light">
+                Serviços de manutenção preventiva e corretiva para garantir máxima 
+                eficiência e durabilidade dos equipamentos.
+              </p>
+              <div class="service-features">
+                <span class="feature-badge">Manutenção Preventiva</span>
+                <span class="feature-badge">Suporte 24/7</span>
+                <span class="feature-badge">Peças Originais</span>
               </div>
             </div>
-            <div class="card-body">
-              <h5 class="card-title">Serviço 3</h5>
-              <p class="card-text">Descrição do serviço 3</p>
+            <div class="card-footer border-0 bg-transparent text-center pb-5">
+              <a href="#contact" class="btn btn-outline-light btn-lg">Solicitar Orçamento</a>
             </div>
           </div>
         </div>
 
+        <!-- Serviço 4 - Capacitação Técnica -->
         <div class="col-md-4">
-          <div class="card h-100">
-            <div class="position-relative">
-              <img src="https://via.placeholder.com/600x320?text=Serviço+4" class="card-img-top" alt="Serviço 4">
-              <div style="position:absolute; left:12px; top:12px;">
-                <span class="text-bg-soft bg-soft-blue">Serviço 4</span>
+          <div class="card service-card h-100 border-0 shadow-lg">
+            <div class="card-icon-wrapper">
+              <i class="bi bi-person-gear"></i>
+            </div>
+            <div class="card-body text-center p-5">
+              <h5 class="card-title fw-bold text-white mb-3">Capacitação Técnica</h5>
+              <p class="card-text text-light">
+                Treinamento e capacitação de equipes para operação e manutenção 
+                de sistemas de energia por biomassa.
+              </p>
+              <div class="service-features">
+                <span class="feature-badge">Treinamento Prático</span>
+                <span class="feature-badge">Certificação</span>
+                <span class="feature-badge">Suporte Contínuo</span>
               </div>
             </div>
-            <div class="card-body">
-              <h5 class="card-title">Serviço 4</h5>
-              <p class="card-text">Descrição do serviço 4</p>
+            <div class="card-footer border-0 bg-transparent text-center pb-5">
+              <a href="#contact" class="btn btn-outline-light btn-lg">Solicitar Orçamento</a>
             </div>
           </div>
         </div>
 
+        <!-- Serviço 5 - Estudos de Viabilidade -->
         <div class="col-md-4">
-          <div class="card h-100">
-            <div class="position-relative">
-              <img src="https://via.placeholder.com/600x320?text=Serviço+5" class="card-img-top" alt="Serviço 5">
-              <div style="position:absolute; left:12px; top:12px;">
-                <span class="text-bg-soft bg-soft-olive">Serviço 5</span>
+          <div class="card service-card h-100 border-0 shadow-lg">
+            <div class="card-icon-wrapper">
+              <i class="bi bi-graph-up-arrow"></i>
+            </div>
+            <div class="card-body text-center p-5">
+              <h5 class="card-title fw-bold text-white mb-3">Estudos de Viabilidade</h5>
+              <p class="card-text text-light">
+                Análise detalhada de custo-benefício e retorno sobre investimento 
+                para projetos de energia sustentável.
+              </p>
+              <div class="service-features">
+                <span class="feature-badge">Análise de ROI</span>
+                <span class="feature-badge">Projeções Financeiras</span>
+                <span class="feature-badge">Relatórios Detalhados</span>
               </div>
             </div>
-            <div class="card-body">
-              <h5 class="card-title">Serviço 5</h5>
-              <p class="card-text">Descrição do serviço 5</p>
+            <div class="card-footer border-0 bg-transparent text-center pb-5">
+              <a href="#contact" class="btn btn-outline-light btn-lg">Solicitar Orçamento</a>
             </div>
           </div>
         </div>
 
+        <!-- Serviço 6 - Sustentabilidade e Certificação -->
         <div class="col-md-4">
-          <div class="card h-100">
-            <div class="position-relative">
-              <img src="https://via.placeholder.com/600x320?text=Serviço+6" class="card-img-top" alt="Serviço 6">
-              <div style="position:absolute; left:12px; top:12px;">
-                <span class="text-bg-soft bg-soft-amber">Serviço 6</span>
+          <div class="card service-card h-100 border-0 shadow-lg">
+            <div class="card-icon-wrapper">
+              <i class="bi bi-award"></i>
+            </div>
+            <div class="card-body text-center p-5">
+              <h5 class="card-title fw-bold text-white mb-3">Sustentabilidade e Certificação</h5>
+              <p class="card-text text-light">
+                Consultoria para certificações ambientais e implementação de 
+                práticas sustentáveis em sua operação.
+              </p>
+              <div class="service-features">
+                <span class="feature-badge">Certificação Ambiental</span>
+                <span class="feature-badge">ESG</span>
+                <span class="feature-badge">Sustentabilidade</span>
               </div>
             </div>
-            <div class="card-body">
-              <h5 class="card-title">Serviço 6</h5>
-              <p class="card-text">Descrição do serviço 6</p>
+            <div class="card-footer border-0 bg-transparent text-center pb-5">
+              <a href="#contact" class="btn btn-outline-light btn-lg">Solicitar Orçamento</a>
             </div>
           </div>
         </div>
@@ -353,69 +391,56 @@
       }
     });
 
+    // JavaScript para o Chat
+    const chatbox = document.getElementById("chatbox");
+    const input = document.getElementById("user-input");
+    const sendBtn = document.getElementById("send-btn");
 
-
-    //Ia
-
-    document.getElementById('send-btn').addEventListener('click', async () => {
-    const input = document.getElementById('user-input').value;
-
-    const response = await fetch('/api/chat', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ input }) // apenas a última mensagem
-  });
-
-const data = await response.json();
-  console.log(data.reply); // resposta da IA
-});
-
-  const chatbox = document.getElementById("chatbox");
-  const input = document.getElementById("user-input");
-  const sendBtn = document.getElementById("send-btn");
-
-  function appendMessage(role, text) {
-    const wrapper = document.createElement("div");
-    wrapper.className = "d-flex mb-3 align-items-start flex-wrap";
-
-    const name = document.createElement("div");
-    name.className = `me-2 fw-bold ${role === "user" ? "text-warning" : "text-success"}`;
-    name.textContent = role === "user" ? "Usuário" : "Chatbot";
-
-    const bubble = document.createElement("div");
-    bubble.className = `message-bubble ${role === "user" ? "user-bubble" : "bot-bubble"}`;
-    bubble.textContent = text;
-
-    wrapper.appendChild(name);
-    wrapper.appendChild(bubble);
-    chatbox.appendChild(wrapper);
-    chatbox.scrollTop = chatbox.scrollHeight;
-  }
-
-  async function sendMessage() {
-    const text = input.value.trim();
-    if (!text) return;
-    appendMessage("user", text);
-    input.value = "";
-
-    try {
-      const resp = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text })
-      });
-      const data = await resp.json();
-      appendMessage("assistant", data.reply);
-    } catch (err) {
-      appendMessage("assistant", "Erro ao conectar com o servidor.");
+    function appendMessage(role, text) {
+      const messageDiv = document.createElement("div");
+      messageDiv.className = `message ${role === "user" ? "message-user" : "message-bot"}`;
+      
+      const contentDiv = document.createElement("div");
+      contentDiv.className = "message-content";
+      contentDiv.textContent = text;
+      
+      const timeDiv = document.createElement("div");
+      timeDiv.className = "message-time";
+      timeDiv.textContent = "Agora";
+      
+      messageDiv.appendChild(contentDiv);
+      messageDiv.appendChild(timeDiv);
+      chatbox.appendChild(messageDiv);
+      
+      // Scroll para a última mensagem
+      chatbox.scrollTop = chatbox.scrollHeight;
     }
-  }
 
-  sendBtn.addEventListener("click", sendMessage);
-  input.addEventListener("keydown", e => { if (e.key === "Enter") sendMessage(); });
+    async function sendMessage() {
+      const text = input.value.trim();
+      if (!text) return;
+      
+      appendMessage("user", text);
+      input.value = "";
 
+      try {
+        const resp = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text })
+        });
+        const data = await resp.json();
+        appendMessage("bot", data.reply);
+      } catch (err) {
+        appendMessage("bot", "Desculpe, ocorreu um erro ao conectar com o servidor. Tente novamente mais tarde.");
+      }
+    }
 
-</script>
+    sendBtn.addEventListener("click", sendMessage);
+    input.addEventListener("keydown", e => { 
+      if (e.key === "Enter") sendMessage(); 
+    });
+  </script>
 
 </body>
 </html>
