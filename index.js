@@ -4,7 +4,6 @@ const MongoClient = require('mongodb').MongoClient
 const session = require('express-session')
 const bcrypt = require('bcrypt')
 const methodOverride = require('method-override')
-const { url } = require('inspector')
 
 const app = express()
 const porta = 3000
@@ -33,7 +32,7 @@ app.get('/registro', (req,res)=>{
 })
 
 app.post('/registro', async (req,res)=>{
-    const cliente = new MongoClient(urlMongo, { useUnifiedTopology: true})
+    const cliente = new MongoClient(urlMongo)
     try {
         await cliente.connect()
         const banco = cliente.db(nomeBanco)
@@ -63,7 +62,7 @@ app.get('/login', (req,res)=>{
 })
 
 app.post('/login', async (req,res)=>{
-    const cliente = new MongoClient(urlMongo, {useUnifiedTopology: true})
+    const cliente = new MongoClient(urlMongo)
     try {
         await cliente.connect()
         const banco = cliente.db(nomeBanco)
@@ -73,8 +72,14 @@ app.post('/login', async (req,res)=>{
 
         if(usuario && await bcrypt.compare(req.body.senha, usuario.senha)){
             req.session.usuario = req.body.usuario;
-            req.session.tipo = usuario.tipo
-            res.redirect('/bemvindo')
+            req.session.tipo = usuario.tipo;
+
+            // Redireciona de acordo com o tipo
+            if (usuario.tipo === 'admin') {
+                res.redirect('/admin')
+            } else {
+                res.redirect('/bemvindo')
+            }
         }else{
             res.redirect('/erro')
         }
@@ -84,6 +89,7 @@ app.post('/login', async (req,res)=>{
         cliente.close()
     }
 })
+
 
 function protegerRota(req,res,proximo){
     if(req.session.usuario){
@@ -128,7 +134,12 @@ app.post('/crud_usuarios_cadastro', protegerAdmin, async (req,res)=>{
         const db = client.db(nomeAdmin)
         const collection = db.collection(collectionName)
 
-        const result = await collection.insertOne(novoUsuario)
+        const senhaCriptografada = await bcrypt.hash(novoUsuario.senha, 10)
+        await collection.insertOne({
+        usuario: novoUsuario.usuario,
+        senha: senhaCriptografada,
+        tipo: novoUsuario.tipo || 'comum'
+        })
         console.log(`Usuário cadastrado com sucesso. ID: ${result.insertedId}`)
 
         res.redirect('/admin')
@@ -141,6 +152,106 @@ app.post('/crud_usuarios_cadastro', protegerAdmin, async (req,res)=>{
    }
 })
 
+app.get('/crud_usuarios_atualizar', protegerAdmin, async(req,res)=>{
+    res.sendFile(__dirname + '/views/admin/views/usuarios/atualizar.html')
+})
+
+app.post('/crud_usuarios_atualizar', protegerAdmin, async(req,res)=>{
+    const { id, usuario, senha } = req.body
+
+    const client = new MongoClient(urlMongo)
+
+    try {
+        await client.connect()
+
+        const db = client.db(nomeAdmin)
+        const collection = db.collection(collectionName)
+        const senhaCriptografada = await bcrypt.hash(senha, 10)
+        const result = await collection.updateOne({ _id: new ObjectId(id)},{
+            $set: {usuario, senha: senhaCriptografada}
+        })
+        if(result.modifiedCount > 0){
+            console.log(`Usuário com o ID: ${id} atualizado com sucesso`)
+            res.redirect('/admin')
+        }else{
+            res.status(404).send('Usuário não encontrado')
+        }
+    }catch(err){
+        console.error('Erro ao atualizar o usuário: ', err)
+        res.status(500).send('Erro ao atualizar o usuário. Por favor tente novamente mais tarde.')
+    }finally{
+        client.close()
+    }
+})
+
+app.get('/usuario/:id', protegerAdmin, async (req,res)=>{
+    const { id } = req.params
+
+    const cliente = new MongoClient(urlMongo)
+
+    try{
+        await cliente.connect()
+        const db = cliente.db(nomeAdmin)
+        const collection = db.collection(collectionName)
+
+        const usuario = await collection.findOne({_id: new ObjectId(id)})
+
+        if(!livro){
+            return res.status(404).send('Usuário não encontrado')
+        }
+        res.json(usuario)
+    }catch(err){
+        console.error('Erro ao buscar o usuário: ', err)
+        res.status(500).send('Erro ao buscar o usuário. Por favor tente novamente mais tarde')
+    }finally{
+        cliente.close()
+    }
+})
+
+app.post('/crud_usuarios_deletar', protegerAdmin, async(req,res)=>{
+    const {id} = req.body
+
+    const client = new MongoClient(url)
+
+    try{
+        await client.connect()
+
+        const db = client.db(nomeAdmin)
+        const collection = db.collection(collectionName)
+
+        const result = await collection.deleteOne({_id: new ObjectId(id)})
+
+        if(result.deletedCount > 0){
+            console.log(`Usuário com ID: ${id} deletado com sucesso`)
+            res.redirect('/admin')
+        }else{
+            res.status(404).send('Usuário não encontrado')
+        }
+    }catch(err){
+        console.log('Erro ao deletar o usuário:', err)
+        res.status(500).send('Erro ao deletar o usuário. Por favor tente novamente mais tarde')
+    }finally{
+        client.close()
+    }
+})
+
+app.get('/crud_usuarios_usuarios', protegerAdmin, async(req,res)=>{
+    const cliente = new MongoClient(urlMongo)
+
+    try{
+        await cliente.connect()
+        const db = cliente.db(nomeAdmin)
+        const collection = db.collection(collectionName)
+
+        const usuarios = await collection.find({}, {projection: {_id:1, usuario:1, senha:1 }}).toArray()
+        res.json(usuarios)
+    }catch(err){
+        console.error('Erro ao buscar usuários: ', err)
+        res.status(500).send('Erro ao buscar usuários. Por favor tente novamente mais tarde.')
+    }finally{
+        cliente.close()
+    }
+})
 app.get('/erro', (req,res)=>{
     res.sendFile(__dirname + '/views/erro.html')
 })
