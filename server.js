@@ -2,17 +2,18 @@ const express = require("express");
 const dotenv = require("dotenv");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
+const path = require('path')
 dotenv.config();
 const app = express();
 app.use(express.json());
 app.use(express.static("public"));
 
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
+const genAI = new GoogleGenerativeAI("AIzaSyCZeRFVrzlebbGWkFbhkJkUjYOlj7NYRLw");
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 const systemPrompt = `
 Você é um assistente da empresa BioEnergy.
-Sua função é ajudar clientes a escolher o serviço mais adequado de acordo com a descrição da fazenda.
+Sua função é ajud ar clientes a escolher o serviço mais adequado de acordo com a descrição da fazenda.
 
 Contexto:
 - Serviço 1 → indicado para fazendas de tamanho médio
@@ -23,7 +24,9 @@ Contexto:
 Quando o usuário mandar uma mensagem, responda apenas com o nome do serviço mais adequado (ex: "Serviço 1").
 Não explique nada além do nome do serviço.
 `;
-
+app.get("/", async (req,res)=>{
+  res.sendFile(path.join(__dirname,'public/index.html'))
+})
 app.post("/api/chat", async (req, res) => {
   const { text } = req.body;
 
