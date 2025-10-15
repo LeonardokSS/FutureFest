@@ -23,6 +23,7 @@ const nomeBanco = 'sistemaBioenergy'
 const collectionName = 'usuarios'
 const collectionServico = 'servicos'
 const collectionManu = 'manutenções'
+const collectionFeedback = 'feedbacks'
 
 app.get('/', (req,res)=>{
     res.sendFile(__dirname + '/views/index.html')
@@ -222,7 +223,6 @@ app.post('/crud_manutencoes_cadastro', protegerAdmin, async (req,res)=>{
     client.close()
    }
 })
-
 
 app.get('/crud_usuarios_atualizar', protegerAdmin, async(req,res)=>{
     res.sendFile(__dirname + '/views/admin/html/usuarios/atualizar.html')
@@ -506,6 +506,26 @@ app.get('/crud_manutencoes_manutencoes', protegerAdmin, async(req,res)=>{
     }finally{
         cliente.close()
     }
+})
+
+app.post('/formulario_feedback', async (req,res)=>{
+   const novoFeedback = req.body
+   const client = new MongoClient(urlMongo)
+
+   try {
+       await client.connect()
+       const db = client.db(nomeBanco)
+       const collection = db.collection(collectionFeedback)
+
+       const result = await collection.insertOne(novoFeedback)
+       console.log(`Feedback cadastrado com sucesso. ID: ${result.insertedId}`)
+        
+   }catch(err){
+    console.error('Erro ao cadastrar o feedback: ', err)
+    res.status(500).send('Erro ao cadastrar o feedback. Por favor tente mais tarde ')
+   }finally{
+    client.close()
+   }
 })
 
 app.get('/erro', (req,res)=>{
