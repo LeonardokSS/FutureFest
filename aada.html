@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard Dinâmico — Rendimento Mensal</title>
+  <style>
+    :root{
+      --bg:#0f1420; --surface:#161c2a; --surface-2:#0f172a;
+      --text:#e8ecf3; --muted:#9aa7bd; --grid:#243046;
+      --primary:#4da6ff; --success:#7bd389; --warn:#ffd166; --danger:#ff6b6b;
+    }
+    body{font-family:'Segoe UI', system-ui, -apple-system, sans-serif; background:var(--bg); color:var(--text); margin:0; padding:24px}
+    h1{text-align:center; margin:0 0 20px}
+    /* Formulário */
+    form{
+      background:var(--surface); padding:20px; border-radius:12px;
+      max-width:800px; margin:0 auto 24px; box-shadow:0 6px 18px rgba(0,0,0,0.35);
+      border:1px solid var(--grid);
+    }
+    form h2{margin:0 0 16px; font-size:18px; color:var(--success)}
+    .grid-2{display:grid; grid-template-columns: repeat(2,1fr); gap:16px}
+    .form-group{display:flex; flex-direction:column; gap:6px}
+    label{font-size:13px; color:var(--muted)}
+    input, select{
+      padding:10px 12px; border-radius:8px; border:1px solid var(--grid);
+      background:var(--surface-2); color:var(--text); font-size:14px;
+    }
+    .actions{display:flex; gap:10px; margin-top:12px}
+    button{
+      background:linear-gradient(90deg,var(--primary),var(--success));
+      border:none; padding:12px 18px; border-radius:10px; font-weight:700; color:#0b1220; cursor:pointer;
+      box-shadow:0 6px 12px rgba(77,166,255,0.25); transition:transform .1s ease;
+    }
+    button:active{transform:scale(0.98)}
+
+    /* Cards */
+    .grid{display:grid; grid-template-columns: repeat(auto-fit,minmax(280px,1fr)); gap:20px}
+    .card{
+      background:var(--surface); padding:16px; border-radius:12px;
+      border:1px solid var(--grid); box-shadow:0 6px 18px rgba(0,0,0,0.3)
+    }
+    .card h3{margin:0 0 12px; font-size:16px; color:var(--success)}
+
+    /* Gauge */
+    .gauge{width:220px; height:220px; position:relative; margin:auto}
+    .gauge svg{transform:rotate(-90deg)}
+    .gauge .value{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:24px; font-weight:700}
+
+    /* Progress bar */
+    .progress{height:20px; background:#101826; border-radius:10px; overflow:hidden; border:1px solid var(--grid)}
+    .progress .bar{height:100%; background:linear-gradient(90deg,var(--primary),var(--success)); width:0%; transition:width 800ms ease}
+
+    /* Vertical bars (CO2 or monthly) */
+    .vbars{display:flex; align-items:flex-end; gap:12px; height:180px; padding:12px; border:1px dashed var(--grid); border-radius:12px}
+    .vbar{flex:1; display:flex; flex-direction:column; align-items:center; gap:6px}
+    .vbar .bar{
+      width:100%; border-radius:8px 8px 4px 4px; background:linear-gradient(180deg,var(--primary),#1f6fd6);
+      box-shadow:0 8px 16px rgba(0,0,0,0.35); height:60px; transition:height 700ms ease, filter 200ms ease
+    }
+    .vbar.active .bar{filter:brightness(1.2)}
+    .vbar .label{font-size:12px; color:var(--muted)}
+
+    /* Horizontal bars (capital) */
+    .hbar{margin:10px 0}
+    .hbar .head{display:flex; justify-content:space-between; font-size:13px; color:var(--muted); margin-bottom:6px}
+    .money{font-weight:700; color:#cfe7ff}
+
+    /* Comparação mensal box */
+    .compare{
+      display:grid; grid-template-columns: repeat(3,1fr); gap:12px; margin-top:8px
+    }
+    .pill{
+      background:#101826; border:1px solid var(--grid); border-radius:10px; padding:10px 12px;
+    }
+    .pill .title{font-size:12px; color:var(--muted)}
+    .pill .value{font-size:18px; font-weight:700}
+    .delta.up{color:var(--success)} .delta.down{color:var(--danger)} .delta.flat{color:#dbe5f3}
+
+    /* Table */
+    table{width:100%; border-collapse:collapse; margin-top:12px; font-size:13px}
+    th, td{padding:10px; border-bottom:1px solid var(--grid)}
+    th{color:#cfe7ff; text-align:left}
+    tbody tr:hover{background:#121a23}
+  </style>
+</head>
+<body>
+  <h1>Dashboard Dinâmico</h1>
+
+  <!-- Formulário -->
+  <form id="form">
+    <h2>Atualizar indicadores</h2>
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="eficiencia">Eficiência (%)</label>
+        <input type="number" id="eficiencia" value="75" min="0" max="100">
+      </div>
+      <div class="form-group">
+        <label for="capital">Capital gerado (R$ mil)</label>
+        <input type="number" id="capital" value="70" min="0" max="100">
+      </div>
+      <div class="form-group">
+        <label for="residuos">Resíduos reaproveitados (ton)</label>
+        <input type="number" id="residuos" value="650" min="0">
+      </div>
+      <div class="form-group">
+        <label for="co2">CO₂ não liberado (ton)</label>
+        <input type="number" id="co2" value="120" min="0">
+      </div>
+    </div>
+
+    <!-- Comparação de meses de rendimento -->
+    <div class="grid-2" style="margin-top:16px">
+      <div class="form-group">
+        <label for="mesA">Comparar mês A</label>
+        <select id="mesA"></select>
+      </div>
+      <div class="form-group">
+        <label for="mesB">Comparar mês B</label>
+        <select id="mesB"></select>
+      </div>
+    </div>
+    <div class="actions">
+      <button type="submit">Atualizar dashboard</button>
+    </div>
+  </form>
+
+  <!-- Gráficos -->
+  <div class="grid">
+    <!-- Eficiência -->
+    <div class="card">
+      <h3>Eficiência</h3>
+      <div class="gauge">
+        <svg width="220" height="220">
+          <circle cx="110" cy="110" r="94" stroke="#25334a" stroke-width="20" fill="none"/>
+          <circle id="gauge-bar" cx="110" cy="110" r="94" stroke="url(#grad)" stroke-width="20" fill="none"
+            stroke-dasharray="590" stroke-dashoffset="590" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="grad" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0%" stop-color="#7bd389"/>
+              <stop offset="100%" stop-color="#4da6ff"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="value" id="gauge-value">0%</div>
+      </div>
+    </div>
+
+    <!-- Capital -->
+    <div class="card">
+      <h3>Capital gerado</h3>
+      <div class="hbar">
+        <div class="head"><span>Mês atual</span><span class="money" id="capital-text">R$ 0 mil</span></div>
+        <div class="progress"><div class="bar" id="capital-bar"></div></div>
+      </div>
+      <div class="compare">
+        <div class="pill">
+          <div class="title">Vs. mês A</div>
+          <div class="value" id="cap-vs-a">—</div>
+        </div>
+        <div class="pill">
+          <div class="title">Vs. mês B</div>
+          <div class="value" id="cap-vs-b">—</div>
+        </div>
+        <div class="pill">
+          <div class="title">Tendência</div>
+          <div class="value" id="cap-trend">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resíduos -->
+    <div class="card">
+      <h3>Resíduos reaproveitados</h3>
+      <div class="progress"><div class="bar" id="residuos-bar"></div></div>
+      <p id="residuos-text" style="color:var(--muted); margin:8px 0 0"></p>
+    </div>
+
+    <!-- CO2 -->
+    <div class="card">
+      <h3>CO₂ não liberado</h3>
+      <div class="progress"><div class="bar" id="co2-bar"></div></div>
+      <p id="co2-text" style="color:var(--muted); margin:8px 0 0"></p>
+    </div>
+
+    <!-- Comparação mensal de rendimento -->
+    <div class="card" style="grid-column:1/-1">
+      <h3>Comparação mensal de rendimento</h3>
+      <div class="vbars" id="monthly-bars">
+        <!-- barras serão preenchidas via JS -->
+      </div>
+      <div class="compare">
+        <div class="pill">
+          <div class="title" id="mA-title">Mês A</div>
+          <div class="value" id="mA-value">—</div>
+        </div>
+        <div class="pill">
+          <div class="title" id="mB-title">Mês B</div>
+          <div class="value" id="mB-value">—</div>
+        </div>
+        <div class="pill">
+          <div class="title">Diferença</div>
+          <div class="value" id="diff-value">—</div>
+        </div>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Mês</th>
+            <th>Rendimento (%)</th>
+            <th>Δ vs. anterior</th>
+          </tr>
+        </thead>
+        <tbody id="monthly-table">
+          <!-- linhas via JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    // Dados exemplo de rendimento (%) por mês
+    const meses = [
+      {mes:'Jan', valor:72},
+      {mes:'Fev', valor:75},
+      {mes:'Mar', valor:78},
+      {mes:'Abr', valor:81},
+      {mes:'Mai', valor:79},
+      {mes:'Jun', valor:83},
+      {mes:'Jul', valor:85},
+      {mes:'Ago', valor:88},
+      {mes:'Set', valor:86},
+      {mes:'Out', valor:87},
+      {mes:'Nov', valor:84},
+      {mes:'Dez', valor:82},
+    ];
+
+    // Elementos
+    const form = document.getElementById("form");
+    const gaugeBar = document.getElementById("gauge-bar");
+    const gaugeValue = document.getElementById("gauge-value");
+    const capitalBar = document.getElementById("capital-bar");
+    const capitalText = document.getElementById("capital-text");
+    const residuosBar = document.getElementById("residuos-bar");
+    const residuosText = document.getElementById("residuos-text");
+    const co2Bar = document.getElementById("co2-bar");
+    const co2Text = document.getElementById("co2-text");
+
+    const mesASelect = document.getElementById("mesA");
+    const mesBSelect = document.getElementById("mesB");
+    const monthlyBars = document.getElementById("monthly-bars");
+    const monthlyTable = document.getElementById("monthly-table");
+
+    const mATitle = document.getElementById("mA-title");
+    const mAValue = document.getElementById("mA-value");
+    const mBTitle = document.getElementById("mB-title");
+    const mBValue = document.getElementById("mB-value");
+    const diffValue = document.getElementById("diff-value");
+
+    const capVsA = document.getElementById("cap-vs-a");
+    const capVsB = document.getElementById("cap-vs-b");
+    const capTrend = document.getElementById("cap-trend");
+
+    // Popular selects
+    function populateSelects(){
+      meses.forEach((m, idx)=>{
+        const optA = document.createElement('option');
+        optA.value = idx; optA.textContent = m.mes;
+        mesASelect.appendChild(optA);
+
+        const optB = document.createElement('option');
+        optB.value = idx; optB.textContent = m.mes;
+        mesBSelect.appendChild(optB);
+      });
+      mesASelect.value = 6; // Jul
+      mesBSelect.value = 7; // Ago
+    }
+
+    // Render barras mensais
+    function renderMonthlyBars(){
+      monthlyBars.innerHTML = '';
+      const maxVal = Math.max(...meses.map(m=>m.valor));
+      meses.forEach((m, idx)=>{
+        const wrap = document.createElement('div');
+        wrap.className = 'vbar';
+        if (idx == +mesASelect.value || idx == +mesBSelect.value) wrap.classList.add('active');
+
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.height = (m.valor/maxVal*160 + 20) + 'px'; // altura proporcional
+        const label = document.createElement('div');
+        label.className = 'label';
+        label.textContent = m.mes + ' — ' + m.valor + '%';
+
+        wrap.appendChild(bar);
+        wrap.appendChild(label);
+        monthlyBars.appendChild(wrap);
+      });
+    }
+
+    // Render tabela mensal
+    function renderMonthlyTable(){
+      monthlyTable.innerHTML = '';
+      meses.forEach((m, idx)=>{
+        const tr = document.createElement('tr');
+        const tdMes = document.createElement('td'); tdMes.textContent = m.mes;
+        const tdVal = document.createElement('td'); tdVal.textContent = m.valor + '%';
+        const tdDelta = document.createElement('td');
+        if (idx === 0) tdDelta.textContent = '—';
+        else {
+          const diff = (m.valor - meses[idx-1].valor);
+          const sign = diff > 0 ? '+' : diff < 0 ? '' : '';
+          tdDelta.textContent = `${sign}${diff}%`;
+          tdDelta.style.color = diff > 0 ? '#7bd389' : diff < 0 ? '#ff6b6b' : '#dbe5f3';
+        }
+        tr.appendChild(tdMes); tr.appendChild(tdVal); tr.appendChild(tdDelta);
+        monthlyTable.appendChild(tr);
+      });
+    }
+
+    // Atualizar métricas principais via formulário
+    function updateMainMetrics(){
+      const eficiencia = +document.getElementById("eficiencia").value;
+      const capital = +document.getElementById("capital").value;
+      const residuos = +document.getElementById("residuos").value;
+      const co2 = +document.getElementById("co2").value;
+
+      // Gauge eficiência
+      const dasharray = 590;
+      const offset = dasharray - (eficiencia/100)*dasharray;
+      gaugeBar.setAttribute("stroke-dashoffset", offset);
+      gaugeValue.textContent = eficiencia + "%";
+
+      // Capital (assumindo 0-100 escala relativa)
+      capitalBar.style.width = Math.min(Math.max(capital,0),100) + "%";
+      capitalText.textContent = "R$ " + capital.toLocaleString('pt-BR') + " mil";
+
+      // Resíduos (meta 1000t)
+      const percResiduos = Math.min((residuos/1000)*100,100);
+      residuosBar.style.width = percResiduos + "%";
+      residuosText.textContent = `${residuos.toLocaleString('pt-BR')} toneladas reaproveitadas (meta 1.000 t)`;
+
+      // CO2 (meta 200t)
+      const percCo2 = Math.min((co2/200)*100,100);
+      co2Bar.style.width = percCo2 + "%";
+      co2Text.textContent = `${co2.toLocaleString('pt-BR')} toneladas não liberadas (meta 200 t)`;
+    }
+
+    // Atualizar comparação (meses A e B) e capital vs meses
+    function updateComparison(){
+      const idxA = +mesASelect.value;
+      const idxB = +mesBSelect.value;
+      const valA = meses[idxA].valor;
+      const valB = meses[idxB].valor;
+
+      mATitle.textContent = `Mês A — ${meses[idxA].mes}`;
+      mAValue.textContent = `${valA}%`;
+      mBTitle.textContent = `Mês B — ${meses[idxB].mes}`;
+      mBValue.textContent = `${valB}%`;
+
+      const diff = valB - valA;
+      const cls = diff > 0 ? 'delta up' : diff < 0 ? 'delta down' : 'delta flat';
+      diffValue.className = `value ${cls}`;
+      const percChange = (valA === 0) ? 0 : ((valB - valA) / valA * 100);
+      diffValue.textContent = `${diff > 0 ? '+' : ''}${diff}% (${percChange.toFixed(1)}%)`;
+
+      // Tendência do capital (exemplo: capital atual comparado ao rendimento dos meses A/B)
+      const capital = +document.getElementById("capital").value;
+      capVsA.innerHTML = `${capital >= valA ? '▲' : '▼'} ${Math.abs(capital - valA)} pts`;
+      capVsA.className = capital >= valA ? 'delta up' : 'delta down';
+
+      capVsB.innerHTML = `${capital >= valB ? '▲' : '▼'} ${Math.abs(capital - valB)} pts`;
+      capVsB.className = capital >= valB ? 'delta up' : 'delta down';
+
+      capTrend.textContent = diff > 0 ? 'Alta' : diff < 0 ? 'Queda' : 'Estável';
+      capTrend.className = diff > 0 ? 'delta up' : diff < 0 ? 'delta down' : 'delta flat';
+    }
+
+    // Eventos
+    form.addEventListener("submit", (e)=>{ e.preventDefault(); updateMainMetrics(); updateComparison(); renderMonthlyBars(); });
+    mesASelect.addEventListener("change", ()=>{ updateComparison(); renderMonthlyBars(); });
+    mesBSelect.addEventListener("change", ()=>{ updateComparison(); renderMonthlyBars(); });
+
+    // Inicialização
+    populateSelects();
+    renderMonthlyBars();
+    renderMonthlyTable();
+    form.dispatchEvent(new Event("submit"));
+  </script>
+</body>
+</html>

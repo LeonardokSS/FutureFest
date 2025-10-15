@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Relatórios Sustentabilidade</title>
+  <style>
+    body{
+      margin:0; font-family:Arial, sans-serif;
+      background:#0f1420; color:#e8ecf3;
+    }
+    .container{
+      max-width:1200px; margin:20px auto; padding:0 16px;
+      display:grid; grid-template-columns: repeat(12, 1fr);
+      gap:16px;
+    }
+    .card{
+      background:#161c2a; border:1px solid #20293e;
+      border-radius:12px; padding:16px;
+    }
+    .card h3{margin:0 0 12px; font-size:16px}
+    .col-6{grid-column: span 6}
+    .col-12{grid-column: span 12}
+
+    /* Gauge */
+    .gauge{width:200px; height:200px; margin:auto; position:relative}
+    .gauge svg{transform:rotate(-90deg)}
+    .gauge .value{
+      position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+      font-size:22px; font-weight:bold;
+    }
+
+    /* Progress bar */
+    .progress{height:20px; background:#111827; border-radius:10px; overflow:hidden}
+    .progress .bar{height:100%; background:linear-gradient(90deg,#4da6ff,#7bd389)}
+
+    /* Horizontal bars */
+    .hbar{margin:8px 0}
+    .hbar .label{font-size:14px; margin-bottom:4px}
+    .hbar .progress{height:14px}
+
+    /* Vertical bars */
+    .vbars{display:flex; align-items:flex-end; gap:12px; height:160px}
+    .vbar{flex:1; display:flex; flex-direction:column; align-items:center}
+    .vbar .bar{width:100%; border-radius:6px 6px 0 0; background:#7bd389}
+    .vbar .label{margin-top:6px; font-size:12px; color:#9aa7bd}
+  </style>
+</head>
+<body>
+  <main class="container">
+    <!-- Relatório Eficiência -->
+    <section class="card col-6">
+      <h3>Relatório de Eficiência</h3>
+      <div class="gauge">
+        <svg width="200" height="200">
+          <circle cx="100" cy="100" r="90" stroke="#2a3348" stroke-width="18" fill="none"/>
+          <circle cx="100" cy="100" r="90" stroke="url(#grad)" stroke-width="18" fill="none"
+            stroke-dasharray="565" stroke-dashoffset="140" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="grad" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0%" stop-color="#7bd389"/>
+              <stop offset="100%" stop-color="#4da6ff"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="value">75%</div>
+      </div>
+    </section>
+
+    <!-- Capital gerado -->
+    <section class="card col-6">
+      <h3>Capital Gerado pela Máquina</h3>
+      <div class="hbar">
+        <div class="label">Janeiro</div>
+        <div class="progress"><div class="bar" style="width:70%"></div></div>
+      </div>
+      <div class="hbar">
+        <div class="label">Fevereiro</div>
+        <div class="progress"><div class="bar" style="width:85%"></div></div>
+      </div>
+      <div class="hbar">
+        <div class="label">Março</div>
+        <div class="progress"><div class="bar" style="width:60%"></div></div>
+      </div>
+    </section>
+
+    <!-- Resíduos reaproveitados -->
+    <section class="card col-6">
+      <h3>Toneladas de Resíduos Reaproveitados</h3>
+      <p>Meta: 1000 toneladas</p>
+      <div class="progress"><div class="bar" style="width:65%"></div></div>
+      <p>650 toneladas reaproveitadas</p>
+    </section>
+
+    <!-- CO2 não liberado -->
+    <section class="card col-6">
+      <h3>Toneladas de CO₂ não liberadas</h3>
+      <div class="vbars">
+        <div class="vbar">
+          <div class="bar" style="height:80px"></div>
+          <div class="label">Jan</div>
+        </div>
+        <div class="vbar">
+          <div class="bar" style="height:120px"></div>
+          <div class="label">Fev</div>
+        </div>
+        <div class="vbar">
+          <div class="bar" style="height:100px"></div>
+          <div class="label">Mar</div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
