@@ -525,6 +525,7 @@ app.post('/formulario_feedback', async (req,res)=>{
     res.status(500).send('Erro ao cadastrar o feedback. Por favor tente mais tarde ')
    }finally{
     client.close()
+    res.redirect('/')
    }
 })
 
@@ -539,6 +540,33 @@ app.get('/sair', (req,res)=>{
         }res.redirect('/login')
     })
 })
+
+app.post('/assistente', (req, res) => {
+  const { nome, area } = req.body;
+
+  if (!nome || !area) {
+    return res.status(400).json({ erro: 'Preencha nome e área corretamente.' });
+  }
+
+  let recomendacao = '';
+  const areaNum = parseFloat(area);
+
+  if (isNaN(areaNum)) {
+    return res.status(400).json({ erro: 'Área deve ser um número válido.' });
+  }
+
+  if (areaNum < 500) {
+    recomendacao = 'Um sistema compacto de biodigestor é o mais indicado. Se quiser mais informações, faça Login e use o nosso recurso de chatbot!.';
+  } else if (areaNum < 2000) {
+    recomendacao = 'Um biodigestor de médio porte pode atender bem sua área. Se quiser mais informações, faça Login e use o nosso recurso de chatbot!.';
+  } else {
+    recomendacao = 'Recomendamos um sistema industrial de grande porte. Se quiser mais informações, faça Login e use o nosso recurso de chatbot!.';
+  }
+
+  res.json({
+    mensagem: `Olá ${nome}! Para sua área de ${areaNum} m², nossa recomendação é: ${recomendacao}`
+  });
+});
 
 app.listen(porta, ()=>{
     console.log(`Servidor rodando na porta ${porta}`)
