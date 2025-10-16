@@ -1,0 +1,18 @@
+[
+  {
+    "role": "user",
+    "content": "meu nome é leo"
+  },
+  {
+    "role": "assistant",
+    "content": "Olá Leo, bem-vindo à BioEnergy! Em que posso te ajudar hoje?"
+  },
+  {
+    "role": "user",
+    "content": "qual o meu nome"
+  },
+  {
+    "role": "assistant",
+    "content": "Seu nome é Leo."
+  }
+]
