@@ -27,10 +27,10 @@
       </button>
       <div class="collapse navbar-collapse" id="navMenu">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link active" href="#home">HOME</a></li>
-          <li class="nav-item"><a class="nav-link" href="#sobre">SOBRE</a></li>
-          <li class="nav-item"><a class="nav-link" href="#chatbot">CHATBOT</a></li>
-          <li class="nav-item"><a class="nav-link" href="#servicos">SERVIÇOS</a></li>
+          <li class="nav-item"><a class="nav-link active fade-in-up" href="#home">HOME</a></li>
+          <li class="nav-item"><a class="nav-link fade-in-up" href="#sobre">SOBRE</a></li>
+          <li class="nav-item"><a class="nav-link fade-in-up" href="#chatbot">CHATBOT</a></li>
+          <li class="nav-item"><a class="nav-link fade-in-up" href="#servicos">SERVIÇOS</a></li>
         </ul>
         <!-- Botão de Login sempre visível -->
         <div class="ms-3">
@@ -130,7 +130,7 @@
       </div>
 
       <!-- Chatbot -->
-      <div class="col-lg-6">
+      <div class="col-lg-6" id="chatbot">
         <div class="card h-100 chat-container shadow-sm">
           <div class="chat-header d-flex align-items-center justify-content-between">
             <div class="d-flex align-items-center">
@@ -383,7 +383,7 @@
         <form class="card shadow-sm p-4 border-0" action="/formulario_feedback" method="post">
           <div class="mb-3">
             <label for="nome" class="form-label">Seu Nome</label>
-            <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite seu nome">
+            <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite seu nome" required>
           </div>
           <div class="mb-3">
             <label for="servico" class="form-label">Serviço Utilizado</label>
@@ -399,7 +399,7 @@
           </div>
           <div class="mb-3">
             <label for="mensagem" class="form-label">Seu Feedback</label>
-            <textarea class="form-control" id="mensagem" rows="4" name="mensagem"placeholder="Escreva sua experiência..."></textarea>
+            <textarea class="form-control" id="mensagem" rows="4" name="mensagem"placeholder="Escreva sua experiência..." required></textarea>
           </div>
           <button type="submit" class="btn btn-success btn-lg">Enviar Feedback</button>
         </form>

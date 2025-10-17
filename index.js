@@ -4,9 +4,17 @@ const MongoClient = require('mongodb').MongoClient
 const session = require('express-session')
 const bcrypt = require('bcrypt')
 const methodOverride = require('method-override')
+const path = require("path");
+const fs = require("fs");
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 
 const app = express()
 const porta = 3000
+const genAI = new GoogleGenerativeAI("AIzaSyCZeRFVrzlebbGWkFbhkJkUjYOlj7NYRLw");
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+const historico = path.join(__dirname, "public", "historicos", "historico.json");
+
 
 app.use(express.static(__dirname + '/public'))
 app.use(express.urlencoded({extended:true}))
@@ -63,33 +71,35 @@ app.get('/login', (req,res)=>{
     res.sendFile(__dirname + '/views/login.html')
 })
 
-app.post('/login', async (req,res)=>{
-    const cliente = new MongoClient(urlMongo)
-    try {
-        await cliente.connect()
-        const banco = cliente.db(nomeBanco)
-        const colecaoUsuarios = banco.collection(collectionName)
+app.post("/login", async (req, res) => {
+  const cliente = new MongoClient(urlMongo);
+  try {
+    await cliente.connect();
+    const banco = cliente.db(nomeBanco);
+    const colecaoUsuarios = banco.collection(collectionName);
 
-        const usuario = await colecaoUsuarios.findOne({usuario: req.body.usuario})
+    const usuario = await colecaoUsuarios.findOne({ usuario: req.body.usuario });
 
-        if(usuario && await bcrypt.compare(req.body.senha, usuario.senha)){
-            req.session.usuario = req.body.usuario;
-            req.session.tipo = usuario.tipo;
+    if (usuario && await bcrypt.compare(req.body.senha, usuario.senha)) {
+      req.session.usuario = req.body.usuario;
+      req.session.tipo = usuario.tipo;
 
-            if (usuario.tipo === 'admin') {
-                res.redirect('/admin')
-            } else {
-                res.redirect('/user')
-            }
-        }else{
-            res.redirect('/erro')
-        }
-    }catch(erro){
-        res.send('Erro ao realizar login.')
-    }finally{
-        cliente.close()
+      res.send(`
+        <script>
+          localStorage.setItem("usuario", "${req.body.usuario}");
+          window.location.href = "${usuario.tipo === 'admin' ? '/admin' : '/user'}";
+        </script>
+      `);
+    } else {
+      res.redirect("/erro");
     }
-})
+  } catch (erro) {
+    console.error("Erro no login:", erro);
+    res.send("Erro ao realizar login.");
+  } finally {
+    cliente.close();
+  }
+});
 
 function protegerRota(req,res,proximo){
     if(req.session.usuario){
@@ -653,6 +663,79 @@ app.post('/assistente', (req, res) => {
 
 app.get('/dados-usuario', (req, res) => {
   res.json({ usuario: req.session.usuario });
+});
+
+const systemPrompt = `
+Você é um assistente virtual da BioEnergy, uma empresa especializada em energia limpa a partir de biomassa.
+Seu papel é ajudar os visitantes a escolher os melhores produtos e serviços da empresa, além de responder dúvidas sobre biomassa, energia renovável e sustentabilidade.
+
+Siga estas diretrizes:
+
+Fale sempre em português.
+Seja educado, direto e claro.
+Dê respostas curtas e objetivas, evitando textos longos.
+Forneça informações sobre:
+- Serviços (consultoria, instalação, manutenção, capacitação e sustentabilidade)
+- A empresa e sua missão
+- Energia renovável, biomassa e práticas ambientais
+
+Seu objetivo é oferecer um atendimento simples, rápido e informativo, ajudando o cliente a entender as soluções da BioEnergy e tomar boas decisões.
+`;
+
+app.post("/api/chat", async (req, res) => {
+  const { usuario, text } = req.body;
+
+  if (!usuario || !text) {
+    return res.status(400).json({ reply: "Usuário e mensagem são obrigatórios." });
+  }
+
+  const pastaHistoricos = path.join(__dirname, "public", "historicos");
+  if (!fs.existsSync(pastaHistoricos)) {
+    fs.mkdirSync(pastaHistoricos, { recursive: true });
+  }
+
+  const caminhoHistorico = path.join(pastaHistoricos, `${usuario}.json`);
+  if (!fs.existsSync(caminhoHistorico)) {
+    fs.writeFileSync(caminhoHistorico, JSON.stringify([]));
+  }
+
+  try {
+    const historico = JSON.parse(fs.readFileSync(caminhoHistorico, "utf8"));
+    historico.push({ role: "user", content: text });
+
+    const conversa = historico
+      .map((msg) => `${msg.role === "user" ? "Usuário" : "Assistente"}: ${msg.content}`)
+      .join("\n");
+
+    const prompt = `${systemPrompt}\n\n${conversa}\nAssistente:`;
+    const result = await model.generateContent(prompt);
+    const reply = result.response.text().trim();
+
+    historico.push({ role: "assistant", content: reply });
+    fs.writeFileSync(caminhoHistorico, JSON.stringify(historico, null, 2));
+
+    res.json({ reply });
+  } catch (err) {
+    console.error("Erro:", err);
+    res.status(500).json({ reply: "Erro ao processar a mensagem." });
+  }
+});
+
+// Rota para limpar histórico de um usuário
+app.post("/api/clear-historico", (req, res) => {
+  const { usuario } = req.body;
+  const caminho = path.join(__dirname, "public", "historicos", `${usuario}.json`);
+  if (fs.existsSync(caminho)) {
+    fs.writeFileSync(caminho, JSON.stringify([]));
+    res.json({ message: "Histórico apagado com sucesso." });
+  } else {
+    res.status(404).json({ message: "Usuário não encontrado." });
+  }
+});
+
+// Rota para dados do usuário (simulada)
+app.get("/dados-do-usuario", (req, res) => {
+  res.json({ usuario: req.session.usuario  }); // substitua por lógica real se necessário
 });
 
 app.listen(porta, ()=>{

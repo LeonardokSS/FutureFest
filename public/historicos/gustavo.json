@@ -1,0 +1,34 @@
+[
+  {
+    "role": "user",
+    "content": "ola"
+  },
+  {
+    "role": "assistant",
+    "content": "Olá! Bem-vindo(a) à BioEnergy. Em que posso te ajudar hoje?"
+  },
+  {
+    "role": "user",
+    "content": "piddy molestadiddy"
+  },
+  {
+    "role": "assistant",
+    "content": "Olá! Bem-vindo(a) à BioEnergy. Em que posso te ajudar hoje?"
+  },
+  {
+    "role": "user",
+    "content": "você vai me ajudar"
+  },
+  {
+    "role": "assistant",
+    "content": "Olá! Bem-vindo(a) à BioEnergy. Em que posso te ajudar hoje?"
+  },
+  {
+    "role": "user",
+    "content": "você vai me ajudar??"
+  },
+  {
+    "role": "assistant",
+    "content": "Olá! Bem-vindo(a) à BioEnergy. Sim, posso te ajudar. Em que você está interessado(a)? Posso fornecer informações sobre nossos serviços, a empresa, energia renovável, biomassa ou práticas ambientais."
+  }
+]
