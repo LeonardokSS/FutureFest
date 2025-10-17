@@ -2,6 +2,48 @@
 *{box-sizing:border-box;margin:0;padding:0}
 
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* altura da navbar */
+}
+
+/* --- Suavização dos links da navbar --- */
+.navbar .nav-link {
+  position: relative;
+  color: #fff;
+  transition: all 0.3s ease-in-out;
+}
+
+.navbar .nav-link:hover {
+  color: #d4f8d4;
+  transform: scale(1.05);
+}
+
+.navbar .nav-link.active {
+  color: #ffe57f;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+/* --- Efeito suave nos botões de Login e Registro --- */
+.navbar .btn {
+  transition: all 0.3s ease-in-out;
+}
+
+.navbar .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+}
+
+/* --- Suavização geral da navbar ao interagir --- */
+.navbar {
+  transition: background-color 0.4s ease-in-out, box-shadow 0.4s ease-in-out;
+}
+
+.navbar.scrolled {
+  background-color: #146c43 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
 /* garante 100 da viewport sem barras brancas laterais */
 html,body{
   width:100%;
