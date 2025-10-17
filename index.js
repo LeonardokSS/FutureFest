@@ -26,7 +26,7 @@ app.use(session({
 }))
 app.use(methodOverride('_method'))
 
-const urlMongo = "mongodb://localhost:27017/"
+const urlMongo = "mongodb+srv://admin:admin@cluster0.huwt4el.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 const nomeBanco = 'sistemaBioenergy'
 const collectionName = 'usuarios'
 const collectionServico = 'servicos'
@@ -635,29 +635,41 @@ app.get('/sair', (req,res)=>{
 })
 
 app.post('/assistente', (req, res) => {
-  const { nome, area } = req.body;
+  const { nome, area, tipo } = req.body;
 
-  if (!nome || !area) {
-    return res.status(400).json({ erro: 'Preencha nome e área corretamente.' });
+  if (!nome || !area || !tipo) {
+    return res.status(400).json({ erro: 'Preencha nome, área e tipo corretamente.' });
   }
 
-  let recomendacao = '';
   const areaNum = parseFloat(area);
-
   if (isNaN(areaNum)) {
     return res.status(400).json({ erro: 'Área deve ser um número válido.' });
   }
 
-  if (areaNum < 500) {
-    recomendacao = 'Um sistema compacto de biodigestor é o mais indicado. Se quiser mais informações, faça Login e use o nosso recurso de chatbot!.';
-  } else if (areaNum < 2000) {
-    recomendacao = 'Um biodigestor de médio porte pode atender bem sua área. Se quiser mais informações, faça Login e use o nosso recurso de chatbot!.';
-  } else {
-    recomendacao = 'Recomendamos um sistema industrial de grande porte. Se quiser mais informações, faça Login e use o nosso recurso de chatbot!.';
-  }
+  let recomendacao = '';
+  const equipamentos = {
+    organica: {
+      pequeno: 'BioEnergyCube',
+      medio: 'BioEnergyEcoDrive',
+      grande: 'BioEnergyContainer'
+    },
+    madeira: {
+      pequeno: 'BioEnergyWoodX',
+      medio: 'BioEnergyWooderPro'
+    }
+  };
+
+  let porte = '';
+  if (areaNum < 500) porte = 'pequeno';
+  else if (areaNum < 2000) porte = 'medio';
+  else porte = 'grande';
+
+  const equipamento = equipamentos[tipo][porte];
+
+  recomendacao = `Recomendamos o equipamento <strong>${equipamento}</strong> para sua área de ${areaNum} m² com biomassa do tipo ${tipo === 'organica' ? 'orgânica' : 'madeira'}. Se quiser mais informações, faça Login e use o nosso recurso de chatbot!.`;
 
   res.json({
-    mensagem: `Olá ${nome}! Para sua área de ${areaNum} m², nossa recomendação é: ${recomendacao}`
+    mensagem: `Olá ${nome}! ${recomendacao}`
   });
 });
 
@@ -678,6 +690,94 @@ Forneça informações sobre:
 - Serviços (consultoria, instalação, manutenção, capacitação e sustentabilidade)
 - A empresa e sua missão
 - Energia renovável, biomassa e práticas ambientais
+
+Use esse pequeno banco de estatísticas para dar ao cliente boas recomendações:
+
+Estatísticas do BioEnergyCube:
+M²: entre 0 e 500
+Tipo de biomassa: Cana de açucar, esterco, palha
+Capacidade de biomassa: 1.000 litros (≈ 1 m³)
+Taxa de processamento: 0,7 L/min
+Tempo para processar o tanque cheio: ≈ 1.430 minutos (23 h 50 min)
+Energia gerada por litro: ≈ 10 Wh/L
+Energia gerada por minuto: 7 Wh/min (0,007 kWh/min)
+Energia total por ciclo (1.000 L): 10.000 Wh = 10 kWh
+Custo para processar 1 L de biomassa: R$ 0,02 (média entre R$ 0,01 e R$ 0,03)
+Custo total por ciclo: R$ 20,00
+Custo operacional por kWh: R$ 2,00/kWh
+Energia gerada por real gasto: 0,5 kWh/R$ (≈ 500 Wh/R$)
+Preço estimado do equipamento: R$ 3.500,00
+
+Estatísticas do BioEnergyEcoDrive:
+M²: 501 e 2000
+Tipo de biomassa: Cana de açucar, esterco, palha
+Capacidade de biomassa: 5.000 litros
+Taxa de processamento: 10 L/min
+Tempo para processar o tanque cheio: 500 minutos (≈ 8 h 20 min)
+Energia gerada por litro: 5,25 Wh/L
+Energia gerada por minuto: 52,5 Wh/min (0,0525 kWh/min)
+Energia total por ciclo (5.000 L): 26.250 Wh = 26,25 kWh
+Custo para processar 1 L de biomassa: R$ 0,05
+Custo total por ciclo: R$ 250,00
+Custo operacional por kWh: R$ 9,52/kWh
+Energia gerada por real gasto: 0,105 kWh/R$ (≈ 105 Wh/R$)
+Preço estimado do equipamento: R$ 8.500,00
+
+Estatísticas do BioEnergyContainer:
+M²: A partir de 2001 
+Tipo de biomassa: Cana de açucar, esterco, palha
+Capacidade de biomassa: 8.000 litros
+Taxa de processamento: 15 L/min
+Tempo para processar tanque cheio: ~533 minutos (≈ 8 h 53 min)
+Energia gerada por litro: 5,25 Wh/L
+Energia gerada por minuto: 78,75 Wh/min (0,07875 kWh/min)
+Energia total por ciclo: 42 kWh
+Custo para processar 1 L de biomassa: R$ 0,05
+Custo total por ciclo: R$ 400
+Custo operacional por kWh: R$ 9,52/kWh
+Energia gerada por real gasto: 0,105 kWh/R$ (105 Wh/R$)
+Preço estimado do equipamento: R$ 15.000
+
+Estatísticas do BioEnergyWoodX:
+M²: 0 a 500
+Tipo de biomassa: Madeira, cavacos e aparas
+Capacidade de biomassa: 500 litros
+Taxa de processamento: 1,5 L/min
+Tempo para processar tanque cheio: 500 ÷ 1,5 ≈ 333 minutos (~5 h 33 min)
+Energia gerada por litro: 5 ÷ 1,5 ≈ 3,33 Wh/L
+Energia gerada por minuto: 5 Wh/min (0,005 kWh/min)
+Energia total por ciclo (500 L): 500 × 3,33 ≈ 1.665 Wh ≈ 1,67 kWh
+Custo para processar 1 L de biomassa: R$ 0,02
+Custo total por ciclo: 500 × 0,02 = R$ 10
+Custo operacional por kWh: 10 ÷ 1,67 ≈ R$ 5,99/kWh
+Energia gerada por real gasto: 1,67 ÷ 10 ≈ 0,167 kWh/R$ (167 Wh/R$)
+Preço estimado do equipamento: R$ 2.500
+
+Estatísticas do BioEnergyWooderPro:
+M²: A partir de 500
+Tipo de biomassa: Madeira, cavacos e aparas
+Capacidade de biomassa: 2.000 litros
+Taxa de processamento: 7 L/min
+Tempo para processar tanque cheio: 2.000 ÷ 7 ≈ 286 minutos (~4 h 46 min)
+Energia gerada por litro: 16 ÷ 7 ≈ 2,29 Wh/L
+Energia gerada por minuto: 16 Wh/min (0,016 kWh/min)
+Energia total por ciclo (2.000 L): 2.000 × 2,29 ≈ 4.580 Wh ≈ 4,58 kWh
+Custo para processar 1 L de biomassa: R$ 0,075
+Custo total por ciclo: 2.000 × 0,075 = R$ 150
+Custo operacional por kWh: 150 ÷ 4,58 ≈ R$ 32,75/kWh
+Energia gerada por real gasto: 4,58 ÷ 150 ≈ 0,0305 kWh/R$ (30,5 Wh/R$)
+Preço estimado do equipamento: R$ 6.000
+
+Lembre-se que o tipo de biomassa não se restringe apenas aos citados, mas ao grupo que eles fazem parte. Ao recomendar máquina. Diga sempre assim: o nome, estatísticas de energia gerada por litro e minuto, custo para processar e capacidade. As outras informações você pode dizer caso o usuário pedir. A área em m² não manda na recomendação dos produtos, apenas o tipo de biomassa, por exemplo se o usuário tiver uma área pequena porém usar muita cana é preferível recomendar o EcoDrive ao invés do Cube. 
+
+Responda de forma clara, objetiva e bem organizada. Use frases completas e evite blocos de texto confusos. Para informações técnicas (como estatísticas de equipamentos), apresente os dados em parágrafos curtos, com medidas e valores destacados de forma natural no texto, sem excesso de negrito ou marcadores. Sempre inclua um resumo ou conclusão prática ao final. Se houver números importantes (como capacidade, energia, custo), inclua-os no corpo do texto de forma legível e fluida. Exemplo de estilo desejado:
+
+'O BioEnergyWooderPro é ideal para biomassa de madeira e possui capacidade para 2.000 litros. Ele gera 16 Wh de energia por minuto, o que equivale a 2,29 Wh por litro processado. O custo para processar cada litro de biomassa é de R$ 0,075. Esse equipamento fornece energia suficiente para atender necessidades médias em terrenos de 500 m², aproveitando resíduos de madeira de forma eficiente.'
+
+Para links de navegação dentro do site, use HTML, no formato <a href="rota">Texto do link</a>. Por exemplo:
+   - Para o usuário acessar produtos: <a href="/produtos">produtos</a>
+   - Para serviços: <a href="/servicos">serviços</a>
+   - Para manutenções: <a href="/manutencoes">manutenções</a>
 
 Sempre utilize o histórico da conversa para responder de forma contextualizada, lembrando das mensagens anteriores do usuário. Diga as respostas com base no histórico e é isso.
 

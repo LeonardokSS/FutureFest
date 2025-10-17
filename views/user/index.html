@@ -136,18 +136,43 @@ fetch('/dados-do-usuario')
     document.getElementById('nome-usuario').textContent = usuario;
   });
   const input = document.getElementById("mensagem");
-  const enviar = document.getElementById("enviar");
-  const chatMensagens = document.getElementById("chat-mensagens");
+const enviar = document.getElementById("enviar");
+const chatMensagens = document.getElementById("chat-mensagens");
 
-  function adicionarMensagem(texto, tipo) {
-    const msg = document.createElement("div");
-    msg.className = `p-2 mb-2 rounded ${tipo === "user" ? "bg-success text-white text-end" : "bg-light text-start"}`;
+// Função para converter Markdown em HTML
+function formatarMarkdown(texto) {
+  if (!texto) return "";
+
+  let html = texto
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // negrito
+    .replace(/\*(.*?)\*/g, "<em>$1</em>") // itálico
+    .replace(/__(.*?)__/g, "<u>$1</u>") // sublinhado
+    .replace(/\n/g, "<br>"); // quebra de linha
+
+  return html;
+}
+
+// Adiciona mensagem no chat
+function adicionarMensagem(texto, tipo) {
+  const msg = document.createElement("div");
+  msg.className = `p-2 mb-2 rounded ${
+    tipo === "user"
+      ? "bg-success text-white text-end"
+      : "bg-light text-start"
+  }`;
+
+  if (tipo === "assistant") {
+    msg.innerHTML = formatarMarkdown(texto);
+  } else {
     msg.textContent = texto;
-    chatMensagens.appendChild(msg);
-    chatMensagens.scrollTop = chatMensagens.scrollHeight;
   }
 
-  enviar.addEventListener("click", async () => {
+  chatMensagens.appendChild(msg);
+  chatMensagens.scrollTop = chatMensagens.scrollHeight;
+}
+
+// Função para enviar mensagem ao bot
+async function enviarMensagem() {
   const texto = input.value.trim();
   if (!texto || !usuario) return;
 
@@ -165,11 +190,15 @@ fetch('/dados-do-usuario')
   } catch (err) {
     adicionarMensagem("Erro ao se comunicar com o assistente.", "assistant");
   }
-});
+}
 
-  input.addEventListener("keypress", e => {
-    if (e.key === "Enter") enviar.click();
-  });
+// Evento do botão enviar
+enviar.addEventListener("click", enviarMensagem);
+
+// Enviar ao pressionar Enter
+input.addEventListener("keypress", e => {
+  if (e.key === "Enter") enviarMensagem();
+});
 </script>
 </body>
 </html>
