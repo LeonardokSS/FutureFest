@@ -79,7 +79,7 @@ app.post('/login', async (req,res)=>{
             if (usuario.tipo === 'admin') {
                 res.redirect('/admin')
             } else {
-                res.redirect('/bemvindo')
+                res.redirect('/user')
             }
         }else{
             res.redirect('/erro')
@@ -107,8 +107,8 @@ function protegerAdmin(req, res, next) {
   }
 }
 
-app.get('/bemvindo', protegerRota, (req,res)=>{
-    res.sendFile(__dirname + '/views/bemvindo.html')
+app.get('/user', protegerRota, (req,res)=>{
+    res.sendFile(__dirname + '/views/user/index.html')
 })
 
 app.get('/admin', protegerAdmin, (req, res) => {
@@ -508,6 +508,89 @@ app.get('/crud_manutencoes_manutencoes', protegerAdmin, async(req,res)=>{
     }
 })
 
+app.get('/mudar-usuario', protegerRota, (req,res)=>{
+    res.sendFile(__dirname + '/views/user/html/mudarUsuário.html')
+})
+
+app.post('/mudar-usuario', protegerRota, async (req, res) => {
+  const { novoUsuario } = req.body;
+  const usuarioAtual = req.session.usuario;
+  const client = new MongoClient(urlMongo);
+
+  try {
+    await client.connect();
+    const db = client.db(nomeBanco);
+    const collection = db.collection(collectionName);
+
+    const result = await collection.updateOne(
+      { usuario: usuarioAtual },
+      { $set: { usuario: novoUsuario } }
+    );
+
+    if (result.modifiedCount > 0) {
+      console.log(`Usuário "${usuarioAtual}" atualizado para "${novoUsuario}"`);
+      req.session.usuario = novoUsuario;
+      res.redirect('/user');
+    } else {
+      res.status(404).send('Usuário não encontrado ou não modificado.');
+    }
+  } catch (err) {
+    console.error('Erro ao atualizar o usuário:', err);
+    res.status(500).send('Erro ao atualizar o usuário. Por favor, tente novamente mais tarde.');
+  } finally {
+    client.close();
+  }
+});
+
+app.get('/mudar-senha', protegerRota, (req, res) => {
+  res.sendFile(__dirname + '/views/user/html/mudarSenha.html')
+});
+
+app.post('/mudar-senha', protegerRota, async (req, res) => {
+  const { senhaAtual, novaSenha, confirmarSenha } = req.body;
+  const usuarioAtual = req.session.usuario;
+  const client = new MongoClient(urlMongo);
+
+  try {
+    await client.connect();
+    const db = client.db(nomeBanco);
+    const collection = db.collection(collectionName);
+
+    const usuario = await collection.findOne({ usuario: usuarioAtual });
+
+    if (!usuario) {
+      return res.sendFile(__dirname + '/views/user/html/senha/usuarioNaoEncontrado.html')
+    }
+
+    const senhaCorreta = await bcrypt.compare(senhaAtual, usuario.senha);
+    if (!senhaCorreta) {
+      return res.sendFile(__dirname + '/views/user/html/senha/senhaIncorreta.html')
+    }
+
+    if (novaSenha !== confirmarSenha) {
+      return res.sendFile(__dirname + '/views/user/html/senha/senhaNaoConcide.html')
+    }
+
+    const senhaCriptografada = await bcrypt.hash(novaSenha, 10);
+    const result = await collection.updateOne(
+      { usuario: usuarioAtual },
+      { $set: { senha: senhaCriptografada } }
+    );
+
+    if (result.modifiedCount > 0) {
+      req.session.senha = novaSenha;
+      return res.sendFile(__dirname + '/views/user/html/senha/senhaAltera.html')
+    } else {
+      return res.sendFile(__dirname + '/views/user/html/senha/senhaFalha.html')
+    }
+  } catch (err) {
+    console.error('Erro ao atualizar a senha:', err);
+    return res.sendFile(__dirname + '/views/user/html/senha/erroInterno.html')
+  } finally {
+    client.close();
+  }
+});
+
 app.post('/formulario_feedback', async (req,res)=>{
    const novoFeedback = req.body
    const client = new MongoClient(urlMongo)
@@ -566,6 +649,10 @@ app.post('/assistente', (req, res) => {
   res.json({
     mensagem: `Olá ${nome}! Para sua área de ${areaNum} m², nossa recomendação é: ${recomendacao}`
   });
+});
+
+app.get('/dados-usuario', (req, res) => {
+  res.json({ usuario: req.session.usuario });
 });
 
 app.listen(porta, ()=>{
