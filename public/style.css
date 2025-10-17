@@ -488,3 +488,7 @@ section{width:100%;overflow-x:hidden}
   background: rgba(255, 255, 255, 0.1);
   box-shadow: 0 6px 20px rgba(255, 255, 255, 0.2);
 }
+
+.hero-right-image{
+  border-radius: 2%;
+}
