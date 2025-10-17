@@ -82,7 +82,7 @@ img, .card, .card-img-top{
 .logo{width:250px;border-radius:12px}
 
 /* seções ocupam largura total e não causam overflow */
-section{width:100%;overflow-x:hidden}
+section{width:100%;overflow-x:hidden;scroll-margin-top: 80px;}
 
 /* responsividade: limita largura de bolhas em telas grandes */
 @media(min-width:768px){
@@ -460,4 +460,8 @@ section{width:100%;overflow-x:hidden}
 
 .fade-in-up {
   animation: fadeInUp 0.8s ease-in forwards;
+}
+
+.hero-right-image{
+  border-radius:10px
 }

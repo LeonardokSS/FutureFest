@@ -1,0 +1,26 @@
+[
+  {
+    "role": "user",
+    "content": "a"
+  },
+  {
+    "role": "assistant",
+    "content": "Olá! Bem-vindo à BioEnergy. Em que posso te ajudar hoje?"
+  },
+  {
+    "role": "user",
+    "content": "Qual o meu nome de usuário"
+  },
+  {
+    "role": "assistant",
+    "content": "Como um assistente virtual, eu não tenho acesso a informações pessoais, incluindo nomes de usuário."
+  },
+  {
+    "role": "user",
+    "content": "1"
+  },
+  {
+    "role": "assistant",
+    "content": "Olá! Bem-vindo à BioEnergy. Em que posso te ajudar hoje?"
+  }
+]

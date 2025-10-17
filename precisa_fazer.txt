@@ -1,5 +1,5 @@
 1. Criar rota de produtos, serviços e manutenções
-2. Fazer o chatbot funcionar com histórico por usuário
+2. Fazer o chatbot funcionar com histórico por usuário - Feito
 3. Refazer o assistente da página inicial ( depois do primeiro item )
-4. Criar estatísticas dos produtos, criar os serviços e manutenções
-5. Fazer as alterações que o Dephoian falou
+4. Criar estatísticas dos produtos - Feito, criar os serviços e manutenções
+5. Fazer as alterações que o Dephoian falou - Feito
