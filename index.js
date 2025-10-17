@@ -18,7 +18,7 @@ app.use(session({
 }))
 app.use(methodOverride('_method'))
 
-const urlMongo = "mongodb+srv://admin:admin@cluster0.huwt4el.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+const urlMongo = "mongodb://localhost:27017/"
 const nomeBanco = 'sistemaBioenergy'
 const collectionName = 'usuarios'
 const collectionServico = 'servicos'
