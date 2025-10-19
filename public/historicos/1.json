@@ -70,5 +70,37 @@
   {
     "role": "assistant",
     "content": "Para recomendar a máquina ideal, preciso de algumas informações sobre sua necessidade:\n\n*   **Qual a área do local onde a máquina será instalada?**\n*   **Qual o tipo de biomassa que você pretende utilizar?**\n\nCom essas informações, posso te indicar a máquina perfeita para você!"
+  },
+  {
+    "role": "user",
+    "content": "a"
+  },
+  {
+    "role": "assistant",
+    "content": "Para recomendar a máquina ideal, preciso de algumas informações sobre sua necessidade:\n\n*   **Qual a área do local onde a máquina será instalada?**\n*   **Qual o tipo de biomassa que você pretende utilizar?**\n\nCom essas informações, posso te indicar a máquina perfeita para você!"
+  },
+  {
+    "role": "user",
+    "content": "oi"
+  },
+  {
+    "role": "assistant",
+    "content": "Olá! Em que posso ajudar você hoje? Posso te recomendar alguma máquina, apresentar nossos <a href=\"/servicos\">serviços</a> ou tirar dúvidas sobre energia renovável?"
+  },
+  {
+    "role": "user",
+    "content": "oi"
+  },
+  {
+    "role": "assistant",
+    "content": "Olá! Em que posso ajudar você hoje? Posso te recomendar alguma máquina, apresentar nossos <a href=\"/servicos\">serviços</a> ou tirar dúvidas sobre energia renovável?"
+  },
+  {
+    "role": "user",
+    "content": "Ola chatbot"
+  },
+  {
+    "role": "assistant",
+    "content": "Olá! Em que posso ajudar você hoje? Posso te recomendar alguma máquina, apresentar nossos <a href=\"/servicos\">serviços</a> ou tirar dúvidas sobre energia renovável?"
   }
 ]

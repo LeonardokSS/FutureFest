@@ -840,6 +840,10 @@ app.get("/dados-do-usuario", (req, res) => {
   res.json({ usuario: req.session.usuario  }); // substitua por lógica real se necessário
 });
 
+app.get('/produtos', protegerRota, (req,res)=>{
+  res.sendFile(__dirname + '/views/user/produtos.html')
+})
+
 app.listen(porta, ()=>{
     console.log(`Servidor rodando na porta ${porta}`)
 })

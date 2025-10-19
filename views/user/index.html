@@ -17,7 +17,7 @@
       border-radius: 12px;
     }
     .chatbot-card {
-      max-width: 600px;
+      max-width: 900px;
       margin: auto;
       background-color: #fff;
       border-radius: 15px;
@@ -52,6 +52,11 @@
     .input-bot::placeholder {
       color: #fff;
       opacity: 1;
+    }
+    .card:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 20px rgba(25, 135, 84, 0.3);
+    transition: all 0.3s ease;
     }
   </style>
 </head>
@@ -99,21 +104,64 @@
       <h5 class="mb-0">Chatbot BioEnergy</h5>
       <span class="badge bg-light text-success">Online</span>
     </div>
-    <div class="chatbot-body">
-      <div id="chat-mensagens" class="mb-3" style="max-height: 300px; overflow-y: auto;"></div>
-      <div class="input-group mb-3">
-        <input type="text" id="mensagem" class="form-control input-bot" placeholder="Digite sua mensagem...">
-        <button id="enviar" class="btn btn-light text-success fw-bold">Enviar</button>
+    <div class="chatbot-body p-4" style="background-color: #eef3ef;">
+  <div id="chat-mensagens" class="mb-4" style="max-height: 350px; overflow-y: auto;"></div>
+
+  <!-- Campo de mensagem + botão -->
+  <div class="input-group mb-5">
+    <input type="text" id="mensagem" class="form-control input-bot fs-5" placeholder="Digite sua mensagem...">
+    <button id="enviar" class="btn btn-success text-white fw-bold w-100 fs-5">Enviar</button>
+  </div>
+
+  <!-- Seção de navegação -->
+  <div class="text-center mt-4">
+    <h2 class="mb-5 text-success fw-bold">Navegue por seção</h2>
+    <div class="container">
+      <div class="row justify-content-center g-4">
+
+        <!-- Card Produtos -->
+        <div class="col-12 col-md-4">
+          <a href="/produtos" class="text-decoration-none text-dark">
+            <div class="card shadow-lg border-0 rounded-4 h-100" style="transition: transform 0.3s, box-shadow 0.3s;">
+              <img src="/img/produtos/BioEnergyCube.jpg" class="card-img-top rounded-top-4" style="height: 220px; object-fit: cover;" alt="Produtos">
+              <div class="card-body">
+                <h4 class="card-title text-success fw-bold">Produtos</h4>
+                <p class="card-text fs-6">Conheça nossa linha de produtos sustentáveis e tecnologias em energia renovável.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Card Serviços -->
+        <div class="col-12 col-md-4">
+          <a href="/servicos" class="text-decoration-none text-dark">
+            <div class="card shadow-lg border-0 rounded-4 h-100" style="transition: transform 0.3s, box-shadow 0.3s;">
+              <img src="/img/servicos.png" class="card-img-top rounded-top-4" style="height: 220px; object-fit: cover;" alt="Serviços">
+              <div class="card-body">
+                <h4 class="card-title text-success fw-bold">Serviços</h4>
+                <p class="card-text fs-6">Oferecemos consultoria e instalação de sistemas de energia limpa adaptados às suas necessidades.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        <!-- Card Manutenções -->
+        <div class="col-12 col-md-4">
+          <a href="/manutencoes" class="text-decoration-none text-dark">
+            <div class="card shadow-lg border-0 rounded-4 h-100" style="transition: transform 0.3s, box-shadow 0.3s;">
+              <img src="/img/manutencoes.jpg" class="card-img-top rounded-top-4" style="height: 220px; object-fit: cover;" alt="Manutenções">
+              <div class="card-body">
+                <h4 class="card-title text-success fw-bold">Manutenções</h4>
+                <p class="card-text fs-6">Garantimos o desempenho máximo dos seus sistemas com manutenções preventivas e corretivas.</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
       </div>
-      <div class="text-center mt-4">
-  <h6 class="mb-3 text-success fw-semibold">Navegue por seção</h6>
-  <div class="d-flex flex-column align-items-center">
-    <a href="/produtos" class="btn btn-success btn-chatbot">PRODUTOS</a>
-    <a href="/servicos" class="btn btn-success btn-chatbot">SERVIÇOS</a>
-    <a href="/manutencoes" class="btn btn-success btn-chatbot">MANUTENÇÕES</a>
+    </div>
   </div>
 </div>
-    </div>
   </div>
 </div>
 
