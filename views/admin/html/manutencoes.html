@@ -24,7 +24,7 @@
             <a class="nav-link" href="/admin">Administradores</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/crud_manutencoes">Manutenções</a>
+            <a class="nav-link active" aria-current="page" href="/admin/manutencoes">Manutenções</a>
           </li>
         </ul>
       </div>
@@ -43,7 +43,7 @@
             <div class="d-flex justify-content-center gap-3 mb-4">
               <a href="/" class="btn btn-primary">Página Inicial</a>
               <a href="/admin" class="btn btn-secondary">Página dos Administradores</a>
-              <a href="/crud_manutencoes_cadastro" class="btn btn-success">Cadastrar Nova Manutenção</a>
+              <a href="/admin/manutencoes_cadastro" class="btn btn-success">Cadastrar Nova Manutenção</a>
             </div>
 
             <h2 class="text-center">Lista de Manutenções</h2>
@@ -72,7 +72,7 @@
   <!-- Script para carregar usuários -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      fetch('/crud_manutencoes_manutencoes')
+      fetch('/admin/listar_manutencoes')
         .then(response => response.json())
         .then(manutencoes => {
           const tabela = document.getElementById('manutencoes-tabela')
@@ -87,8 +87,8 @@
               <td>${manutencao.disponivel}</td>
               <td>
                 <div class="btn-group btn-group-sm" role="group">
-                  <a href="/crud_manutencoes_atualizar?id=${manutencao._id}" class="btn btn-warning">Atualizar</a>
-                  <form action="/crud_manutencoes_deletar" method="post" onsubmit="return confirm('Tem certeza que deseja excluir a manutenção?')">
+                  <a href="/admin/manutencoes_atualizar?id=${manutencao._id}" class="btn btn-warning">Atualizar</a>
+                  <form action="/admin/manutencoes_deletar" method="post" onsubmit="return confirm('Tem certeza que deseja excluir a manutenção?')">
                     <input type="hidden" name="id" value="${manutencao._id}">
                     <button type="submit" class="btn btn-danger">Deletar</button>
                   </form>

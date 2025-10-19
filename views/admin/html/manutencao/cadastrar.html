@@ -24,7 +24,7 @@
             <a class="nav-link" href="/admin">Administradores</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/crud_manutencoes">Manutenções</a>
+            <a class="nav-link active" aria-current="page" href="/admin/manutencoes">Manutenções</a>
           </li>
         </ul>
       </div>
@@ -43,11 +43,11 @@
             <div class="d-flex justify-content-center gap-3 mb-4">
               <a href="/" class="btn btn-primary">Página Inicial</a>
               <a href="/admin" class="btn btn-secondary">Página dos Administradores</a>
-              <a href="/crud_manutencoes" class="btn btn-success">Lista de Manutenções</a>
+              <a href="/admin/manutencoes" class="btn btn-success">Lista de Manutenções</a>
             </div>
 
             <!-- Formulário -->
-            <form action="/crud_manutencoes_cadastro" method="post" id="formManu">
+            <form action="/admin/manutencoes_cadastro" method="post" id="formManu">
               <input type="hidden" name="id" id="id">
 
               <!-- Usuário -->
@@ -111,7 +111,7 @@
   <!-- Script para carregar usuários -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      fetch('/api/usuarios')
+      fetch('/admin/dropdown-usuarios')
         .then(response => response.json())
         .then(usuarios => {
           const select = document.getElementById("usuario")

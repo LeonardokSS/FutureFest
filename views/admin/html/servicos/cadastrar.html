@@ -24,7 +24,7 @@
             <a class="nav-link" href="/admin">Administradores</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/crud_servicos">Serviços</a>
+            <a class="nav-link active" aria-current="page" href="/admin/servicos">Serviços</a>
           </li>
         </ul>
       </div>
@@ -43,11 +43,11 @@
             <div class="d-flex justify-content-center gap-3 mb-4">
               <a href="/" class="btn btn-primary">Página Inicial</a>
               <a href="/admin" class="btn btn-secondary">Página dos Administradores</a>
-              <a href="/crud_servicos" class="btn btn-success">Lista de Serviços</a>
+              <a href="/admin/servicos" class="btn btn-success">Lista de Serviços</a>
             </div>
 
             <!-- Formulário -->
-            <form action="/crud_servicos_cadastro" method="post" id="formServico">
+            <form action="/admin/servicos_cadastro" method="post" id="formServico">
               <input type="hidden" name="id" id="id">
 
               <!-- Usuário -->
@@ -64,12 +64,12 @@
                 <label for="tipo" class="form-label">Tipo de Serviço:</label>
                 <select name="tipo" id="tipo" class="form-select" required>
                   <option value="">Selecione o tipo</option>
-                  <option value="colheita">Colheita de Biomassa</option>
-                  <option value="transporte">Transporte de Biomassa</option>
-                  <option value="armazenamento">Armazenamento de Biomassa</option>
-                  <option value="secagem">Secagem de Biomassa</option>
-                  <option value="trituração">Trituração de Biomassa</option>
-                  <option value="processamento">Processamento de Biomassa</option>
+                  <option value="consultoria">Consultoria de Biomassa</option>
+                  <option value="instalação">Instalação de Equipamentos</option>
+                  <option value="manutenção">Manutenção Especializada</option>
+                  <option value="capacitação">Capacitação técnica</option>
+                  <option value="estudos">Estudos de viabilidade</option>
+                  <option value="certificação">Sustentabilidade e certificação</option>
                 </select>
               </div>
 
@@ -110,7 +110,7 @@
   </div>
   <script>
   document.addEventListener("DOMContentLoaded", () => {
-    fetch('/api/usuarios')
+    fetch('/admin/dropdown-usuarios')
       .then(response => response.json())
       .then(usuarios => {
         const select = document.getElementById("usuario")

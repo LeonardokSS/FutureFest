@@ -1,3 +1,4 @@
+//Bibliotecas usadas no código.
 const express = require('express')
 const ObjectId  = require('mongodb').ObjectId
 const MongoClient = require('mongodb').MongoClient
@@ -9,13 +10,14 @@ const fs = require("fs");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 
+//Constantes de configuração  que serão usadas no código.
 const app = express()
 const porta = 3000
 const genAI = new GoogleGenerativeAI("AIzaSyCZeRFVrzlebbGWkFbhkJkUjYOlj7NYRLw");
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-const historico = path.join(__dirname, "public", "historicos", "historico.json");
 
 
+//Registrando middlewares para serem executados.
 app.use(express.static(__dirname + '/public'))
 app.use(express.urlencoded({extended:true}))
 app.use(express.json())
@@ -26,13 +28,18 @@ app.use(session({
 }))
 app.use(methodOverride('_method'))
 
+//Configurações do mongodb usadas no código.
 const urlMongo = "mongodb+srv://admin:admin@cluster0.huwt4el.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 const nomeBanco = 'sistemaBioenergy'
 const collectionName = 'usuarios'
 const collectionServico = 'servicos'
 const collectionManu = 'manutenções'
 const collectionFeedback = 'feedbacks'
+const collectionProdutos = 'produtos'
+const collectionCarrinho = 'carrinho'
+const collectionCompras = 'compras';
 
+//Rotas principais do código, para o usuário entrar na página, fazer login e registro e rotas de controle.
 app.get('/', (req,res)=>{
     res.sendFile(__dirname + '/views/index.html')
 })
@@ -101,6 +108,19 @@ app.post("/login", async (req, res) => {
   }
 });
 
+app.get('/erro', (req,res)=>{
+    res.sendFile(__dirname + '/views/erro.html')
+})
+
+app.get('/sair', (req,res)=>{
+    req.session.destroy((err)=>{
+        if(err){
+            return res.send('Erro ao sair!')
+        }res.redirect('/login')
+    })
+})
+
+//Middlewares para proteger rotas após um login de usuário ou administrador.
 function protegerRota(req,res,proximo){
     if(req.session.usuario){
         proximo()
@@ -117,6 +137,7 @@ function protegerAdmin(req, res, next) {
   }
 }
 
+//Rotas para quando usuários e administradores logarem
 app.get('/user', protegerRota, (req,res)=>{
     res.sendFile(__dirname + '/views/user/index.html')
 })
@@ -125,398 +146,7 @@ app.get('/admin', protegerAdmin, (req, res) => {
   res.sendFile(__dirname + '/views/admin/index.html');
 });
 
-app.get('/api/usuarios', protegerAdmin, async (req, res) => {
-  const client = new MongoClient(urlMongo)
-  try {
-    await client.connect()
-    const db = client.db(nomeBanco)
-    const collection = db.collection(collectionName)
-
-    const usuarios = await collection.find({}, { projection: { _id: 1, usuario: 1 } }).toArray()
-    res.json(usuarios)
-  } catch (err) {
-    console.error('Erro ao buscar usuários: ', err)
-    res.status(500).send('Erro ao buscar usuários')
-  } finally {
-    client.close()
-  }
-})
-
-app.get('/crud_usuarios', protegerAdmin, (req,res) =>{
-    res.sendFile(__dirname + '/views/admin/html/usuarios.html')
-})
-
-app.get('/crud_servicos', protegerAdmin, (req,res) =>{
-    res.sendFile(__dirname + '/views/admin/html/serviços.html')
-})
-
-app.get('/crud_manutencoes', protegerAdmin, (req,res) =>{
-    res.sendFile(__dirname + '/views/admin/html/manutencoes.html')
-})
-
-app.get('/crud_usuarios_cadastro', protegerAdmin, (req,res)=>{
-    res.sendFile(__dirname + '/views/admin/html/usuarios/cadastrar.html')
-})
-
-app.get('/crud_servicos_cadastro', protegerAdmin, (req,res)=>{
-    res.sendFile(__dirname + '/views/admin/html/servicos/cadastrar.html')
-})
-
-app.get('/crud_manutencoes_cadastro', protegerAdmin, (req,res)=>{
-    res.sendFile(__dirname + '/views/admin/html/manutencao/cadastrar.html')
-})
-
-app.post('/crud_usuarios_cadastro', protegerAdmin, async (req,res)=>{
-   const novoUsuario = req.body
-   const client = new MongoClient(urlMongo)
-
-   try {
-       await client.connect()
-       const db = client.db(nomeBanco)
-       const collection = db.collection(collectionName)
-
-       const senhaCriptografada = await bcrypt.hash(novoUsuario.senha, 10)
-       const result = await collection.insertOne({
-          usuario: novoUsuario.usuario,
-          senha: senhaCriptografada,
-          tipo: novoUsuario.tipo || 'comum'
-       })
-       console.log(`Usuário cadastrado com sucesso. ID: ${result.insertedId}`)
-       res.redirect('/admin')
-        
-   }catch(err){
-    console.error('Erro ao cadastrar o usuário: ', err)
-    res.status(500).send('Erro ao cadastrar o usuário. Por favor tente mais tarde ')
-   }finally{
-    client.close()
-   }
-})
-
-app.post('/crud_servicos_cadastro', protegerAdmin, async (req,res)=>{
-   const novoServico = req.body
-   const client = new MongoClient(urlMongo)
-
-   try {
-       await client.connect()
-       const db = client.db(nomeBanco)
-       const collection = db.collection(collectionServico)
-
-       const result = await collection.insertOne(novoServico)
-       console.log(`Serviço cadastrado com sucesso. ID: ${result.insertedId}`)
-       res.redirect('/admin')
-        
-   }catch(err){
-    console.error('Erro ao cadastrar o serviço: ', err)
-    res.status(500).send('Erro ao cadastrar o serviço. Por favor tente mais tarde ')
-   }finally{
-    client.close()
-   }
-})
-
-app.post('/crud_manutencoes_cadastro', protegerAdmin, async (req,res)=>{
-   const novaManu = req.body
-   const client = new MongoClient(urlMongo)
-
-   try {
-       await client.connect()
-       const db = client.db(nomeBanco)
-       const collection = db.collection(collectionManu)
-
-       const result = await collection.insertOne(novaManu)
-       console.log(`Manutenção cadastrada com sucesso. ID: ${result.insertedId}`)
-       res.redirect('/admin')
-        
-   }catch(err){
-    console.error('Erro ao cadastrar a manutenção: ', err)
-    res.status(500).send('Erro ao cadastrar a manutenção. Por favor tente mais tarde ')
-   }finally{
-    client.close()
-   }
-})
-
-app.get('/crud_usuarios_atualizar', protegerAdmin, async(req,res)=>{
-    res.sendFile(__dirname + '/views/admin/html/usuarios/atualizar.html')
-})
-
-app.get('/crud_servicos_atualizar', protegerAdmin, async(req,res)=>{
-    res.sendFile(__dirname + '/views/admin/html/servicos/atualizar.html')
-})
-
-app.get('/crud_manutencoes_atualizar', protegerAdmin, async(req,res)=>{
-    res.sendFile(__dirname + '/views/admin/html/manutencao/atualizar.html')
-})
-
-app.post('/crud_usuarios_atualizar', protegerAdmin, async(req,res)=>{
-    const { id, usuario, senha, tipo } = req.body
-    const client = new MongoClient(urlMongo)
-
-    try {
-        await client.connect()
-        const db = client.db(nomeBanco)
-        const collection = db.collection(collectionName)
-        const senhaCriptografada = await bcrypt.hash(senha, 10)
-        const result = await collection.updateOne({ _id: new ObjectId(id)},{
-            $set: {usuario, senha: senhaCriptografada, tipo}
-        })
-        if(result.modifiedCount > 0){
-            console.log(`Usuário com o ID: ${id} atualizado com sucesso`)
-            res.redirect('/admin')
-        }else{
-            res.status(404).send('Usuário não encontrado')
-        }
-    }catch(err){
-        console.error('Erro ao atualizar o usuário: ', err)
-        res.status(500).send('Erro ao atualizar o usuário. Por favor tente novamente mais tarde.')
-    }finally{
-        client.close()
-    }
-})
-
-
-app.post('/crud_servicos_atualizar', protegerAdmin, async(req,res)=>{
-    const { id, usuario, tipo, custoHora, custoTotal, dias, disponivel } = req.body
-    const client = new MongoClient(urlMongo)
-
-    try {
-        await client.connect()
-        const db = client.db(nomeBanco)
-        const collection = db.collection(collectionServico)
-        const result = await collection.updateOne({ _id: new ObjectId(id)},{
-            $set: {usuario,  tipo, custoHora, custoTotal, dias, disponivel}
-        })
-        if(result.modifiedCount > 0){
-            console.log(`Serviço com o ID: ${id} atualizado com sucesso`)
-            res.redirect('/admin')
-        }else{
-            res.status(404).send('Serviço não encontrado')
-        }
-    }catch(err){
-        console.error('Erro ao atualizar o serviço: ', err)
-        res.status(500).send('Erro ao atualizar o Serviço. Por favor tente novamente mais tarde.')
-    }finally{
-        client.close()
-    }
-})
-
-app.post('/crud_manutencoes_atualizar', protegerAdmin, async(req,res)=>{
-    const { id, usuario, tipo, custoHora, custoTotal, dias, disponivel } = req.body
-    const client = new MongoClient(urlMongo)
-
-    try {
-        await client.connect()
-        const db = client.db(nomeBanco)
-        const collection = db.collection(collectionManu)
-        const result = await collection.updateOne({ _id: new ObjectId(id)},{
-            $set: {usuario,  tipo, custoHora, custoTotal, dias, disponivel}
-        })
-        if(result.modifiedCount > 0){
-            console.log(`Manutenção com o ID: ${id} atualizado com sucesso`)
-            res.redirect('/admin')
-        }else{
-            res.status(404).send('Manutenção não encontrada')
-        }
-    }catch(err){
-        console.error('Erro ao atualizar a manutenção: ', err)
-        res.status(500).send('Erro ao atualizar a manutenção. Por favor tente novamente mais tarde.')
-    }finally{
-        client.close()
-    }
-})
-app.get('/usuario/:id', protegerAdmin, async (req,res)=>{
-    const { id } = req.params
-    const cliente = new MongoClient(urlMongo)
-
-    try{
-        await cliente.connect()
-        const db = cliente.db(nomeBanco)
-        const collection = db.collection(collectionName)
-
-        const usuario = await collection.findOne({_id: new ObjectId(id)})
-
-        if(!usuario){
-            return res.status(404).send('Usuário não encontrado')
-        }
-        res.json(usuario)
-    }catch(err){
-        console.error('Erro ao buscar o usuário: ', err)
-        res.status(500).send('Erro ao buscar o usuário. Por favor tente novamente mais tarde')
-    }finally{
-        cliente.close()
-    }
-})
-
-app.get('/servico/:id', protegerAdmin, async (req,res)=>{
-    const { id } = req.params
-    const cliente = new MongoClient(urlMongo)
-
-    try{
-        await cliente.connect()
-        const db = cliente.db(nomeBanco)
-        const collection = db.collection(collectionServico)
-
-        const serviço = await collection.findOne({_id: new ObjectId(id)})
-
-        if(!serviço){
-            return res.status(404).send('Serviço não encontrado')
-        }
-        res.json(serviço)
-    }catch(err){
-        console.error('Erro ao buscar o serviço: ', err)
-        res.status(500).send('Erro ao buscar o serviço. Por favor tente novamente mais tarde')
-    }finally{
-        cliente.close()
-    }
-})
-app.get('/manutencao/:id', protegerAdmin, async (req,res)=>{
-    const { id } = req.params
-    const cliente = new MongoClient(urlMongo)
-
-    try{
-        await cliente.connect()
-        const db = cliente.db(nomeBanco)
-        const collection = db.collection(collectionManu)
-
-        const manu = await collection.findOne({_id: new ObjectId(id)})
-
-        if(!manu){
-            return res.status(404).send('Manutenção não encontrado')
-        }
-        res.json(manu)
-    }catch(err){
-        console.error('Erro ao buscar a manutenção: ', err)
-        res.status(500).send('Erro ao buscar a manutenção. Por favor tente novamente mais tarde')
-    }finally{
-        cliente.close()
-    }
-})
-
-app.post('/crud_usuarios_deletar', protegerAdmin, async(req,res)=>{
-    const {id} = req.body
-    const client = new MongoClient(urlMongo)
-
-    try{
-        await client.connect()
-        const db = client.db(nomeBanco)
-        const collection = db.collection(collectionName)
-
-        const result = await collection.deleteOne({_id: new ObjectId(id)})
-
-        if(result.deletedCount > 0){
-            console.log(`Usuário com ID: ${id} deletado com sucesso`)
-            res.redirect('/admin')
-        }else{
-            res.status(404).send('Usuário não encontrado')
-        }
-    }catch(err){
-        console.log('Erro ao deletar o usuário:', err)
-        res.status(500).send('Erro ao deletar o usuário. Por favor tente novamente mais tarde')
-    }finally{
-        client.close()
-    }
-})
-
-app.post('/crud_servicos_deletar', protegerAdmin, async(req,res)=>{
-    const {id} = req.body
-    const client = new MongoClient(urlMongo)
-
-    try{
-        await client.connect()
-        const db = client.db(nomeBanco)
-        const collection = db.collection(collectionServico)
-
-        const result = await collection.deleteOne({_id: new ObjectId(id)})
-
-        if(result.deletedCount > 0){
-            console.log(`Serviço com ID: ${id} deletado com sucesso`)
-            res.redirect('/admin')
-        }else{
-            res.status(404).send('Serviço não encontrado')
-        }
-    }catch(err){
-        console.log('Erro ao deletar o serviço:', err)
-        res.status(500).send('Erro ao deletar o serviço. Por favor tente novamente mais tarde')
-    }finally{
-        client.close()
-    }
-})
-
-app.post('/crud_manutencoes_deletar', protegerAdmin, async(req,res)=>{
-    const {id} = req.body
-    const client = new MongoClient(urlMongo)
-
-    try{
-        await client.connect()
-        const db = client.db(nomeBanco)
-        const collection = db.collection(collectionManu)
-
-        const result = await collection.deleteOne({_id: new ObjectId(id)})
-
-        if(result.deletedCount > 0){
-            console.log(`Manutenção com ID: ${id} deletado com sucesso`)
-            res.redirect('/admin')
-        }else{
-            res.status(404).send('Manutenção não encontrada')
-        }
-    }catch(err){
-        console.log('Erro ao deletar a manutenção:', err)
-        res.status(500).send('Erro ao deletar a manutenção. Por favor tente novamente mais tarde')
-    }finally{
-        client.close()
-    }
-})
-app.get('/crud_usuarios_usuarios', protegerAdmin, async(req,res)=>{
-    const cliente = new MongoClient(urlMongo)
-
-    try{
-        await cliente.connect()
-        const db = cliente.db(nomeBanco)
-        const collection = db.collection(collectionName)
-
-        const usuarios = await collection.find({}, {projection: {_id:1, usuario:1, senha:1, tipo:1 }}).toArray()
-        res.json(usuarios)
-    }catch(err){
-        console.error('Erro ao buscar usuários: ', err)
-        res.status(500).send('Erro ao buscar usuários. Por favor tente novamente mais tarde.')
-    }finally{
-        cliente.close()
-    }
-})
-
-app.get('/crud_servicos_servicos', protegerAdmin, async(req,res)=>{
-    const cliente = new MongoClient(urlMongo)
-
-    try{
-        await cliente.connect()
-        const db = cliente.db(nomeBanco)
-        const collection = db.collection(collectionServico)
-
-        const usuarios = await collection.find({}, {projection: {_id:1, usuario:1, tipo:1, custoHora:1, custoTotal:1, dias:1, disponivel:1 }}).toArray()
-        res.json(usuarios)
-    }catch(err){
-        console.error('Erro ao buscar servicos: ', err)
-        res.status(500).send('Erro ao buscar servicos. Por favor tente novamente mais tarde.')
-    }finally{
-        cliente.close()
-    }
-})
-
-app.get('/crud_manutencoes_manutencoes', protegerAdmin, async(req,res)=>{
-    const cliente = new MongoClient(urlMongo)
-
-    try{
-        await cliente.connect()
-        const db = cliente.db(nomeBanco)
-        const collection = db.collection(collectionManu)
-
-        const usuarios = await collection.find({}, {projection: {_id:1, usuario:1, tipo:1, custoHora:1, custoTotal:1, dias:1, disponivel:1 }}).toArray()
-        res.json(usuarios)
-    }catch(err){
-        console.error('Erro ao buscar manutenções: ', err)
-        res.status(500).send('Erro ao buscar manutenções. Por favor tente novamente mais tarde.')
-    }finally{
-        cliente.close()
-    }
-})
+//Rotas para o usuário poder mudar seu usuário e sua senha
 
 app.get('/mudar-usuario', protegerRota, (req,res)=>{
     res.sendFile(__dirname + '/views/user/html/mudarUsuário.html')
@@ -601,39 +231,7 @@ app.post('/mudar-senha', protegerRota, async (req, res) => {
   }
 });
 
-app.post('/formulario_feedback', async (req,res)=>{
-   const novoFeedback = req.body
-   const client = new MongoClient(urlMongo)
-
-   try {
-       await client.connect()
-       const db = client.db(nomeBanco)
-       const collection = db.collection(collectionFeedback)
-
-       const result = await collection.insertOne(novoFeedback)
-       console.log(`Feedback cadastrado com sucesso. ID: ${result.insertedId}`)
-        
-   }catch(err){
-    console.error('Erro ao cadastrar o feedback: ', err)
-    res.status(500).send('Erro ao cadastrar o feedback. Por favor tente mais tarde ')
-   }finally{
-    client.close()
-    res.redirect('/')
-   }
-})
-
-app.get('/erro', (req,res)=>{
-    res.sendFile(__dirname + '/views/erro.html')
-})
-
-app.get('/sair', (req,res)=>{
-    req.session.destroy((err)=>{
-        if(err){
-            return res.send('Erro ao sair!')
-        }res.redirect('/login')
-    })
-})
-
+//Rota para fazer o assistente rápido funcionar
 app.post('/assistente', (req, res) => {
   const { nome, area, tipo } = req.body;
 
@@ -673,10 +271,7 @@ app.post('/assistente', (req, res) => {
   });
 });
 
-app.get('/dados-usuario', (req, res) => {
-  res.json({ usuario: req.session.usuario });
-});
-
+//Prompt de contexto para a Ia ser quem ela é.
 const systemPrompt = `
 Você é um assistente virtual da BioEnergy, uma empresa especializada em energia limpa a partir de biomassa.
 Seu papel é ajudar os visitantes a escolher os melhores produtos e serviços da empresa, além de responder dúvidas sobre biomassa, energia renovável e sustentabilidade.
@@ -784,7 +379,14 @@ Sempre utilize o histórico da conversa para responder de forma contextualizada,
 Seu objetivo é oferecer um atendimento simples, rápido e informativo, ajudando o cliente a entender as soluções da BioEnergy e tomar boas decisões.
 `;
 
-app.post("/api/chat", async (req, res) => {
+//Rota para fazer com que os dados do usuário sejam carregados ao fazer login
+app.get('/dados-usuario', (req, res) => {
+  res.json({ usuario: req.session.usuario });
+});
+
+//Rota para fazer o chatbot que recomenda máquinas, serviços e manutenções funcionar
+
+app.post("/chatbot", protegerRota, async (req, res) => {
   const { usuario, text } = req.body;
 
   if (!usuario || !text) {
@@ -823,25 +425,871 @@ app.post("/api/chat", async (req, res) => {
   }
 });
 
-// Rota para limpar histórico de um usuário
-app.post("/api/clear-historico", (req, res) => {
-  const { usuario } = req.body;
-  const caminho = path.join(__dirname, "public", "historicos", `${usuario}.json`);
-  if (fs.existsSync(caminho)) {
-    fs.writeFileSync(caminho, JSON.stringify([]));
-    res.json({ message: "Histórico apagado com sucesso." });
-  } else {
-    res.status(404).json({ message: "Usuário não encontrado." });
-  }
-});
-
-// Rota para dados do usuário (simulada)
-app.get("/dados-do-usuario", (req, res) => {
-  res.json({ usuario: req.session.usuario  }); // substitua por lógica real se necessário
-});
+//Rotas para o usuário poder acessar partes da página dos usuários. 
 
 app.get('/produtos', protegerRota, (req,res)=>{
   res.sendFile(__dirname + '/views/user/produtos.html')
+})
+
+app.get('/servicos', protegerRota, (req,res)=>{
+  res.sendFile(__dirname + '/views/user/servicos.html')
+})
+
+//Sistema de carrinho para o usuário.
+
+app.get('/produto/:nome', protegerRota, async (req, res) => {
+    const { nome } = req.params;
+    const client = new MongoClient(urlMongo);
+
+    try {
+        await client.connect();
+        const db = client.db(nomeBanco);
+        const collection = db.collection(collectionProdutos); // ou coleção de produtos, dependendo de como você estruturou
+
+        const produto = await collection.findOne({ nome });
+        if (!produto) return res.status(404).send('Produto não encontrado');
+
+        res.send(`
+            <h1>${produto.nome}</h1>
+            <p>Preço: R$ ${produto.preco}</p>
+            <form action="/adicionar-carrinho" method="POST">
+                <input type="hidden" name="produtoId" value="${produto._id}">
+                <input type="hidden" name="nome" value="${produto.nome}">
+                <input type="hidden" name="preco" value="${produto.preco}">
+                <label>Quantidade: <input type="number" name="quantidade" value="1" min="1"></label>
+                <button type="submit">Adicionar ao carrinho</button>
+            </form>
+        `);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao abrir página do produto');
+    } finally {
+        client.close();
+    }
+});
+
+app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
+    const { produtoId, quantidade } = req.body;
+    const usuario = req.session.usuario;
+    const qtdDesejada = parseInt(quantidade);
+    const client = new MongoClient(urlMongo);
+
+    try {
+        await client.connect();
+        const db = client.db(nomeBanco);
+        const produtosCollection = db.collection(collectionProdutos);
+        const carrinhoCollection = db.collection(collectionCarrinho);
+
+        // Busca o produto pelo ObjectId
+        const produto = await produtosCollection.findOne({ nome: req.body.nome });
+        if (!produto) return res.sendFile(__dirname + '/views/user/html/produto/produtoNaoEstoque.html');
+
+        const estoque = Number(produto.estoque) || 0;
+        const disponivel = produto.disponivel
+        if (disponivel === 'Não') return res.sendFile(__dirname + '/views/user/html/produto/produtoIndisponível.html');
+
+        // Busca carrinho do usuário
+        let carrinhoUsuario = await carrinhoCollection.findOne({ usuario });
+        let qtdNoCarrinho = 0;
+
+        if (carrinhoUsuario) {
+            const itemNoCarrinho = carrinhoUsuario.produtos.find(p => p.produtoId === produtoId);
+            if (itemNoCarrinho) qtdNoCarrinho = Number(itemNoCarrinho.quantidade);
+        }
+
+        if (qtdDesejada + qtdNoCarrinho > estoque) {
+            return res.send(`
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
+            <title>Erro - BioEnergy</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+            <style>
+                .logo { width: 200px; border-radius: 15px; }
+                .error-card { max-width: 500px; margin: auto; }
+            </style>
+        </head>
+        <body class="bg-light">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+                <div class="container">
+                    <img class="logo" src="img/logo.png" alt="Logo BioEnergy">
+                </div>
+            </nav>
+
+            <section class="py-5">
+                <div class="container">
+                    <div class="error-card bg-white p-4 rounded shadow-sm text-center">
+                        <h2 class="text-danger mb-3"><i class="bi bi-exclamation-triangle-fill me-2"></i>Erro ao Adicionar Produto</h2>
+                        <p class="mb-4">${`Não é possível adicionar ${qtdDesejada} unidades. Apenas ${estoque - qtdNoCarrinho} disponíveis.`}</p>
+                        <a href="/produtos" class="btn btn-outline-danger w-100">Voltar para Produtos</a>
+                    </div>
+                </div>
+            </section>
+
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        </body>
+        </html>
+        `);
+        }
+
+        // Cria objeto do produto para o carrinho
+        const produtoObj = {
+            produtoId: produto._id.toString(),
+            nome: produto.nome,
+            preco: Number(produto.preco),
+            quantidade: qtdDesejada
+        };
+
+        // Atualiza ou cria carrinho
+        if (carrinhoUsuario) {
+            const index = carrinhoUsuario.produtos.findIndex(p => p.produtoId === produtoId);
+            if (index >= 0) {
+                carrinhoUsuario.produtos[index].quantidade += qtdDesejada;
+            } else {
+                carrinhoUsuario.produtos.push(produtoObj);
+            }
+            await carrinhoCollection.updateOne(
+                { usuario },
+                { $set: { produtos: carrinhoUsuario.produtos } }
+            );
+        } else {
+            await carrinhoCollection.insertOne({ usuario, produtos: [produtoObj] });
+        }
+
+        res.redirect('/carrinho');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao adicionar produto ao carrinho');
+    } finally {
+        client.close();
+    }
+});
+
+
+
+
+
+
+app.get('/carrinho', protegerRota, async (req, res) => {
+    const usuario = req.session.usuario;
+    const client = new MongoClient(urlMongo);
+
+    try {
+        await client.connect();
+        const db = client.db(nomeBanco);
+        const carrinhoCollection = db.collection(collectionCarrinho);
+
+        const carrinhoUsuario = await carrinhoCollection.findOne({ usuario });
+        const produtos = carrinhoUsuario ? carrinhoUsuario.produtos : [];
+        const total = produtos.reduce((acc, p) => acc + p.preco * p.quantidade, 0);
+
+        let html = `
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <title>Meu Carrinho</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        </head>
+        <body class="bg-light">
+        <div class="container py-5">
+            <h1 class="text-success mb-4">Meu Carrinho</h1>`;
+
+        if (produtos.length === 0) {
+            html += `<h3>Seu carrinho está vazio.</h3>
+                     <a href="/produtos" class="btn btn-success mt-3">Voltar aos Produtos</a>`;
+        } else {
+            html += `<ul class="list-group mb-3">`;
+            produtos.forEach(p => {
+                const subtotal = p.preco * p.quantidade;
+                html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${p.nome} - R$ ${p.preco.toFixed(2)} x ${p.quantidade}
+                            <span>Subtotal: R$ ${subtotal.toFixed(2)}</span>
+                        </li>`;
+            });
+            html += `</ul>
+                     <h3>Total: R$ ${total.toFixed(2)}</h3>
+                     <form action="/resumo-compra" method="GET">
+                         <button type="submit" class="btn btn-success mt-3 w-100">Prosseguir para Resumo</button>
+                     </form>
+                     <a href="/produtos" class="btn btn-secondary mt-2 w-100">Continuar Comprando</a>`;
+        }
+
+        html += `</div></body></html>`;
+        res.send(html);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao carregar o carrinho');
+    } finally {
+        client.close();
+    }
+});
+
+app.get('/resumo-compra', protegerRota, async (req, res) => {
+    const usuario = req.session.usuario;
+    const client = new MongoClient(urlMongo);
+
+    try {
+        await client.connect();
+        const db = client.db(nomeBanco);
+        const carrinhoCollection = db.collection(collectionCarrinho);
+
+        const carrinhoUsuario = await carrinhoCollection.findOne({ usuario });
+        const produtos = carrinhoUsuario ? carrinhoUsuario.produtos : [];
+        const total = produtos.reduce((acc, p) => acc + p.preco * p.quantidade, 0);
+
+        let html = `
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <title>Resumo da Compra</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        </head>
+        <body class="bg-light">
+        <div class="container py-5">
+            <h1 class="text-success mb-4">Resumo da Compra</h1>
+            <ul class="list-group mb-3">`;
+
+        produtos.forEach(p => {
+            const subtotal = p.preco * p.quantidade;
+            html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                        ${p.nome} - R$ ${p.preco.toFixed(2)} x ${p.quantidade}
+                        <span>Subtotal: R$ ${subtotal.toFixed(2)}</span>
+                     </li>`;
+        });
+
+        html += `</ul>
+                 <h3>Total: R$ ${total.toFixed(2)}</h3>
+                 <form action="/finalizar-compra" method="POST">
+                     <button type="submit" class="btn btn-success mt-3 w-100">Finalizar Compra</button>
+                 </form>
+                 <form action="/carrinho" method="GET">
+                     <button type="submit" class="btn btn-secondary mt-2 w-100">Voltar ao Carrinho</button>
+                 </form>
+                 </div></body></html>`;
+
+        res.send(html);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao carregar resumo da compra');
+    } finally {
+        client.close();
+    }
+});
+
+
+app.post('/finalizar-compra', protegerRota, async (req, res) => {
+    const usuario = req.session.usuario;
+    const client = new MongoClient(urlMongo);
+
+    try {
+        await client.connect();
+        const db = client.db(nomeBanco);
+        const carrinhoCollection = db.collection(collectionCarrinho);
+        const comprasCollection = db.collection(collectionCompras);
+        const produtosCollection = db.collection(collectionProdutos);
+
+        const carrinhoUsuario = await carrinhoCollection.findOne({ usuario });
+        if (!carrinhoUsuario || carrinhoUsuario.produtos.length === 0)
+            return res.redirect('/carrinho');
+
+        // Salva a compra
+        await comprasCollection.insertOne({ usuario, produtos: carrinhoUsuario.produtos, data: new Date() });
+
+        // Atualiza estoque (não-negativo)
+        for (const item of carrinhoUsuario.produtos) {
+            await produtosCollection.updateOne(
+                { nome: item.nome },
+                [
+                    { $set: { estoque: { $max: [{ $subtract: ["$estoque", Number(item.quantidade)] }, 0] } } }
+                ]
+            );
+        }
+
+        // Limpa carrinho
+        await carrinhoCollection.updateOne({ usuario }, { $set: { produtos: [] } });
+
+        // Página de confirmação
+        let html = `
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <title>Compra Concluída</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        </head>
+        <body class="bg-light">
+        <div class="container py-5 text-center">
+            <h1 class="text-success mb-4">Compra Finalizada com Sucesso!</h1>
+            <p>Obrigado por comprar na BioEnergy. Seus produtos serão processados em breve.</p>
+            <a href="/produtos" class="btn btn-success mt-3">Voltar aos Produtos</a>
+        </div>
+        </body>
+        </html>`;
+        res.send(html);
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Erro ao finalizar compra');
+    } finally {
+        client.close();
+    }
+});
+
+
+
+
+//Rota para o usuário fazer feedbacks 
+
+app.post('/formulario_feedback', async (req,res)=>{
+   const novoFeedback = req.body
+   const client = new MongoClient(urlMongo)
+
+   try {
+       await client.connect()
+       const db = client.db(nomeBanco)
+       const collection = db.collection(collectionFeedback)
+
+       const result = await collection.insertOne(novoFeedback)
+       console.log(`Feedback cadastrado com sucesso. ID: ${result.insertedId}`)
+        
+   }catch(err){
+    console.error('Erro ao cadastrar o feedback: ', err)
+    res.status(500).send('Erro ao cadastrar o feedback. Por favor tente mais tarde ')
+   }finally{
+    client.close()
+    res.redirect('/')
+   }
+})
+
+//Crud de usuários dos administradores
+
+app.get('/admin/usuarios', protegerAdmin, (req,res) =>{
+    res.sendFile(__dirname + '/views/admin/html/usuarios.html')
+})
+
+app.get('/admin/usuarios_cadastro', protegerAdmin, (req,res)=>{
+    res.sendFile(__dirname + '/views/admin/html/usuarios/cadastrar.html')
+})
+
+app.post('/admin/usuarios_cadastro', protegerAdmin, async (req,res)=>{
+   const novoUsuario = req.body
+   const client = new MongoClient(urlMongo)
+
+   try {
+       await client.connect()
+       const db = client.db(nomeBanco)
+       const collection = db.collection(collectionName)
+
+       const senhaCriptografada = await bcrypt.hash(novoUsuario.senha, 10)
+       const result = await collection.insertOne({
+          usuario: novoUsuario.usuario,
+          senha: senhaCriptografada,
+          tipo: novoUsuario.tipo || 'comum'
+       })
+       console.log(`Usuário cadastrado com sucesso. ID: ${result.insertedId}`)
+       res.redirect('/admin')
+        
+   }catch(err){
+    console.error('Erro ao cadastrar o usuário: ', err)
+    res.status(500).send('Erro ao cadastrar o usuário. Por favor tente mais tarde ')
+   }finally{
+    client.close()
+   }
+})
+
+app.get('/admin/usuarios_atualizar', protegerAdmin, async(req,res)=>{
+    res.sendFile(__dirname + '/views/admin/html/usuarios/atualizar.html')
+})
+
+app.post('/admin/usuarios_atualizar', protegerAdmin, async(req,res)=>{
+    const { id, usuario, senha, tipo } = req.body
+    const client = new MongoClient(urlMongo)
+
+    try {
+        await client.connect()
+        const db = client.db(nomeBanco)
+        const collection = db.collection(collectionName)
+        const senhaCriptografada = await bcrypt.hash(senha, 10)
+        const result = await collection.updateOne({ _id: new ObjectId(id)},{
+            $set: {usuario, senha: senhaCriptografada, tipo}
+        })
+        if(result.modifiedCount > 0){
+            console.log(`Usuário com o ID: ${id} atualizado com sucesso`)
+            res.redirect('/admin')
+        }else{
+            res.status(404).send('Usuário não encontrado')
+        }
+    }catch(err){
+        console.error('Erro ao atualizar o usuário: ', err)
+        res.status(500).send('Erro ao atualizar o usuário. Por favor tente novamente mais tarde.')
+    }finally{
+        client.close()
+    }
+})
+
+app.get('/admin/usuario/:id', protegerAdmin, async (req,res)=>{
+    const { id } = req.params
+    const cliente = new MongoClient(urlMongo)
+
+    try{
+        await cliente.connect()
+        const db = cliente.db(nomeBanco)
+        const collection = db.collection(collectionName)
+
+        const usuario = await collection.findOne({_id: new ObjectId(id)})
+
+        if(!usuario){
+            return res.status(404).send('Usuário não encontrado')
+        }
+        res.json(usuario)
+    }catch(err){
+        console.error('Erro ao buscar o usuário: ', err)
+        res.status(500).send('Erro ao buscar o usuário. Por favor tente novamente mais tarde')
+    }finally{
+        cliente.close()
+    }
+})
+
+app.post('/admin/usuarios_deletar', protegerAdmin, async(req,res)=>{
+    const {id} = req.body
+    const client = new MongoClient(urlMongo)
+
+    try{
+        await client.connect()
+        const db = client.db(nomeBanco)
+        const collection = db.collection(collectionName)
+
+        const result = await collection.deleteOne({_id: new ObjectId(id)})
+
+        if(result.deletedCount > 0){
+            console.log(`Usuário com ID: ${id} deletado com sucesso`)
+            res.redirect('/admin')
+        }else{
+            res.status(404).send('Usuário não encontrado')
+        }
+    }catch(err){
+        console.log('Erro ao deletar o usuário:', err)
+        res.status(500).send('Erro ao deletar o usuário. Por favor tente novamente mais tarde')
+    }finally{
+        client.close()
+    }
+})
+
+app.get('/admin/listar_usuarios', protegerAdmin, async(req,res)=>{
+    const cliente = new MongoClient(urlMongo)
+
+    try{
+        await cliente.connect()
+        const db = cliente.db(nomeBanco)
+        const collection = db.collection(collectionName)
+
+        const usuarios = await collection.find({}, {projection: {_id:1, usuario:1, senha:1, tipo:1 }}).toArray()
+        res.json(usuarios)
+    }catch(err){
+        console.error('Erro ao buscar usuários: ', err)
+        res.status(500).send('Erro ao buscar usuários. Por favor tente novamente mais tarde.')
+    }finally{
+        cliente.close()
+    }
+})
+
+//Crud de produtos dos administradores
+
+app.get('/admin/produtos', protegerAdmin, (req,res) =>{
+    res.sendFile(__dirname + '/views/admin/html/produtos.html')
+})
+
+app.get('/admin/produtos_cadastro', protegerAdmin, (req,res)=>{
+    res.sendFile(__dirname + '/views/admin/html/produtos/cadastrar.html')
+})
+
+app.post('/admin/produtos_cadastro', protegerAdmin, async (req,res)=>{
+   const novoProduto = req.body
+   const client = new MongoClient(urlMongo)
+
+   try {
+       await client.connect()
+       const db = client.db(nomeBanco)
+       const collection = db.collection(collectionProdutos)
+
+       const result = await collection.insertOne(novoProduto)
+       console.log(`Produto cadastrado com sucesso. ID: ${result.insertedId}`)
+       res.redirect('/admin')
+        
+   }catch(err){
+    console.error('Erro ao cadastrar o produto: ', err)
+    res.status(500).send('Erro ao cadastrar o produto. Por favor tente mais tarde ')
+   }finally{
+    client.close()
+   }
+})
+
+app.get('/admin/produtos_atualizar', protegerAdmin, async(req,res)=>{
+    res.sendFile(__dirname + '/views/admin/html/produtos/atualizar.html')
+})
+
+app.post('/admin/produtos_atualizar', protegerAdmin, async(req,res)=>{
+    const { id, nome, tipo, capacidade, taxa, tempo, energiaTotal, custoCiclo, eficiencia, preco, estoque, disponivel} = req.body
+    const client = new MongoClient(urlMongo)
+
+    try {
+        await client.connect()
+        const db = client.db(nomeBanco)
+        const collection = db.collection(collectionProdutos)
+        const result = await collection.updateOne({ _id: new ObjectId(id)},{
+            $set: {nome,  tipo, capacidade, taxa,tempo, energiaTotal, custoCiclo, eficiencia, preco, estoque, disponivel}
+        })
+        if(result.modifiedCount > 0){
+            console.log(`Produto com o ID: ${id} atualizado com sucesso`)
+            res.redirect('/admin')
+        }else{
+            res.status(404).send('Produto não encontrada')
+        }
+    }catch(err){
+        console.error('Erro ao atualizar o produto: ', err)
+        res.status(500).send('Erro ao atualizar o produto. Por favor tente novamente mais tarde.')
+    }finally{
+        client.close()
+    }
+})
+
+app.get('/admin/produto/:id', protegerAdmin, async (req,res)=>{
+    const { id } = req.params
+    const cliente = new MongoClient(urlMongo)
+
+    try{
+        await cliente.connect()
+        const db = cliente.db(nomeBanco)
+        const collection = db.collection(collectionProdutos)
+
+        const manu = await collection.findOne({_id: new ObjectId(id)})
+
+        if(!manu){
+            return res.status(404).send('Produto não encontrado')
+        }
+        res.json(manu)
+    }catch(err){
+        console.error('Erro ao buscar o produto: ', err)
+        res.status(500).send('Erro ao buscar o produto. Por favor tente novamente mais tarde')
+    }finally{
+        cliente.close()
+    }
+})
+
+app.post('/admin/produtos_deletar', protegerAdmin, async(req,res)=>{
+    const {id} = req.body
+    const client = new MongoClient(urlMongo)
+
+    try{
+        await client.connect()
+        const db = client.db(nomeBanco)
+        const collection = db.collection(collectionProdutos)
+
+        const result = await collection.deleteOne({_id: new ObjectId(id)})
+
+        if(result.deletedCount > 0){
+            console.log(`Produto com ID: ${id} deletado com sucesso`)
+            res.redirect('/admin')
+        }else{
+            res.status(404).send('Produto não encontrado')
+        }
+    }catch(err){
+        console.log('Erro ao deletar o produto:', err)
+        res.status(500).send('Erro ao deletar o produto. Por favor tente novamente mais tarde')
+    }finally{
+        client.close()
+    }
+})
+
+app.get('/admin/listar_produtos', protegerAdmin, async(req,res)=>{
+    const cliente = new MongoClient(urlMongo)
+
+    try{
+        await cliente.connect()
+        const db = cliente.db(nomeBanco)
+        const collection = db.collection(collectionProdutos)
+
+        const usuarios = await collection.find({}, {projection: {_id:1, nome:1, tipo:1, capacidade:1, taxa:1, tempo:1, energiaTotal:1, custoCiclo:1, eficiencia:1, preco:1, estoque:1, disponivel:1 }}).toArray()
+        res.json(usuarios)
+    }catch(err){
+        console.error('Erro ao buscar produtos: ', err)
+        res.status(500).send('Erro ao buscar produtos. Por favor tente novamente mais tarde.')
+    }finally{
+        cliente.close()
+    }
+})
+
+//Crud de serviços dos administradores
+
+app.get('/admin/servicos', protegerAdmin, (req,res) =>{
+    res.sendFile(__dirname + '/views/admin/html/serviços.html')
+})
+
+app.get('/admin/servicos_cadastro', protegerAdmin, (req,res)=>{
+    res.sendFile(__dirname + '/views/admin/html/servicos/cadastrar.html')
+})
+
+app.post('/admin/servicos_cadastro', protegerAdmin, async (req,res)=>{
+   const novoServico = req.body
+   const client = new MongoClient(urlMongo)
+
+   try {
+       await client.connect()
+       const db = client.db(nomeBanco)
+       const collection = db.collection(collectionServico)
+
+       const result = await collection.insertOne(novoServico)
+       console.log(`Serviço cadastrado com sucesso. ID: ${result.insertedId}`)
+       res.redirect('/admin')
+        
+   }catch(err){
+    console.error('Erro ao cadastrar o serviço: ', err)
+    res.status(500).send('Erro ao cadastrar o serviço. Por favor tente mais tarde ')
+   }finally{
+    client.close()
+   }
+})
+
+app.get('/admin/servicos_atualizar', protegerAdmin, async(req,res)=>{
+    res.sendFile(__dirname + '/views/admin/html/servicos/atualizar.html')
+})
+
+app.post('/admin/servicos_atualizar', protegerAdmin, async(req,res)=>{
+    const { id, usuario, tipo, custoHora, custoTotal, dias, disponivel } = req.body
+    const client = new MongoClient(urlMongo)
+
+    try {
+        await client.connect()
+        const db = client.db(nomeBanco)
+        const collection = db.collection(collectionServico)
+        const result = await collection.updateOne({ _id: new ObjectId(id)},{
+            $set: {usuario,  tipo, custoHora, custoTotal, dias, disponivel}
+        })
+        if(result.modifiedCount > 0){
+            console.log(`Serviço com o ID: ${id} atualizado com sucesso`)
+            res.redirect('/admin')
+        }else{
+            res.status(404).send('Serviço não encontrado')
+        }
+    }catch(err){
+        console.error('Erro ao atualizar o serviço: ', err)
+        res.status(500).send('Erro ao atualizar o Serviço. Por favor tente novamente mais tarde.')
+    }finally{
+        client.close()
+    }
+})
+
+app.get('/admin/servico/:id', protegerAdmin, async (req,res)=>{
+    const { id } = req.params
+    const cliente = new MongoClient(urlMongo)
+
+    try{
+        await cliente.connect()
+        const db = cliente.db(nomeBanco)
+        const collection = db.collection(collectionServico)
+
+        const serviço = await collection.findOne({_id: new ObjectId(id)})
+
+        if(!serviço){
+            return res.status(404).send('Serviço não encontrado')
+        }
+        res.json(serviço)
+    }catch(err){
+        console.error('Erro ao buscar o serviço: ', err)
+        res.status(500).send('Erro ao buscar o serviço. Por favor tente novamente mais tarde')
+    }finally{
+        cliente.close()
+    }
+})
+
+app.post('/admin/servicos_deletar', protegerAdmin, async(req,res)=>{
+    const {id} = req.body
+    const client = new MongoClient(urlMongo)
+
+    try{
+        await client.connect()
+        const db = client.db(nomeBanco)
+        const collection = db.collection(collectionServico)
+
+        const result = await collection.deleteOne({_id: new ObjectId(id)})
+
+        if(result.deletedCount > 0){
+            console.log(`Serviço com ID: ${id} deletado com sucesso`)
+            res.redirect('/admin')
+        }else{
+            res.status(404).send('Serviço não encontrado')
+        }
+    }catch(err){
+        console.log('Erro ao deletar o serviço:', err)
+        res.status(500).send('Erro ao deletar o serviço. Por favor tente novamente mais tarde')
+    }finally{
+        client.close()
+    }
+})
+
+app.get('/admin/listar_servicos', protegerAdmin, async(req,res)=>{
+    const cliente = new MongoClient(urlMongo)
+
+    try{
+        await cliente.connect()
+        const db = cliente.db(nomeBanco)
+        const collection = db.collection(collectionServico)
+
+        const usuarios = await collection.find({}, {projection: {_id:1, usuario:1, tipo:1, custoHora:1, custoTotal:1, dias:1, disponivel:1 }}).toArray()
+        res.json(usuarios)
+    }catch(err){
+        console.error('Erro ao buscar servicos: ', err)
+        res.status(500).send('Erro ao buscar servicos. Por favor tente novamente mais tarde.')
+    }finally{
+        cliente.close()
+    }
+})
+
+//Crud de manutenções para administradores
+
+app.get('/admin/manutencoes', protegerAdmin, (req,res) =>{
+    res.sendFile(__dirname + '/views/admin/html/manutencoes.html')
+})
+
+app.get('/admin/manutencoes_cadastro', protegerAdmin, (req,res)=>{
+    res.sendFile(__dirname + '/views/admin/html/manutencao/cadastrar.html')
+})
+
+app.post('/admin/manutencoes_cadastro', protegerAdmin, async (req,res)=>{
+   const novaManu = req.body
+   const client = new MongoClient(urlMongo)
+
+   try {
+       await client.connect()
+       const db = client.db(nomeBanco)
+       const collection = db.collection(collectionManu)
+
+       const result = await collection.insertOne(novaManu)
+       console.log(`Manutenção cadastrada com sucesso. ID: ${result.insertedId}`)
+       res.redirect('/admin')
+        
+   }catch(err){
+    console.error('Erro ao cadastrar a manutenção: ', err)
+    res.status(500).send('Erro ao cadastrar a manutenção. Por favor tente mais tarde ')
+   }finally{
+    client.close()
+   }
+})
+
+app.get('/admin/manutencoes_atualizar', protegerAdmin, async(req,res)=>{
+    res.sendFile(__dirname + '/views/admin/html/manutencao/atualizar.html')
+})
+
+app.post('/admin/manutencoes_atualizar', protegerAdmin, async(req,res)=>{
+    const { id, usuario, tipo, custoHora, custoTotal, dias, disponivel } = req.body
+    const client = new MongoClient(urlMongo)
+
+    try {
+        await client.connect()
+        const db = client.db(nomeBanco)
+        const collection = db.collection(collectionManu)
+        const result = await collection.updateOne({ _id: new ObjectId(id)},{
+            $set: {usuario,  tipo, custoHora, custoTotal, dias, disponivel}
+        })
+        if(result.modifiedCount > 0){
+            console.log(`Manutenção com o ID: ${id} atualizado com sucesso`)
+            res.redirect('/admin')
+        }else{
+            res.status(404).send('Manutenção não encontrada')
+        }
+    }catch(err){
+        console.error('Erro ao atualizar a manutenção: ', err)
+        res.status(500).send('Erro ao atualizar a manutenção. Por favor tente novamente mais tarde.')
+    }finally{
+        client.close()
+    }
+})
+
+app.get('/admin/manutencao/:id', protegerAdmin, async (req,res)=>{
+    const { id } = req.params
+    const cliente = new MongoClient(urlMongo)
+
+    try{
+        await cliente.connect()
+        const db = cliente.db(nomeBanco)
+        const collection = db.collection(collectionManu)
+
+        const manu = await collection.findOne({_id: new ObjectId(id)})
+
+        if(!manu){
+            return res.status(404).send('Manutenção não encontrado')
+        }
+        res.json(manu)
+    }catch(err){
+        console.error('Erro ao buscar a manutenção: ', err)
+        res.status(500).send('Erro ao buscar a manutenção. Por favor tente novamente mais tarde')
+    }finally{
+        cliente.close()
+    }
+})
+
+app.post('/admin/manutencoes_deletar', protegerAdmin, async(req,res)=>{
+    const {id} = req.body
+    const client = new MongoClient(urlMongo)
+
+    try{
+        await client.connect()
+        const db = client.db(nomeBanco)
+        const collection = db.collection(collectionManu)
+
+        const result = await collection.deleteOne({_id: new ObjectId(id)})
+
+        if(result.deletedCount > 0){
+            console.log(`Manutenção com ID: ${id} deletado com sucesso`)
+            res.redirect('/admin')
+        }else{
+            res.status(404).send('Manutenção não encontrada')
+        }
+    }catch(err){
+        console.log('Erro ao deletar a manutenção:', err)
+        res.status(500).send('Erro ao deletar a manutenção. Por favor tente novamente mais tarde')
+    }finally{
+        client.close()
+    }
+})
+
+app.get('/admin/listar_manutencoes', protegerAdmin, async(req,res)=>{
+    const cliente = new MongoClient(urlMongo)
+
+    try{
+        await cliente.connect()
+        const db = cliente.db(nomeBanco)
+        const collection = db.collection(collectionManu)
+
+        const usuarios = await collection.find({}, {projection: {_id:1, usuario:1, tipo:1, custoHora:1, custoTotal:1, dias:1, disponivel:1 }}).toArray()
+        res.json(usuarios)
+    }catch(err){
+        console.error('Erro ao buscar manutenções: ', err)
+        res.status(500).send('Erro ao buscar manutenções. Por favor tente novamente mais tarde.')
+    }finally{
+        cliente.close()
+    }
+})
+
+app.get('/admin/dropdown-usuarios', protegerAdmin, async (req, res) => {
+  const client = new MongoClient(urlMongo)
+  try {
+    await client.connect()
+    const db = client.db(nomeBanco)
+    const collection = db.collection(collectionName)
+
+    const usuarios = await collection.find({}, { projection: { _id: 1, usuario: 1 } }).toArray()
+    res.json(usuarios)
+  } catch (err) {
+    console.error('Erro ao buscar usuários: ', err)
+    res.status(500).send('Erro ao buscar usuários')
+  } finally {
+    client.close()
+  }
 })
 
 app.listen(porta, ()=>{

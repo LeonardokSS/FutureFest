@@ -23,31 +23,28 @@
       text-align: center;
     }
     .card {
-  border: none;
-  border-radius: 15px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-.card-body {
-  flex: 1; /* faz o conteúdo preencher a altura do card */
-}
-
-.card:hover {
-  transform: scale(1.04);
-  box-shadow: 0 0 20px rgba(25, 135, 84, 0.3);
-}
-
-.card-img-top {
-  height: 220px; /* mesma altura para todas as imagens */
-  object-fit: cover;
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
-  width: 100%;
-}
-
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .card-body {
+      flex: 1;
+    }
+    .card:hover {
+      transform: scale(1.04);
+      box-shadow: 0 0 20px rgba(25, 135, 84, 0.3);
+    }
+    .card-img-top {
+      height: 220px;
+      object-fit: cover;
+      border-top-left-radius: 15px;
+      border-top-right-radius: 15px;
+      width: 100%;
+    }
     .page-title {
       text-align: center;
       color: #198754;
@@ -88,109 +85,150 @@
   <!-- Seção 1 -->
   <h3 class="text-success fw-bold mb-4 text-center">Produtos para Cana, Esterco e Palha</h3>
   <div class="row justify-content-center g-4 mb-5">
-    <!-- BioEnergyCube --> 
-     <div class="col-12 col-md-4">
-  <div class="card">
-    <img src="/img/produtos/BioEnergyCube.jpg" alt="BioEnergyCube">
-    <div class="card-body">
-      <h5 class="card-title text-success fw-bold">BioEnergyCube</h5>
-      <p class="card-text">Fertilizante orgânico ideal para o cultivo de cana, melhorando o solo e aumentando a produtividade.</p>
-      <div class="stats">
-        <strong>Capacidade:</strong> 1.000 L<br>
-        <strong>Taxa:</strong> 0,7 L/min<br>
-        <strong>Tempo:</strong> 23h50min<br>
-        <strong>Energia total:</strong> 10 kWh<br>
-        <strong>Custo por ciclo:</strong> R$ 20,00<br>
-        <strong>Eficiência:</strong> 0,5 kWh/R$<br>
-        <strong>Preço:</strong> R$ 3.500,00
+
+    <!-- BioEnergyCube -->
+    <div class="col-12 col-md-4">
+      <div class="card">
+        <img src="/img/produtos/BioEnergyCube.jpg" alt="BioEnergyCube">
+        <div class="card-body">
+          <h5 class="card-title text-success fw-bold">BioEnergyCube</h5>
+          <p class="card-text">Fertilizante orgânico ideal para o cultivo de cana, melhorando o solo e aumentando a produtividade.</p>
+          <div class="stats">
+            <strong>Capacidade:</strong> 1.000 L<br>
+            <strong>Taxa:</strong> 0,7 L/min<br>
+            <strong>Tempo:</strong> 23h50min<br>
+            <strong>Energia total:</strong> 10 kWh<br>
+            <strong>Custo por ciclo:</strong> R$ 20,00<br>
+            <strong>Eficiência:</strong> 0,5 kWh/R$<br>
+            <strong>Preço:</strong> R$ 3.500,00
+          </div>
+          <form action="/adicionar-carrinho" method="POST">
+            <input type="hidden" name="produtoId" value="{{produto._id}}">
+            <input type="hidden" name="nome" value="BioEnergyCube">
+            <input type="hidden" name="preco" value="3500">
+            <input type="number" name="quantidade" value="1" min="1" class="form-control my-2">
+            <button type="submit" class="btn btn-success w-100 mt-3">Adicionar ao carrinho</button>
+          </form>
+        </div>
       </div>
-      <button class="btn btn-success w-100 mt-3">Adicionar ao carrinho</button>
     </div>
-  </div>
-</div>
-        <!-- BioEnergyEcoDrive --> 
-         <div class="col-12 col-md-4"> 
-            <div class="card"> 
-                <img src="/img/produtos/BioEnergyEcoDrive.jpg" alt="BioEnergyEcoDrive"> 
-                <div class="card-body"> 
-                    <h5 class="card-title text-success fw-bold">BioEnergyEcoDrive</h5> 
-                    <p class="card-text">Produto voltado para o aproveitamento da palha, com foco em compostagem e enriquecimento do solo.</p> 
-                    <div class="stats"> 
-                        <strong>Capacidade:</strong> 5.000 L<br> 
-                        <strong>Taxa:</strong> 10 L/min<br> 
-                        <strong>Tempo:</strong> 8h20min<br> 
-                        <strong>Energia total:</strong> 26,25 kWh<br> 
-                        <strong>Custo por ciclo:</strong> R$ 250,00<br> 
-                        <strong>Eficiência:</strong> 0,105 kWh/R$<br> 
-                        <strong>Preço:</strong> R$ 8.500,00 </div> 
-                    </div> 
-                    <button class="btn btn-success w-100 mt-3">Adicionar ao carrinho</button>
-                </div> 
-            </div> 
-            <!-- BioEnergyContainer --> 
-            <div class="col-12 col-md-4"> 
-                <div class="card"> 
-                    <img src="/img/produtos/BioEnergyContainer.png" alt="BioEnergyContainer"> 
-                    <div class="card-body"> 
-                        <h5 class="card-title text-success fw-bold">BioEnergyContainer</h5> 
-                        <p class="card-text">Adubo orgânico à base de esterco processado, ideal para regeneração de áreas agrícolas.</p> 
-                        <div class="stats"> 
-                            <strong>Capacidade:</strong> 8.000 L<br> 
-                            <strong>Taxa:</strong> 15 L/min<br> 
-                            <strong>Tempo:</strong> 8h53min<br> 
-                            <strong>Energia total:</strong> 42 kWh<br> 
-                            <strong>Custo por ciclo:</strong> R$ 400,00<br> 
-                            <strong>Eficiência:</strong> 0,105 kWh/R$<br> 
-                            <strong>Preço:</strong> R$ 15.000,00 </div> 
-                        </div> 
-                        <button class="btn btn-success w-100 mt-3">Adicionar ao carrinho</button>
-                    </div>
-             </div>
+
+    <!-- BioEnergyEcoDrive -->
+    <div class="col-12 col-md-4">
+      <div class="card">
+        <img src="/img/produtos/BioEnergyEcoDrive.jpg" alt="BioEnergyEcoDrive">
+        <div class="card-body">
+          <h5 class="card-title text-success fw-bold">BioEnergyEcoDrive</h5>
+          <p class="card-text">Produto voltado para o aproveitamento da palha, com foco em compostagem e enriquecimento do solo.</p>
+          <div class="stats">
+            <strong>Capacidade:</strong> 5.000 L<br>
+            <strong>Taxa:</strong> 10 L/min<br>
+            <strong>Tempo:</strong> 8h20min<br>
+            <strong>Energia total:</strong> 26,25 kWh<br>
+            <strong>Custo por ciclo:</strong> R$ 250,00<br>
+            <strong>Eficiência:</strong> 0,105 kWh/R$<br>
+            <strong>Preço:</strong> R$ 8.500,00
+          </div>
+          <form action="/adicionar-carrinho" method="POST">
+            <input type="hidden" name="produtoId" value="{{produto._id}}">
+            <input type="hidden" name="nome" value="BioEnergyEcoDrive">
+            <input type="hidden" name="preco" value="8500">
+            <input type="number" name="quantidade" value="1" min="1" class="form-control my-2">
+            <button type="submit" class="btn btn-success w-100 mt-3">Adicionar ao carrinho</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- BioEnergyContainer -->
+    <div class="col-12 col-md-4">
+      <div class="card">
+        <img src="/img/produtos/BioEnergyContainer.png" alt="BioEnergyContainer">
+        <div class="card-body">
+          <h5 class="card-title text-success fw-bold">BioEnergyContainer</h5>
+          <p class="card-text">Adubo orgânico à base de esterco processado, ideal para regeneração de áreas agrícolas.</p>
+          <div class="stats">
+            <strong>Capacidade:</strong> 8.000 L<br>
+            <strong>Taxa:</strong> 15 L/min<br>
+            <strong>Tempo:</strong> 8h53min<br>
+            <strong>Energia total:</strong> 42 kWh<br>
+            <strong>Custo por ciclo:</strong> R$ 400,00<br>
+            <strong>Eficiência:</strong> 0,105 kWh/R$<br>
+            <strong>Preço:</strong> R$ 15.000,00
+          </div>
+          <form action="/adicionar-carrinho" method="POST">
+            <input type="hidden" name="produtoId" value="{{produto._id}}">
+            <input type="hidden" name="nome" value="BioEnergyContainer">
+            <input type="hidden" name="preco" value="15000">
+            <input type="number" name="quantidade" value="1" min="1" class="form-control my-2">
+            <button type="submit" class="btn btn-success w-100 mt-3">Adicionar ao carrinho</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Seção 2 -->
   <h3 class="section-title mt-5">Produtos para Madeira, Cavacos e Aparas</h3>
   <div class="row justify-content-center g-4 mb-5">
-    <!-- BioEnergyWoodX --> 
-     <div class="col-12 col-md-4"> 
-        <div class="card"> 
-            <img src="/img/produtos/BioEnergyWoodX.jpg" alt="BioEnergyWoodX"> 
-            <div class="card-body"> 
-                <h5 class="card-title text-success fw-bold">BioEnergyWoodX</h5> 
-                <p class="card-text">Combustível ecológico derivado de resíduos de madeira, com alta eficiência energética e baixo impacto ambiental.</p> 
-                <div class="stats"> 
-                    <strong>Capacidade:</strong> 500 L<br> 
-                    <strong>Taxa:</strong> 1,5 L/min<br> 
-                    <strong>Tempo:</strong> 5h33min<br> 
-                    <strong>Energia total:</strong> 1,67 kWh<br> 
-                    <strong>Custo por ciclo:</strong> R$ 10,00<br> 
-                    <strong>Eficiência:</strong> 0,167 kWh/R$<br> 
-                    <strong>Preço:</strong> R$ 2.500,00 
-                </div> 
-                <button class="btn btn-success w-100 mt-3">Adicionar ao carrinho</button>
-            </div> 
-        </div> 
-    </div> 
-    <!-- BioEnergyWooderPro --> 
-     <div class="col-12 col-md-4"> 
-        <div class="card"> 
-            <img src="/img/produtos/BioEnergyWooderPro.jpg" alt="BioEnergyWooderPro"> 
-            <div class="card-body"> 
-                <h5 class="card-title text-success fw-bold">BioEnergyWooderPro</h5>
-                <p class="card-text">Cavacos de madeira selecionados para uso industrial e geração de energia limpa.</p> 
-                <div class="stats"> 
-                    <strong>Capacidade:</strong> 2.000 L<br> 
-                    <strong>Taxa:</strong> 7 L/min<br> 
-                    <strong>Tempo:</strong> 4h46min<br> 
-                    <strong>Energia total:</strong> 4,58 kWh<br> 
-                    <strong>Custo por ciclo:</strong> R$ 150,00<br> 
-                    <strong>Eficiência:</strong> 0,0305 kWh/R$<br> 
-                    <strong>Preço:</strong> R$ 6.000,00 </div> 
-                    <button class="btn btn-success w-100 mt-3">Adicionar ao carrinho</button>
-                </div> 
-            </div> 
+
+    <!-- BioEnergyWoodX -->
+    <div class="col-12 col-md-4">
+      <div class="card">
+        <img src="/img/produtos/BioEnergyWoodX.jpg" alt="BioEnergyWoodX">
+        <div class="card-body">
+          <h5 class="card-title text-success fw-bold">BioEnergyWoodX</h5>
+          <p class="card-text">Combustível ecológico derivado de resíduos de madeira, com alta eficiência energética e baixo impacto ambiental.</p>
+          <div class="stats">
+            <strong>Capacidade:</strong> 500 L<br>
+            <strong>Taxa:</strong> 1,5 L/min<br>
+            <strong>Tempo:</strong> 5h33min<br>
+            <strong>Energia total:</strong> 1,67 kWh<br>
+            <strong>Custo por ciclo:</strong> R$ 10,00<br>
+            <strong>Eficiência:</strong> 0,167 kWh/R$<br>
+            <strong>Preço:</strong> R$ 2.500,00
+          </div>
+          <form action="/adicionar-carrinho" method="POST">
+            <input type="hidden" name="produtoId" value="{{produto._id}}">
+            <input type="hidden" name="nome" value="BioEnergyWoodX">
+            <input type="hidden" name="preco" value="2500">
+            <input type="number" name="quantidade" value="1" min="1" class="form-control my-2">
+            <button type="submit" class="btn btn-success w-100 mt-3">Adicionar ao carrinho</button>
+          </form>
         </div>
+      </div>
+    </div>
+
+    <!-- BioEnergyWooderPro -->
+    <div class="col-12 col-md-4">
+      <div class="card">
+        <img src="/img/produtos/BioEnergyWooderPro.jpg" alt="BioEnergyWooderPro">
+        <div class="card-body">
+          <h5 class="card-title text-success fw-bold">BioEnergyWooderPro</h5>
+          <p class="card-text">Cavacos de madeira selecionados para uso industrial e geração de energia limpa.</p>
+          <div class="stats">
+            <strong>Capacidade:</strong> 2.000 L<br>
+            <strong>Taxa:</strong> 7 L/min<br>
+            <strong>Tempo:</strong> 4h46min<br>
+            <strong>Energia total:</strong> 4,58 kWh<br>
+            <strong>Custo por ciclo:</strong> R$ 150,00<br>
+            <strong>Eficiência:</strong> 0,0305 kWh/R$<br>
+            <strong>Preço:</strong> R$ 6.000,00
+          </div>
+          <form action="/adicionar-carrinho" method="POST">
+            <input type="hidden" name="produtoId" value="{{produto._id}}">
+            <input type="hidden" name="nome" value="BioEnergyWooderPro">
+            <input type="hidden" name="preco" value="6000">
+            <input type="number" name="quantidade" value="1" min="1" class="form-control my-2">
+            <button type="submit" class="btn btn-success w-100 mt-3">Adicionar ao carrinho</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
   </div>
+
 </div>
 
 <!-- Bootstrap JS -->

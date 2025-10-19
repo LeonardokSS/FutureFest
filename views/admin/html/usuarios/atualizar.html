@@ -24,7 +24,7 @@
             <a class="nav-link" href="/admin">Administradores</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/crud_usuarios">Usuários</a>
+            <a class="nav-link active" aria-current="page" href="/admin/usuarios">Usuários</a>
           </li>
         </ul>
       </div>
@@ -43,11 +43,11 @@
             <div class="d-flex justify-content-center gap-3 mb-4">
               <a href="/" class="btn btn-primary">Página Inicial</a>
               <a href="/admin" class="btn btn-secondary">Página dos Administradores</a>
-              <a href="/crud_usuarios" class="btn btn-success">Lista de Usuários</a>
+              <a href="/admin/usuarios" class="btn btn-success">Lista de Usuários</a>
             </div>
 
             <!-- Formulário -->
-            <form action="/crud_usuarios_atualizar" method="post" id="formAtualizar">
+            <form action="/admin/usuarios_atualizar" method="post" id="formAtualizar">
               <input type="hidden" name="id" id="id">
               <div class="mb-3">
                 <label for="usuario" class="form-label">Usuário:</label>
@@ -79,7 +79,7 @@
       const id = params.get("id");
 
       if (id) {
-        fetch(`/usuario/${id}`)
+        fetch(`/admin/usuario/${id}`)
           .then(response => response.json())
           .then(usuario => {
             document.getElementById("id").value = usuario._id;

@@ -24,7 +24,7 @@
             <a class="nav-link" href="/admin">Administradores</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/crud_usuarios">Usuários</a>
+            <a class="nav-link active" aria-current="page" href="/admin/usuarios">Usuários</a>
           </li>
         </ul>
       </div>
@@ -43,7 +43,7 @@
             <div class="d-flex justify-content-center gap-3 mb-4">
               <a href="/" class="btn btn-primary">Página Inicial</a>
               <a href="/admin" class="btn btn-secondary">Página dos Administradores</a>
-              <a href="/crud_usuarios_cadastro" class="btn btn-success">Cadastrar Novo Usuário</a>
+              <a href="/admin/usuarios_cadastro" class="btn btn-success">Cadastrar Novo Usuário</a>
             </div>
 
             <h2 class="text-center">Lista de Usuários</h2>
@@ -70,7 +70,7 @@
   <!-- Script para carregar usuários -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      fetch('/crud_usuarios_usuarios')
+      fetch('/admin/listar_usuarios')
         .then(response => response.json())
         .then(usuarios => {
           const tabela = document.getElementById('usuarios-tabela')
@@ -82,8 +82,8 @@
               <td>${usuario.tipo}</td>
               <td>
                 <div class="btn-group btn-group-sm" role="group">
-                  <a href="/crud_usuarios_atualizar?id=${usuario._id}" class="btn btn-warning">Atualizar</a>
-                  <form action="crud_usuarios_deletar" method="post" onsubmit="return confirm('Tem certeza que deseja excluir o usuário?')">
+                  <a href="/admin/usuarios_atualizar?id=${usuario._id}" class="btn btn-warning">Atualizar</a>
+                  <form action="/admin/usuarios_deletar" method="post" onsubmit="return confirm('Tem certeza que deseja excluir o usuário?')">
                     <input type="hidden" name="id" value="${usuario._id}">
                     <button type="submit" class="btn btn-danger">Deletar</button>
                   </form>
