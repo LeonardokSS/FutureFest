@@ -18,30 +18,23 @@
   </head>
   <body class="bg-light">
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-    <div class="container">
-      <img class="logo" src="/img/logo.png" alt="imagem logo tipo">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link active" href="#home">HOME</a></li>
-          <li class="nav-item"><a class="nav-link" href="#sobre">SOBRE</a></li>
-          <li class="nav-item"><a class="nav-link" href="#assistentes">CHATBOT</a></li>
-          <li class="nav-item"><a class="nav-link" href="#servicos">SERVIÇOS</a></li>
-        </ul>
-        <!-- Botão de Login sempre visível -->
-        <div class="ms-3">
-          <a href="/login" class="btn btn-outline-light fw-semibold shadow-sm">Login</a>
-          <a href="/registro" class="btn btn-outline-light fw-semibold shadow-sm">Registre-se</a>
-        </div>
-      </div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+  <div class="container">
+    <img class="logo" src="/img/logo.png" alt="imagem logo tipo">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+      <ul class="navbar-nav align-items-center" id="navbarItems">
+        <!-- Aqui os itens vão ser inseridos dinamicamente -->
+      </ul>
     </div>
-  </nav>
+  </div>
+</nav>
 
-<!-- HERO (substituir todo o <header id="home"> existente) -->
+
+
+    <!-- HERO (substituir todo o <header id="home"> existente) -->
 <header id="home" class="py-5">
   <div class="container">
     <div class="row g-4 hero-row align-items-stretch">
@@ -64,149 +57,154 @@
       <!-- coluna imagem: aparece só em lg+ -->
       <div class="col-lg-5 d-none d-lg-flex hero-image-col">
         <!-- coloque o caminho correto da imagem -->
-        <img src="/ImageFundo.jpg" class="hero-right-image" alt="Imagem Transformando biomassa em energia">
+        <img src="/img/img_hero.jpg" class="hero-right-image" alt="Imagem Transformando biomassa em energia">
       </div>
     </div>
   </div>
 </header>
-
-
-   
-<section id="sobre" class="py-5 bg-white">
-  <div class="container">
-    <div class="row align-items-center">
-      <!-- Coluna do texto (esquerda) -->
-      <div class="col-lg-7">
-        <div class="text-start mb-4">
-          <h2 class="fw-bold text-success">Sobre Nós</h2>
-        </div>
-
-        <p class="lead text-muted">
-          A BioEnergy é uma empresa certificada B-Corp que oferece soluções inovadoras para geração de energia limpa
-          a partir de resíduos orgânicos e biomassa. Atuamos com tecnologias de ponta que transformam resíduos
-          orgânicos e agroindustriais em energia, calor e bioprodutos de alto valor agregado.
-        </p>
-
-        <p class="text-muted">
-          Nosso objetivo é reduzir custos operacionais, aumentar a competitividade dos nossos clientes e
-          minimizar impactos ambientais, promovendo práticas sustentáveis e eficientes que contribuem para
-          um futuro mais verde.
-        </p>
-
-        <div class="row text-start mt-4 g-3">
-          <div class="col-6 col-md-3">
-            <i class="bi bi-check-circle-fill text-success"></i>
-            <span class="ms-2">Soluções Sustentáveis</span>
+  <section id="sobre" class="py-5 bg-white">
+    <div class="container">
+      <div class="row align-items-center">
+        <!-- Coluna do texto (esquerda) -->
+        <div class="col-lg-7">
+          <div class="text-start mb-4">
+            <h2 class="fw-bold text-success">Sobre Nós</h2>
           </div>
-          <div class="col-6 col-md-3">
-            <i class="bi bi-check-circle-fill text-success"></i>
-            <span class="ms-2">Tecnologia de Ponta</span>
-          </div>
-          <div class="col-6 col-md-3">
-            <i class="bi bi-check-circle-fill text-success"></i>
-            <span class="ms-2">Redução de Custos</span>
-          </div>
-          <div class="col-6 col-md-3">
-            <i class="bi bi-check-circle-fill text-success"></i>
-            <span class="ms-2">Impacto Ambiental Positivo</span>
-          </div>
-        </div>
-      </div>
 
-      <!-- Coluna do gráfico (direita) -->
-      <div class="col-lg-5 mt-4 mt-lg-0">
-        <div class="card shadow-sm card-accent-top h-100">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title text-success mb-3">Custo operacional</h5>
+          <p class="lead text-muted">
+            A BioEnergy é uma empresa certificada B-Corp que oferece soluções inovadoras para geração de energia limpa
+            a partir de resíduos orgânicos e biomassa. Atuamos com tecnologias de ponta que transformam resíduos
+            orgânicos e agroindustriais em energia, calor e bioprodutos de alto valor agregado.
+          </p>
 
-            <!-- Canvas do gráfico -->
-            <div class="flex-fill d-flex align-items-center justify-content-center">
-              <canvas id="operationalCostChart" width="400" height="260" style="max-width:100%;"></canvas>
+          <p class="text-muted">
+            Nosso objetivo é reduzir custos operacionais, aumentar a competitividade dos nossos clientes e
+            minimizar impactos ambientais, promovendo práticas sustentáveis e eficientes que contribuem para
+            um futuro mais verde.
+          </p>
+
+          <div class="row text-start mt-4 g-3">
+            <div class="col-6 col-md-3">
+              <i class="bi bi-check-circle-fill text-success"></i>
+              <span class="ms-2">Soluções Sustentáveis</span>
             </div>
+            <div class="col-6 col-md-3">
+              <i class="bi bi-check-circle-fill text-success"></i>
+              <span class="ms-2">Tecnologia de Ponta</span>
+            </div>
+            <div class="col-6 col-md-3">
+              <i class="bi bi-check-circle-fill text-success"></i>
+              <span class="ms-2">Redução de Custos</span>
+            </div>
+            <div class="col-6 col-md-3">
+              <i class="bi bi-check-circle-fill text-success"></i>
+              <span class="ms-2">Impacto Ambiental Positivo</span>
+            </div>
+          </div>
+        </div>
 
-            <p class="small text-muted mt-3 mb-0">Valores em mil reais; gráfico ilustrativo.</p>
-            <div class="text-end mt-2"><small class="text-muted">Made with leo ken</small></div>
+        <!-- Coluna do gráfico (direita) -->
+        <div class="col-lg-5 mt-4 mt-lg-0">
+          <div class="card shadow-sm card-accent-top h-100">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title text-success mb-3">Custo operacional</h5>
+
+              <!-- Canvas do gráfico -->
+              <div class="flex-fill d-flex align-items-center justify-content-center">
+                <canvas id="operationalCostChart" width="400" height="260" style="max-width:100%;"></canvas>
+              </div>
+
+              <p class="small text-muted mt-3 mb-0">Valores em mil reais; gráfico ilustrativo.</p>
+              <div class="text-end mt-2"><small class="text-muted">Made with leo ken</small></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Assistente Rápido e Chatbot -->
-<section id="assistentes" class="py-5">
-  <div class="container">
-    <div class="row g-4">
-      
-      <!-- Assistente Rápido -->
-      <div class="col-lg-6">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <div class="d-flex align-items-center mb-3">
-              <i class="bi bi-lightning-charge-fill text-success me-2"></i>
-              <h5 class="fw-bold mb-0">Assistente Rápido ⚡</h5>
-            </div>
-            <p>Informe sua área de plantio para receber uma recomendação personalizada:</p>
-
-            <label for="nome" class="form-label">Seu nome:</label>
-            <input type="text" id="nome" name="nome" class="form-control mb-2" placeholder="Digite seu nome">
-
-            <label for="area" class="form-label">Área de plantio (m²):</label>
-            <input type="number" id="area" name="area" class="form-control mb-3" placeholder="Ex: 350">
-
-            <button id="btn-analisar" class="btn btn-success w-100" type="button" onclick="analisar()">Analisar</button>
-
-            <div id="resultado" class="mt-3"></div>
-          </div>
+  <!-- Assistente Rápido e Chatbot -->
+  <section id="assistentes" class="py-5">
+    <div class="container">
+      <div class="row g-4">
+        
+        <!-- Assistente Rápido -->
+        <div class="col-lg-6">
+  <div class="card shadow-sm h-100" style="min-height: 420px;">
+    <div class="card-body d-flex flex-column justify-content-between p-3">
+      <div>
+        <div class="d-flex align-items-center mb-2">
+          <i class="bi bi-lightning-charge-fill text-success me-2"></i>
+          <h5 class="fw-semibold text-success mb-1">Assistente Rápido ⚡</h5>
         </div>
+        <small class="text-muted">Informe os dados para recomendação:</small>
+
+        <input type="text" id="nome" class="form-control form-control-sm mt-2" placeholder="Seu nome">
+        <input type="number" id="area" class="form-control form-control-sm mt-2" placeholder="Área (m²)">
+
+        <select id="tipo" class="form-select form-select-sm mt-2">
+          <option value="">Tipo de biomassa</option>
+          <option value="organica">Cana, esterco, palha</option>
+          <option value="madeira">Madeira, cavacos, aparas</option>
+        </select>
       </div>
 
-      <!-- Chatbot -->
-      <div class="col-lg-6">
-        <div class="card h-100 chat-container shadow-sm">
-          <div class="chat-header d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center">
-              <i class="bi bi-robot text-success me-2"></i>
-              <h5 class="mb-0 fw-bold">Chatbot BioEnergy</h5>
-            </div>
-            <div class="chat-status">
-              <div class="status-dot bg-success"></div>
-              <span>Online</span>
-            </div>
-          </div>
-          
-          <div class="chat-body">
-            <div id="chatbox" class="chat-messages border rounded p-2 mb-3">
-              <div class="message message-bot">
-                <div class="message-content">
-                  Olá! Sou o assistente virtual da BioEnergy. Como posso ajudá-lo hoje?
-                </div>
-                <div class="message-time">Agora</div>
+      <div>
+        <button class="btn btn-success btn-sm w-100 mt-3" onclick="analisar()">Analisar</button>
+        <div id="resultado" class="mt-2"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+        <!-- Chatbot -->
+        <div class="col-lg-6" id="chatbot">
+          <div class="card h-100 chat-container shadow-sm">
+            <div class="chat-header d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <i class="bi bi-robot text-success me-2"></i>
+                <h5 class="mb-0 fw-bold">Chatbot BioEnergy</h5>
+              </div>
+              <div class="chat-status">
+                <div class="status-dot bg-success"></div>
+                <span>Online</span>
               </div>
             </div>
-          </div>
-          
-          <div class="chat-input-container d-flex">
-            <input id="user-input" type="text" class="chat-input form-control" placeholder="Digite sua mensagem...">
-            <button id="send-btn" class="btn btn-success ms-2" type="button">
-              <i class="bi bi-send-fill"></i>
-            </button>
+            
+            <div class="chat-body">
+              <div id="chatbox" class="chat-messages border rounded p-2 mb-3">
+                <div class="message message-bot">
+                  <div class="message-content">
+                    Olá! Sou o assistente virtual da BioEnergy. Como posso ajudá-lo hoje?
+                  </div>
+                  <div class="message-time">Agora</div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="chat-input-container d-flex">
+              <input id="user-input" type="text" class="chat-input form-control" placeholder="Digite sua mensagem...">
+              <button id="send-btn" class="btn btn-success ms-2" type="button">
+                <i class="bi bi-send-fill"></i>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
+      </div> 
     </div> 
-  </div> 
-</section>
+  </section>
 
-    <!-- Serviços -->
-    <section id="servicos" class="py-5">
-      <br>
-      <div class="container">
-        <div class="text-center mb-5">
-          <h2 class="fw-bold text-success display-5 mb-3">Nossos Serviços</h2>
-          <p class="lead text-muted">Soluções completas em energia sustentável para seu negócio</p>
-        </div>
+      <!-- Serviços -->
+      <section id="servicos" class="py-5">
+        <br>
+        <div class="container">
+          <div class="text-center mb-5">
+            <h2 class="fw-bold text-success display-5 mb-3">Nossos Serviços</h2>
+            <p class="lead text-muted">Soluções completas em energia sustentável para seu negócio</p>
+          </div>
 
         <div class="row g-5">
           <!-- Serviço 1 - Consultoria em Biomassa -->
@@ -228,7 +226,7 @@
                 </div>
               </div>
               <div class="card-footer border-0 bg-transparent text-center pb-5">
-                <a href="/login" class="btn btn-outline-light btn-lg">Solicitar Orçamento</a>
+                <a href="/login" class="btn btn-outline-light btn-lg rounded-0">Solicitar Orçamento</a>
               </div>
             </div>
           </div>
@@ -252,7 +250,7 @@
                 </div>
               </div>
               <div class="card-footer border-0 bg-transparent text-center pb-5">
-                <a href="/login" class="btn btn-outline-light btn-lg">Solicitar Orçamento</a>
+                <a href="/login" class="btn btn-outline-light btn-lg rounded-0">Solicitar Orçamento</a>
               </div>
             </div>
           </div>
@@ -276,7 +274,7 @@
                 </div>
               </div>
               <div class="card-footer border-0 bg-transparent text-center pb-5">
-                <a href="/login" class="btn btn-outline-light btn-lg">Solicitar Orçamento</a>
+                <a href="/login" class="btn btn-outline-light btn-lg rounded-0">Solicitar Orçamento</a>
               </div>
             </div>
           </div>
@@ -300,7 +298,7 @@
                 </div>
               </div>
               <div class="card-footer border-0 bg-transparent text-center pb-5">
-                <a href="/login" class="btn btn-outline-light btn-lg">Solicitar Orçamento</a>
+                <a href="/login" class="btn btn-outline-light btn-lg rounded-0">Solicitar Orçamento</a>
               </div>
             </div>
           </div>
@@ -324,7 +322,7 @@
                 </div>
               </div>
               <div class="card-footer border-0 bg-transparent text-center pb-5">
-                <a href="/login" class="btn btn-outline-light btn-lg">Solicitar Orçamento</a>
+                <a href="/login" class="btn btn-outline-light btn-lg rounded-0">Solicitar Orçamento</a>
               </div>
             </div>
           </div>
@@ -348,7 +346,7 @@
                 </div>
               </div>
               <div class="card-footer border-0 bg-transparent text-center pb-5">
-                <a href="/login" class="btn btn-outline-light btn-lg">Solicitar Orçamento</a>
+                <a href="/login" class="btn btn-outline-light btn-lg rounded-0">Solicitar Orçamento</a>
               </div>
             </div>
           </div>
@@ -415,7 +413,7 @@
         <form class="card shadow-sm p-4 border-0" action="/formulario_feedback" method="post">
           <div class="mb-3">
             <label for="nome" class="form-label">Seu Nome</label>
-            <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite seu nome">
+            <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite seu nome" required>
           </div>
           <div class="mb-3">
             <label for="servico" class="form-label">Serviço Utilizado</label>
@@ -431,7 +429,7 @@
           </div>
           <div class="mb-3">
             <label for="mensagem" class="form-label">Seu Feedback</label>
-            <textarea class="form-control" id="mensagem" rows="4" name="mensagem"placeholder="Escreva sua experiência..."></textarea>
+            <textarea class="form-control" id="mensagem" rows="4" name="mensagem"placeholder="Escreva sua experiência..." required></textarea>
           </div>
           <button type="submit" class="btn btn-success btn-lg">Enviar Feedback</button>
         </form>
@@ -439,23 +437,28 @@
     </div>
   </div>
 </section>
-    <!-- Footer -->
-    <footer class="bg-dark text-light py-4">
-      <div class="container">
-        <div class="row align-items-center">
-          <div class="col-md-6">
-            <h6 class="text-success fw-bold">Contato</h6>
-            <p class="mb-1"><i class="bi bi-envelope"></i> bioenergy@gmail.com</p>
-            <p class="mb-1"><i class="bi bi-telephone"></i> +55 11 00000-0000</p>
-            <p class="mb-0"><i class="bi bi-whatsapp"></i> +55 11 97774-3204</p>
-          </div>
-
-          <div class="col-md-6 text-md-end mt-3 mt-md-0">
-            <small>Copyright © 2025 BioEnergy. Todos os direitos reservados.</small>
-          </div>
-        </div>
+<br>
+<footer class="bg-dark text-light py-4">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <h6 class="text-success fw-bold">Contato</h6>
+        <p class="mb-1"><i class="bi bi-envelope"></i> bioenergy@gmail.com</p>
+        <p class="mb-1"><i class="bi bi-telephone"></i> +55 11 00000-0000</p>
+        <p class="mb-0"><i class="bi bi-whatsapp"></i> +55 11 97774-3204</p>
       </div>
-    </footer>
+      <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <small>Copyright © 2025 BioEnergy. Todos os direitos reservados.</small>
+      </div>
+    </div>
+    <!-- Linha separada para a logo, centralizada -->
+    <div class="row mt-3">
+      <div class="col-12 d-flex justify-content-center">
+        <img src="/img/logo_preta.png" alt="Logo BioEnergy preta" style="max-width: 180px;">
+      </div>
+    </div>
+  </div>
+</footer>
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
@@ -465,62 +468,43 @@
 
     <!-- Chart Initialization (suavizado e rótulo indicando ilustrativo) -->
     <script>
- document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-      e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
-      if (target) {
-        window.scrollTo({
-          top: target.offsetTop - 70, // ajusta conforme altura da navbar
-          behavior: 'smooth'
-        });
-      }
-    });
-  });
-
-  const navbarHeight = document.querySelector('.navbar').offsetHeight;
-window.scrollTo({
-  top: target.offsetTop - navbarHeight,
-  behavior: 'smooth'
-});
-
       const ctx = document.getElementById('operationalCostChart').getContext('2d');
-  new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio'],
-      datasets: [{
-        label: 'Custo operacional (R$ mil)',
-        data: [56, 54, 51, 48, 46],
-        borderColor: '#18b27a',
-        backgroundColor: 'rgba(24,178,122,0.12)',
-        tension: 0.32,
-        pointRadius: 4,
-        pointBackgroundColor: '#2f8f4f',
-        fill: true
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          suggestedMin: 44,
-          suggestedMax: 58,
-          grid: { color: 'rgba(0,0,0,0.04)' },
-          ticks: { color: '#556066' }
+      const operationalCostChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['janeiro', 'fevereiro', 'março', 'abril', 'maio'],
+          datasets: [{
+            label: 'Custo operacional (mil) — valores ilustrativos',
+            data: [55, 52.5, 49.3, 49.2, 45.44, 39.7],
+            borderColor: 'rgba(25,135,84,0.45)',
+            backgroundColor: 'rgba(25,135,84,0.08)',
+            borderWidth: 2,
+            tension: 0.15,
+            pointBackgroundColor: 'rgba(255,255,255,0.9)',
+            pointBorderColor: 'rgba(25,135,84,0.45)',
+            pointRadius: 3,
+            fill: true
+          }]
         },
-        x: {
-          grid: { display: false },
-          ticks: { color: '#556066' }
+        options: {
+          responsive: true,
+          scales: {
+            y: {
+              beginAtZero: false,
+              ticks: { color: '#556' }
+            },
+            x: { ticks: { color: '#556' } }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(0,0,0,0.75)',
+              titleColor: '#fff',
+              bodyColor: '#fff'
+            }
+          }
         }
-      },
-      plugins: {
-        legend: { display: false },
-        tooltip: { mode: 'index', intersect: false }
-      }
-    }
-  });
+      });
 
       // JavaScript para o Chat
       const chatbox = document.getElementById("chatbox");
@@ -555,7 +539,7 @@ window.scrollTo({
         input.value = "";
 
         try {
-          const resp = await fetch("/api/chat", {
+          const resp = await fetch("/chatbot", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ text })
@@ -585,28 +569,91 @@ window.scrollTo({
   }
 
   async function analisar() {
-  const nome = document.getElementById('nome').value;
-  const area = document.getElementById('area').value;
-  const resultado = document.getElementById('resultado');
+    const nome = document.getElementById('nome').value;
+    const area = document.getElementById('area').value;
+    const tipo = document.getElementById('tipo').value;
+    const resultado = document.getElementById('resultado');
 
-  try {
-    const resposta = await fetch('/assistente', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nome, area })
+    try {
+      const resposta = await fetch('/assistente', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, area, tipo })
+      });
+
+      const dados = await resposta.json();
+
+      if (resposta.ok) {
+        resultado.innerHTML = `<div class="alert alert-success">${dados.mensagem}</div>`;
+      } else {
+        resultado.innerHTML = `<div class="alert alert-danger">${dados.erro}</div>`;
+      }
+    } catch (err) {
+      resultado.innerHTML = `<div class="alert alert-danger">Erro ao processar: ${err.message}</div>`;
+    }
+  }
+// Função para atualizar a navbar com base no login
+  function atualizarNavbar() {
+    const navbarItems = document.getElementById('navbarItems');
+    const usuarioLogado = JSON.parse(sessionStorage.getItem('usuarioLogado'));  // Lê o estado do login no sessionStorage
+
+    navbarItems.innerHTML = '';  // Limpa os itens atuais da navbar
+
+    if (usuarioLogado) {
+      // Usuário logado
+      navbarItems.innerHTML = `
+        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user/#chatbot">CHATBOT</a></li>
+        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
+        <!-- Ícone do carrinho -->
+        <li class="nav-item">
+          <a class="nav-link" href="/carrinho">
+            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+          </a>
+        </li>
+
+        <!-- Menu de usuário -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle fs-4 me-1"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
+            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
+            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
+            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="/">Sair</a></li>
+          </ul>
+        </li>
+      </ul>
+      `;
+    } else {
+      // Usuário não logado
+      navbarItems.innerHTML = `
+        <li class="nav-item"><a class="nav-link active fade-in-up" href="/">HOME</a></li>
+        <li class="nav-item"><a class="nav-link fade-in-up" href="/#sobre">SOBRE</a></li>
+        <li class="nav-item"><a class="nav-link fade-in-up" href="/#chatbot">CHATBOT</a></li>
+        <li class="nav-item"><a class="nav-link fade-in-up" href="/#servicos">SERVIÇOS</a></li>
+        <li class="nav-item"><a href="/login" class="btn btn-outline-light fw-semibold shadow-sm">Login</a></li>
+        <li class="nav-item"><a href="/registro" class="btn btn-outline-light fw-semibold shadow-sm">Registre-se</a></li>
+      `;
+    }
+  }
+  fetch('/dados-usuario')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('nome-usuario').textContent = data.usuario;
     });
 
-    const dados = await resposta.json();
+  // Chama a função para atualizar a navbar quando a página carregar
+  window.onload = atualizarNavbar;
 
-    if (resposta.ok) {
-      resultado.innerHTML = `<div class="alert alert-success">${dados.mensagem}</div>`;
-    } else {
-      resultado.innerHTML = `<div class="alert alert-danger">${dados.erro}</div>`;
-    }
-  } catch (err) {
-    resultado.innerHTML = `<div class="alert alert-danger">Erro ao processar: ${err.message}</div>`;
-  }
-}
     </script>
 
   </body>
