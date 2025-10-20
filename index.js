@@ -527,6 +527,7 @@ app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
                     </style>
                 </head>
                 <body class="bg-light">
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
                 <!-- Navbar -->
                 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
                   <div class="container-fluid px-4">
@@ -560,7 +561,7 @@ app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
                             <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
                             <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="/sair">Sair</a></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
                           </ul>
                         </li>
                       </ul>
@@ -576,6 +577,24 @@ app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
                         </div>
                     </div>
                 </section>
+              
+<script>
+    fetch('/dados-usuario')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('nome-usuario').textContent = data.usuario;
+        });
+    function realizarLogout(event) {
+   
+        event.preventDefault(); 
+    
+        sessionStorage.removeItem('usuarioLogado');
+        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
+    
+        window.location.href = '/sair'; 
+    } 
+</script>
+
                 </body>
                 </html>
             `);
@@ -647,7 +666,8 @@ app.get('/carrinho', protegerRota, async (req, res) => {
         </head>
         <body class="bg-light">
         <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+       <nav class="navbar navbar-expand-lg navbar-dark bg-success">
           <div class="container-fluid px-4">
             <a class="navbar-brand d-flex align-items-center" href="/">
               <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
@@ -682,13 +702,31 @@ app.get('/carrinho', protegerRota, async (req, res) => {
                     <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
                     <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger" href="/sair">Sair</a></li>
+                    <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
                   </ul>
                 </li>
               </ul>
             </div>
           </div>
         </nav>
+       
+<script>
+    fetch('/dados-usuario')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('nome-usuario').textContent = data.usuario;
+        }); 
+    function realizarLogout(event) {
+   
+        event.preventDefault(); 
+    
+        sessionStorage.removeItem('usuarioLogado');
+        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
+    
+        window.location.href = '/sair'; 
+    }
+</script>
+
 
         <div class="container py-5">
             <h1 class="text-success mb-4">Meu Carrinho</h1>`;
@@ -757,6 +795,7 @@ app.get('/resumo-compra', protegerRota, async (req, res) => {
         </style>
         <body class="bg-light">
          <!-- Navbar -->
+         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         <nav class="navbar navbar-expand-lg navbar-dark bg-success">
             <div class="container-fluid px-4">
                 <a class="navbar-brand d-flex align-items-center" href="/">
@@ -791,13 +830,31 @@ app.get('/resumo-compra', protegerRota, async (req, res) => {
                                 <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
                                 <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="/sair">Sair</a></li>
+                                <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
                             </ul>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
+   
+<script>
+    fetch('/dados-usuario')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('nome-usuario').textContent = data.usuario;
+        }); 
+    function realizarLogout(event) {
+   
+        event.preventDefault(); 
+    
+        sessionStorage.removeItem('usuarioLogado');
+        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
+    
+        window.location.href = '/sair'; 
+    }
+</script>
+
         
         <div class="container py-5">
             <h1 class="text-success mb-4">Resumo da Compra</h1>
@@ -928,7 +985,7 @@ app.post('/finalizar-compra', protegerRota, async (req, res) => {
                                 <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
                                 <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="/sair">Sair</a></li>
+                                <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
                             </ul>
                         </li>
                     </ul>
@@ -941,6 +998,26 @@ app.post('/finalizar-compra', protegerRota, async (req, res) => {
             <p>Obrigado por comprar na BioEnergy. Seus produtos serão processados em breve.</p>
             <a href="/produtos" class="btn btn-success btn-custom mt-3">Voltar aos Produtos</a>
         </div>
+    
+<script>
+    fetch('/dados-usuario')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('nome-usuario').textContent = data.usuario;
+        }); 
+
+    function realizarLogout(event) {
+   
+    event.preventDefault(); 
+    
+    sessionStorage.removeItem('usuarioLogado');
+    sessionStorage.removeItem('logado'); // Se 'logado' também for usado
+    
+    window.location.href = '/sair'; 
+    }
+</script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         </body>
         </html>`;
         res.send(html);

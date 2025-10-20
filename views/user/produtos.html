@@ -93,7 +93,7 @@
             <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
             <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="/sair">Sair</a></li>
+            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
           </ul>
         </li>
       </ul>
@@ -261,6 +261,15 @@
     .then(data => {
       document.getElementById('nome-usuario').textContent = data.usuario;
     });
+    function realizarLogout(event) {
+   
+        event.preventDefault(); 
+    
+        sessionStorage.removeItem('usuarioLogado');
+        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
+    
+        window.location.href = '/sair'; 
+}
 </script>
 
 <!-- Bootstrap JS -->
