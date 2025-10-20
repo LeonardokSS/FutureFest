@@ -29,7 +29,7 @@ app.use(session({
 app.use(methodOverride('_method'))
 
 //Configurações do mongodb usadas no código.
-const urlMongo = "mongodb+srv://admin:admin@cluster0.huwt4el.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+const urlMongo = "mongodb://localhost:27017"
 const nomeBanco = 'sistemaBioenergy'
 const collectionName = 'usuarios'
 const collectionServico = 'servicos'
@@ -703,11 +703,12 @@ app.post('/finalizar-compra', protegerRota, async (req, res) => {
         // Atualiza estoque (não-negativo)
         for (const item of carrinhoUsuario.produtos) {
             await produtosCollection.updateOne(
-                { nome: item.nome },
-                [
-                    { $set: { estoque: { $max: [{ $subtract: ["$estoque", Number(item.quantidade)] }, 0] } } }
-                ]
-            );
+            { nome: item.nome },
+            [{$set: { estoque: { $max: [{ $subtract: [{ $toInt: "$estoque" }, Number(item.quantidade)] },0]}
+          }
+    }
+  ]
+);
         }
 
         // Limpa carrinho
