@@ -9,13 +9,11 @@ const path = require("path");
 const fs = require("fs");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-
 //Constantes de configuração  que serão usadas no código.
 const app = express()
 const porta = 3000
 const genAI = new GoogleGenerativeAI("AIzaSyCZeRFVrzlebbGWkFbhkJkUjYOlj7NYRLw");
 const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-
 
 //Registrando middlewares para serem executados.
 app.use(express.static(__dirname + '/public'))
@@ -80,24 +78,36 @@ app.get('/login', (req,res)=>{
 
 app.post("/login", async (req, res) => {
   const cliente = new MongoClient(urlMongo);
+  
   try {
     await cliente.connect();
     const banco = cliente.db(nomeBanco);
     const colecaoUsuarios = banco.collection(collectionName);
 
+    // Buscar o usuário no banco de dados
     const usuario = await colecaoUsuarios.findOne({ usuario: req.body.usuario });
 
+    // Verificar se a senha está correta
     if (usuario && await bcrypt.compare(req.body.senha, usuario.senha)) {
+      // Se o login for bem-sucedido, criamos a sessão
       req.session.usuario = req.body.usuario;
       req.session.tipo = usuario.tipo;
 
+      // Retorna um script para salvar as informações no sessionStorage para o frontend
       res.send(`
         <script>
-          localStorage.setItem("usuario", "${req.body.usuario}");
+          // Armazenar os dados de login no sessionStorage
+          sessionStorage.setItem("usuarioLogado", JSON.stringify({
+            nome: "${req.body.usuario}",
+            tipo: "${usuario.tipo}"
+          }));
+
+          // Redireciona o usuário com base no tipo (admin ou usuário comum)
           window.location.href = "${usuario.tipo === 'admin' ? '/admin' : '/user'}";
         </script>
       `);
     } else {
+      // Caso o login falhe
       res.redirect("/erro");
     }
   } catch (erro) {
@@ -482,10 +492,10 @@ app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
 
         // Busca o produto pelo ObjectId
         const produto = await produtosCollection.findOne({ nome: req.body.nome });
-        if (!produto) return res.sendFile(__dirname + '/views/user/html/produto/produtoNaoEstoque.html');
+        if (!produto) return res.status(404).send('Produto não encontrado.');
 
         const estoque = Number(produto.estoque) || 0;
-        const disponivel = produto.disponivel
+        const disponivel = produto.disponivel; // Garantir que é um valor booleano
         if (disponivel === 'Não') return res.sendFile(__dirname + '/views/user/html/produto/produtoIndisponível.html');
 
         // Busca carrinho do usuário
@@ -494,45 +504,81 @@ app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
 
         if (carrinhoUsuario) {
             const itemNoCarrinho = carrinhoUsuario.produtos.find(p => p.produtoId === produtoId);
-            if (itemNoCarrinho) qtdNoCarrinho = Number(itemNoCarrinho.quantidade);
+            if (itemNoCarrinho) qtdNoCarrinho = itemNoCarrinho.quantidade;
         }
 
+        // Verifica se a quantidade desejada ultrapassa o estoque
         if (qtdDesejada + qtdNoCarrinho > estoque) {
             return res.send(`
-        <!DOCTYPE html>
-        <html lang="pt-BR">
-        <head>
-            <meta charset="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1" />
-            <title>Erro - BioEnergy</title>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-            <style>
-                .logo { width: 200px; border-radius: 15px; }
-                .error-card { max-width: 500px; margin: auto; }
-            </style>
-        </head>
-        <body class="bg-light">
-            <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-                <div class="container">
-                    <img class="logo" src="img/logo.png" alt="Logo BioEnergy">
-                </div>
-            </nav>
-
-            <section class="py-5">
-                <div class="container">
-                    <div class="error-card bg-white p-4 rounded shadow-sm text-center">
-                        <h2 class="text-danger mb-3"><i class="bi bi-exclamation-triangle-fill me-2"></i>Erro ao Adicionar Produto</h2>
-                        <p class="mb-4">${`Não é possível adicionar ${qtdDesejada} unidades. Apenas ${estoque - qtdNoCarrinho} disponíveis.`}</p>
-                        <a href="/produtos" class="btn btn-outline-danger w-100">Voltar para Produtos</a>
+                <!DOCTYPE html>
+                <html lang="pt-BR">
+                <head>
+                    <meta charset="UTF-8" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1" />
+                    <title>Erro - BioEnergy</title>
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+                    <style>
+                        .logo { width: 200px; border-radius: 15px; }
+                        .error-card { max-width: 500px; margin: auto; }
+                        .form-card { max-width: 500px; margin: 80px auto;background-color: #fff; padding: 30px; border-radius: 10px;box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+                        .logo {width: 180px;border-radius: 12px;}
+                        .section-title {color: #198754;font-weight: 700;margin-bottom: 30px;text-align: center;}
+                    </style>
+                </head>
+                <body class="bg-light">
+                <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+                  <div class="container-fluid px-4">
+                    <a class="navbar-brand d-flex align-items-center" href="/">
+                      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+                      <ul class="navbar-nav align-items-center">
+                        <li class="nav-item"><a class="nav-link" href="/home">HOME</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="/carrinho">
+                            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+                          </a>
+                        </li>
+                        <!-- Menu de usuário -->
+                        <li class="nav-item dropdown">
+                          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-4 me-1"></i>
+                          </a>
+                          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
+                            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
+                            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
+                            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="/sair">Sair</a></li>
+                          </ul>
+                        </li>
+                      </ul>
                     </div>
-                </div>
-            </section>
-
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        </body>
-        </html>
-        `);
+                  </div>
+                </nav>
+                <section class="py-5">
+                    <div class="container">
+                        <div class="error-card bg-white p-4 rounded shadow-sm text-center">
+                            <h2 class="text-danger mb-3"><i class="bi bi-exclamation-triangle-fill me-2"></i>Erro ao Adicionar Produto</h2>
+                            <p class="mb-4">${`Não é possível adicionar ${qtdDesejada} unidades. Apenas ${estoque - qtdNoCarrinho} disponíveis.`}</p>
+                            <a href="/produtos" class="btn btn-outline-danger w-100">Voltar para Produtos</a>
+                        </div>
+                    </div>
+                </section>
+                </body>
+                </html>
+            `);
         }
 
         // Cria objeto do produto para o carrinho
@@ -568,11 +614,6 @@ app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
     }
 });
 
-
-
-
-
-
 app.get('/carrinho', protegerRota, async (req, res) => {
     const usuario = req.session.usuario;
     const client = new MongoClient(urlMongo);
@@ -586,15 +627,69 @@ app.get('/carrinho', protegerRota, async (req, res) => {
         const produtos = carrinhoUsuario ? carrinhoUsuario.produtos : [];
         const total = produtos.reduce((acc, p) => acc + p.preco * p.quantidade, 0);
 
-        let html = `
-        <!DOCTYPE html>
+        let html = `<!DOCTYPE html>
         <html lang="pt-BR">
         <head>
             <meta charset="UTF-8">
             <title>Meu Carrinho</title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+            <style>
+                .form-card { max-width: 500px; margin: 80px auto;background-color: #fff; padding: 30px; border-radius: 10px;box-shadow: 0 0 10px rgba(0,0,0,0.1);}
+                .logo {width: 180px;border-radius: 12px;}
+                .section-title {color: #198754;font-weight: 700;margin-bottom: 30px;text-align: center;}
+                .card {border: none; border-radius: 15px; box-shadow: 0 0 10px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; height: 100%;}
+                .card-body { flex: 1;}
+                .card:hover { transform: scale(1.04);box-shadow: 0 0 20px rgba(25, 135, 84, 0.3);}
+                .card-img-top { height: 220px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px; width: 100%;}
+                .page-title {text-align: center;color: #198754;font-weight: 800;margin: 50px 0 20px;}
+            </style>
         </head>
         <body class="bg-light">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+          <div class="container-fluid px-4">
+            <a class="navbar-brand d-flex align-items-center" href="/">
+              <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+              <ul class="navbar-nav align-items-center">
+                <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
+                <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
+                <li class="nav-item"><a class="nav-link" href="/user/#chatbot">CHATBOT</a></li>
+                <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
+                <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
+                <li class="nav-item"><a class="nav-link" href="/servicos">MANUTENÇÕES</a></li>
+                <li class="nav-item">
+                  <a class="nav-link" href="/carrinho">
+                    <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+                  </a>
+                </li>
+
+                <!-- Menu de usuário -->
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-person-circle fs-4 me-1"></i>
+                  </a>
+                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                    <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
+                    <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
+                    <li><a class="dropdown-item" href="#">Senha: ********</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
+                    <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger" href="/sair">Sair</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+
         <div class="container py-5">
             <h1 class="text-success mb-4">Meu Carrinho</h1>`;
 
@@ -648,29 +743,97 @@ app.get('/resumo-compra', protegerRota, async (req, res) => {
             <meta charset="UTF-8">
             <title>Resumo da Compra</title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
         </head>
+        <style>
+            .form-card { max-width: 700px; margin: 80px auto; background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
+            .logo { width: 180px; border-radius: 12px; }
+            .section-title { color: #198754; font-weight: 700; margin-bottom: 30px; text-align: center; }
+            .page-title { text-align: center; color: #198754; font-weight: 800; margin: 50px 0 20px; }
+            .card { border: none; border-radius: 15px; box-shadow: 0 0 10px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; height: 100%; }
+            .card-body { flex: 1; }
+            .card:hover { transform: scale(1.04); box-shadow: 0 0 20px rgba(25, 135, 84, 0.3); }
+            .card-img-top { height: 220px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px; width: 100%; }
+        </style>
         <body class="bg-light">
+         <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+            <div class="container-fluid px-4">
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+                    <ul class="navbar-nav align-items-center">
+                        <li class="nav-item"><a class="nav-link" href="/home">HOME</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/#chatbot">CHATBOT</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/carrinho">
+                                <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+                            </a>
+                        </li>
+                        <!-- Menu de usuário -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle fs-4 me-1"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
+                                <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
+                                <li><a class="dropdown-item" href="#">Senha: ********</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
+                                <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="/sair">Sair</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
         <div class="container py-5">
             <h1 class="text-success mb-4">Resumo da Compra</h1>
-            <ul class="list-group mb-3">`;
+            <ul class="list-group mb-4">
+        `;
 
         produtos.forEach(p => {
             const subtotal = p.preco * p.quantidade;
-            html += `<li class="list-group-item d-flex justify-content-between align-items-center">
-                        ${p.nome} - R$ ${p.preco.toFixed(2)} x ${p.quantidade}
-                        <span>Subtotal: R$ ${subtotal.toFixed(2)}</span>
-                     </li>`;
+            html += `
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${p.nome} 
+                    <span>R$ ${p.preco.toFixed(2)} x ${p.quantidade}</span>
+                    <span>Subtotal: R$ ${subtotal.toFixed(2)}</span>
+                </li>
+            `;
         });
 
-        html += `</ul>
-                 <h3>Total: R$ ${total.toFixed(2)}</h3>
-                 <form action="/finalizar-compra" method="POST">
-                     <button type="submit" class="btn btn-success mt-3 w-100">Finalizar Compra</button>
-                 </form>
-                 <form action="/carrinho" method="GET">
-                     <button type="submit" class="btn btn-secondary mt-2 w-100">Voltar ao Carrinho</button>
-                 </form>
-                 </div></body></html>`;
+        html += `
+            </ul>
+            <div class="d-flex justify-content-between mb-4">
+                <h3>Total: R$ ${total.toFixed(2)}</h3>
+            </div>
+
+            <!-- Botões de navegação -->
+            <div class="d-flex justify-content-between">
+                <form action="/finalizar-compra" method="POST" class="w-48">
+                    <button type="submit" class="btn btn-success w-100">Finalizar Compra</button>
+                </form>
+                <form action="/carrinho" method="GET" class="w-48">
+                    <button type="submit" class="btn btn-secondary w-100">Voltar ao Carrinho</button>
+                </form>
+            </div>
+        </div>
+        </body>
+        </html>
+        `;
 
         res.send(html);
     } catch (err) {
@@ -680,6 +843,7 @@ app.get('/resumo-compra', protegerRota, async (req, res) => {
         client.close();
     }
 });
+
 
 
 app.post('/finalizar-compra', protegerRota, async (req, res) => {
@@ -703,12 +867,9 @@ app.post('/finalizar-compra', protegerRota, async (req, res) => {
         // Atualiza estoque (não-negativo)
         for (const item of carrinhoUsuario.produtos) {
             await produtosCollection.updateOne(
-            { nome: item.nome },
-            [{$set: { estoque: { $max: [{ $subtract: [{ $toInt: "$estoque" }, Number(item.quantidade)] },0]}
-          }
-    }
-  ]
-);
+                { nome: item.nome },
+                [{ $set: { estoque: { $max: [{ $subtract: [{ $toInt: "$estoque" }, Number(item.quantidade)] }, 0] } } } ]
+            );
         }
 
         // Limpa carrinho
@@ -722,12 +883,63 @@ app.post('/finalizar-compra', protegerRota, async (req, res) => {
             <meta charset="UTF-8">
             <title>Compra Concluída</title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
         </head>
+        <style>
+            .form-card { max-width: 600px; margin: 80px auto; background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+            .logo { width: 180px; border-radius: 12px; }
+            .section-title { color: #198754; font-weight: 700; margin-bottom: 30px; text-align: center; }
+            .page-title { text-align: center; color: #198754; font-weight: 800; margin: 50px 0 20px; }
+            .btn-custom { width: 100%; }
+        </style>
         <body class="bg-light">
+         <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+            <div class="container-fluid px-4">
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+                    <ul class="navbar-nav align-items-center">
+                        <li class="nav-item"><a class="nav-link" href="/home">HOME</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user/#chatbot">CHATBOT</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/carrinho">
+                                <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+                            </a>
+                        </li>
+                        <!-- Menu de usuário -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle fs-4 me-1"></i>
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
+                                <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
+                                <li><a class="dropdown-item" href="#">Senha: ********</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
+                                <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item text-danger" href="/sair">Sair</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
         <div class="container py-5 text-center">
             <h1 class="text-success mb-4">Compra Finalizada com Sucesso!</h1>
             <p>Obrigado por comprar na BioEnergy. Seus produtos serão processados em breve.</p>
-            <a href="/produtos" class="btn btn-success mt-3">Voltar aos Produtos</a>
+            <a href="/produtos" class="btn btn-success btn-custom mt-3">Voltar aos Produtos</a>
         </div>
         </body>
         </html>`;
@@ -739,9 +951,6 @@ app.post('/finalizar-compra', protegerRota, async (req, res) => {
         client.close();
     }
 });
-
-
-
 
 //Rota para o usuário fazer feedbacks 
 

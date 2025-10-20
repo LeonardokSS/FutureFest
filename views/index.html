@@ -18,28 +18,19 @@
   </head>
   <body class="bg-light">
 
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-    <div class="container">
-      <img class="logo" src="/img/logo.png" alt="imagem logo tipo">
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navMenu">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link active fade-in-up" href="#home">HOME</a></li>
-          <li class="nav-item"><a class="nav-link fade-in-up" href="#sobre">SOBRE</a></li>
-          <li class="nav-item"><a class="nav-link fade-in-up" href="#chatbot">CHATBOT</a></li>
-          <li class="nav-item"><a class="nav-link fade-in-up" href="#servicos">SERVIÇOS</a></li>
-        </ul>
-        <!-- Botão de Login sempre visível -->
-        <div class="ms-3">
-          <a href="/login" class="btn btn-outline-light fw-semibold shadow-sm">Login</a>
-          <a href="/registro" class="btn btn-outline-light fw-semibold shadow-sm">Registre-se</a>
-        </div>
-      </div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+  <div class="container">
+    <img class="logo" src="/img/logo.png" alt="imagem logo tipo">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+      <ul class="navbar-nav align-items-center" id="navbarItems">
+        <!-- Aqui os itens vão ser inseridos dinamicamente -->
+      </ul>
     </div>
-  </nav>
+  </div>
+</nav>
 
 
 
@@ -601,6 +592,68 @@
       resultado.innerHTML = `<div class="alert alert-danger">Erro ao processar: ${err.message}</div>`;
     }
   }
+// Função para atualizar a navbar com base no login
+  function atualizarNavbar() {
+    const navbarItems = document.getElementById('navbarItems');
+    const usuarioLogado = JSON.parse(sessionStorage.getItem('usuarioLogado'));  // Lê o estado do login no sessionStorage
+
+    navbarItems.innerHTML = '';  // Limpa os itens atuais da navbar
+
+    if (usuarioLogado) {
+      // Usuário logado
+      navbarItems.innerHTML = `
+        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user/#chatbot">CHATBOT</a></li>
+        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
+        <!-- Ícone do carrinho -->
+        <li class="nav-item">
+          <a class="nav-link" href="/carrinho">
+            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+          </a>
+        </li>
+
+        <!-- Menu de usuário -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle fs-4 me-1"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
+            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
+            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
+            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="/">Sair</a></li>
+          </ul>
+        </li>
+      </ul>
+      `;
+    } else {
+      // Usuário não logado
+      navbarItems.innerHTML = `
+        <li class="nav-item"><a class="nav-link active fade-in-up" href="/">HOME</a></li>
+        <li class="nav-item"><a class="nav-link fade-in-up" href="/#sobre">SOBRE</a></li>
+        <li class="nav-item"><a class="nav-link fade-in-up" href="/#chatbot">CHATBOT</a></li>
+        <li class="nav-item"><a class="nav-link fade-in-up" href="/#servicos">SERVIÇOS</a></li>
+        <li class="nav-item"><a class="nav-link fade-in-up" href="/login">LOGIN</a></li>
+        <li class="nav-item"><a class="nav-link fade-in-up" href="/registro">REGISTRE-SE</a></li>
+      `;
+    }
+  }
+  fetch('/dados-usuario')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('nome-usuario').textContent = data.usuario;
+    });
+
+  // Chama a função para atualizar a navbar quando a página carregar
+  window.onload = atualizarNavbar;
+
     </script>
 
   </body>
