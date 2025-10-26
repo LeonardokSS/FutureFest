@@ -62,7 +62,7 @@
 </head>
 <body>
 
-<!-- Navbar -->
+ <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container-fluid px-4">
     <a class="navbar-brand d-flex align-items-center" href="/">
@@ -74,9 +74,20 @@
     <div class="collapse navbar-collapse justify-content-end" id="navMenu">
       <ul class="navbar-nav align-items-center">
         <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
-        <li class="nav-item"><a class="nav-link" href="/#sobre">SOBRE</a></li>
-        <li class="nav-item"><a class="nav-link" href="/#chatbot">CHATBOT</a></li>
-        <li class="nav-item"><a class="nav-link" href="/#servicos">SERVIÇOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user/#chatbot">CHATBOT</a></li>
+        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
+        
+        <!-- Ícone do carrinho -->
+        <li class="nav-item">
+          <a class="nav-link" href="/carrinho">
+            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+          </a>
+        </li>
+
+        <!-- Menu de usuário -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle fs-4 me-1"></i>
@@ -89,7 +100,7 @@
             <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
             <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item text-danger" href="/sair">Sair</a></li>
+            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
           </ul>
         </li>
       </ul>
@@ -238,6 +249,15 @@ async function enviarMensagem() {
   } catch (err) {
     adicionarMensagem("Erro ao se comunicar com o assistente.", "assistant");
   }
+}
+function realizarLogout(event) {
+   
+        event.preventDefault(); 
+    
+        sessionStorage.removeItem('usuarioLogado');
+        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
+    
+        window.location.href = '/sair'; 
 }
 
 // Evento do botão enviar

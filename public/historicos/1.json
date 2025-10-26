@@ -102,5 +102,29 @@
   {
     "role": "assistant",
     "content": "Olá! Em que posso ajudar você hoje? Posso te recomendar alguma máquina, apresentar nossos <a href=\"/servicos\">serviços</a> ou tirar dúvidas sobre energia renovável?"
+  },
+  {
+    "role": "user",
+    "content": "ola"
+  },
+  {
+    "role": "assistant",
+    "content": "Olá! Em que posso ajudar você hoje? Posso te recomendar alguma máquina, apresentar nossos <a href=\"/servicos\">serviços</a> ou tirar dúvidas sobre energia renovável?"
+  },
+  {
+    "role": "user",
+    "content": "Me recomende uma máquina"
+  },
+  {
+    "role": "assistant",
+    "content": "Para recomendar a máquina ideal, preciso de algumas informações sobre sua necessidade:\n\n*   **Qual a área do local onde a máquina será instalada?**\n*   **Qual o tipo de biomassa que você pretende utilizar?**\n\nCom essas informações, posso te indicar a máquina perfeita para você!"
+  },
+  {
+    "role": "user",
+    "content": "Madeira"
+  },
+  {
+    "role": "assistant",
+    "content": "Para o uso de biomassa de madeira, recomendo duas opções, dependendo do tamanho da sua área:\n\n*   **BioEnergyWoodX:** Ideal para áreas menores, opera com madeira, cavacos e aparas. Possui capacidade de 500 litros de biomassa, gera 3,33 Wh de energia por litro e 5 Wh por minuto, com um custo de R$ 0,02 por litro processado.\n\n*   **BioEnergyWooderPro:** Recomendado para áreas maiores, também utiliza madeira, cavacos e aparas. Possui capacidade de 2.000 litros de biomassa, gera 2,29 Wh de energia por litro e 16 Wh por minuto, com um custo de R$ 0,075 por litro processado.\n\nQual o tamanho da área onde a máquina será instalada? Assim, posso te ajudar a escolher a melhor opção para você!"
   }
 ]
