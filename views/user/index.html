@@ -247,6 +247,30 @@ enviar.addEventListener("click", enviarMensagem);
 input.addEventListener("keypress", e => {
   if (e.key === "Enter") enviarMensagem();
 });
+  document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    // Pega o link de manutenções
+    const linkManutencoes = document.querySelector('a[href="/manutencoes"]');
+    if (!linkManutencoes) return;
+
+    // Faz a verificação no servidor
+    const res = await fetch("/tem-produto");
+    const data = await res.json();
+
+    if (!data.temProduto) {
+      // Bloqueia o acesso e aplica estilo visual
+      linkManutencoes.addEventListener("click", e => {
+        e.preventDefault();
+        alert("⚠️ Você precisa possuir um produto comprado para acessar as manutenções.");
+      });
+      linkManutencoes.style.pointerEvents = "none";
+      linkManutencoes.style.opacity = "0.6";
+      linkManutencoes.style.cursor = "not-allowed";
+    }
+  } catch (err) {
+    console.error("Erro ao verificar produtos:", err);
+  }
+});
 </script>
 </body>
 </html>

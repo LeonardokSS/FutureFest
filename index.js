@@ -435,6 +435,95 @@ app.get('/servicos', protegerRota, (req,res)=>{
   res.sendFile(__dirname + '/views/user/servicos.html')
 })
 
+app.get('/manutencoes', protegerRota, async (req, res) => {
+  const usuario = req.session.usuario;
+  const client = new MongoClient(urlMongo);
+
+  try {
+    await client.connect();
+    const db = client.db(nomeBanco);
+    const comprasCollection = db.collection(collectionCompras);
+
+    // Verifica se o usuário já fez pelo menos uma compra
+    const compra = await comprasCollection.findOne({ usuario });
+
+    if (!compra) {
+      // Se não tiver produto comprado, exibe página de aviso
+      return res.send(`
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+          <meta charset="UTF-8">
+          <title>Acesso Restrito - BioEnergy</title>
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+          <style>
+            .logo { width: 200px; border-radius: 15px; }
+            .card-aviso { max-width: 600px; margin: auto; margin-top: 80px; }
+          </style>
+        </head>
+        <body class="bg-light">
+          <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+            <div class="container">
+              <img class="logo" src="/img/logo.png" alt="Logo BioEnergy">
+            </div>
+          </nav>
+
+          <section class="py-5">
+            <div class="container">
+              <div class="card-aviso bg-white p-4 rounded shadow-sm text-center">
+                <h2 class="text-warning mb-3">
+                  <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                  Acesso Restrito
+                </h2>
+                <p class="fs-5">
+                  Você precisa possuir um produto comprado para acessar as manutenções.
+                </p>
+                <a href="/produtos" class="btn btn-success mt-3 w-100">
+                  Ver Produtos Disponíveis
+                </a>
+              </div>
+            </div>
+          </section>
+
+          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        </body>
+        </html>
+      `);
+    }
+
+    // Se o usuário tiver uma compra, permite acesso à página de manutenções
+    res.sendFile(__dirname + '/views/user/html/manutencoes.html');
+
+  } catch (err) {
+    console.error('Erro ao verificar acesso a manutenções:', err);
+    res.status(500).send('Erro interno do servidor');
+  } finally {
+    await client.close();
+  }
+});
+
+// Verifica se o usuário possui produtos comprados
+app.get('/tem-produto', protegerRota, async (req, res) => {
+  const usuario = req.session.usuario;
+  const client = new MongoClient(urlMongo);
+
+  try {
+    await client.connect();
+    const db = client.db(nomeBanco);
+    const comprasCollection = db.collection(collectionCompras);
+
+    const compra = await comprasCollection.findOne({ usuario });
+    res.json({ temProduto: !!compra }); // true ou false
+  } catch (err) {
+    console.error(err);
+    res.json({ temProduto: false });
+  } finally {
+    await client.close();
+  }
+});
+
+
+
 //Sistema de carrinho para o usuário.
 
 app.get('/produto/:nome', protegerRota, async (req, res) => {
