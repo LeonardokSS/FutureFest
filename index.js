@@ -27,7 +27,7 @@ app.use(session({
 app.use(methodOverride('_method'))
 
 //Configurações do mongodb usadas no código.
-const urlMongo = "mongodb://localhost:27017"
+const urlMongo = "mongodb+srv://admin:admin@cluster0.huwt4el.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 const nomeBanco = 'sistemaBioenergy'
 const collectionName = 'usuarios'
 const collectionServico = 'servicos'
@@ -502,7 +502,7 @@ app.get('/manutencoes', protegerRota, async (req, res) => {
     }
 
     // Se o usuário tiver uma compra, permite acesso à página de manutenções
-    res.sendFile(__dirname + '/views/user/html/manutencoes.html');
+    res.sendFile(__dirname + '/views/user/manutencoes.html');
 
   } catch (err) {
     console.error('Erro ao verificar acesso a manutenções:', err);
@@ -532,6 +532,75 @@ app.get('/tem-produto', protegerRota, async (req, res) => {
   }
 });
 
+// Retorna produtos do usuário
+app.get('/produtos-usuario', protegerRota, async (req, res) => {
+  const usuario = req.session.usuario;
+  const client = new MongoClient(urlMongo);
+
+  try {
+    await client.connect();
+    const db = client.db(nomeBanco);
+    const comprasCollection = db.collection(collectionCompras);
+
+    const compras = await comprasCollection.find({ usuario }).toArray();
+
+    // Extrai todos os produtos do array de compras
+    const produtos = compras
+      .flatMap(c => c.produtos || []) // pega todos os produtos de todas as compras
+      .map(p => ({
+        nome: p.nome || 'Produto sem nome',
+        id: p.produtoId || ''
+      }))
+      .filter(p => p.id); // só produtos com id válido
+
+    res.json({ produtos });
+  } catch (err) {
+    console.error(err);
+    res.json({ produtos: [] });
+  } finally {
+    client.close();
+  }
+});
+
+// Registrar manutenção
+app.post('/adicionar-manutencao', async (req, res) => {
+  // Define client dentro da rota
+  const client = new MongoClient(urlMongo);
+
+  try {
+    const { usuario, produto, tipo, custoHora, custoTotal, dias } = req.body;
+
+    if (!usuario || !produto || !tipo) {
+      return res.status(400).json({ error: 'Dados incompletos' });
+    }
+
+    // Conecta ao MongoDB
+    await client.connect();
+    const db = client.db(nomeBanco);
+    const manutencoesCollection = db.collection(collectionManu);
+
+    const manutencao = {
+      usuario,
+      produto,
+      tipo,
+      custoHora,
+      custoTotal,
+      dias,
+      disponivel: "Sim",
+      data: new Date()
+    };
+
+    const result = await manutencoesCollection.insertOne(manutencao);
+
+    res.json({ sucesso: true, id: result.insertedId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Erro ao salvar manutenção' });
+  } finally {
+    // Fecha a conexão depois que terminar a operação
+    await client.close();
+  }
+});
 
 
 //Sistema de carrinho para o usuário.
@@ -628,7 +697,7 @@ app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
                     </button>
                     <div class="collapse navbar-collapse justify-content-end" id="navMenu">
                       <ul class="navbar-nav align-items-center">
-                        <li class="nav-item"><a class="nav-link" href="/home">HOME</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
                         <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
                         <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
                         <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
@@ -732,7 +801,10 @@ app.get('/carrinho', protegerRota, async (req, res) => {
         const carrinhoCollection = db.collection(collectionCarrinho);
 
         const carrinhoUsuario = await carrinhoCollection.findOne({ usuario });
-        const produtos = carrinhoUsuario ? carrinhoUsuario.produtos : [];
+        
+        // Garante que 'produtos' seja um array plano de objetos válidos
+        const produtos = (carrinhoUsuario?.produtos || []).flat().filter(p => p && p.nome && p.preco && p.quantidade);
+        
         const total = produtos.reduce((acc, p) => acc + p.preco * p.quantidade, 0);
 
         let html = `<!DOCTYPE html>
@@ -743,82 +815,56 @@ app.get('/carrinho', protegerRota, async (req, res) => {
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
             <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
             <style>
-                .form-card { max-width: 500px; margin: 80px auto;background-color: #fff; padding: 30px; border-radius: 10px;box-shadow: 0 0 10px rgba(0,0,0,0.1);}
-                .logo {width: 180px;border-radius: 12px;}
-                .section-title {color: #198754;font-weight: 700;margin-bottom: 30px;text-align: center;}
-                .card {border: none; border-radius: 15px; box-shadow: 0 0 10px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; height: 100%;}
-                .card-body { flex: 1;}
-                .card:hover { transform: scale(1.04);box-shadow: 0 0 20px rgba(25, 135, 84, 0.3);}
-                .card-img-top { height: 220px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px; width: 100%;}
-                .page-title {text-align: center;color: #198754;font-weight: 800;margin: 50px 0 20px;}
+                .card { border: none; border-radius: 15px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 15px; }
+                .card:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(25, 135, 84, 0.3); }
+                .card-img-top { height: 220px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px; }
+                .page-title { text-align: center; color: #198754; font-weight: 800; margin: 50px 0 20px; }
+                .logo { width: 180px; border-radius: 12px; }
             </style>
         </head>
         <body class="bg-light">
         <!-- Navbar -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-       <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-          <div class="container-fluid px-4">
-            <a class="navbar-brand d-flex align-items-center" href="/">
-              <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse justify-content-end" id="navMenu">
-              <ul class="navbar-nav align-items-center">
-                <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
-                <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
-                <li class="nav-item"><a class="nav-link" href="/user/#chatbot">CHATBOT</a></li>
-                <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
-                <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
-                <li class="nav-item"><a class="nav-link" href="/servicos">MANUTENÇÕES</a></li>
-                <li class="nav-item">
-                  <a class="nav-link" href="/carrinho">
-                    <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
-                  </a>
-                </li>
-
-                <!-- Menu de usuário -->
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="bi bi-person-circle fs-4 me-1"></i>
-                  </a>
-                  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                    <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
-                    <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
-                    <li><a class="dropdown-item" href="#">Senha: ********</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
-                    <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
-                    <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-       
-<script>
-    fetch('/dados-usuario')
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById('nome-usuario').textContent = data.usuario;
-        }); 
-    function realizarLogout(event) {
-   
-        event.preventDefault(); 
-    
-        sessionStorage.removeItem('usuarioLogado');
-        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
-    
-        window.location.href = '/sair'; 
-    }
-</script>
-
-
+                <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+                  <div class="container-fluid px-4">
+                    <a class="navbar-brand d-flex align-items-center" href="/">
+                      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+                      <ul class="navbar-nav align-items-center">
+                        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
+                        <li class="nav-item">
+                          <a class="nav-link" href="/carrinho">
+                            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+                          </a>
+                        </li>
+                        <!-- Menu de usuário -->
+                        <li class="nav-item dropdown">
+                          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-4 me-1"></i>
+                          </a>
+                          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
+                            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
+                            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
+                            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </nav>
         <div class="container py-5">
-            <h1 class="text-success mb-4">Meu Carrinho</h1>`;
+            <h1 class="page-title">Meu Carrinho</h1>`;
 
         if (produtos.length === 0) {
             html += `<h3>Seu carrinho está vazio.</h3>
@@ -840,7 +886,27 @@ app.get('/carrinho', protegerRota, async (req, res) => {
                      <a href="/produtos" class="btn btn-secondary mt-2 w-100">Continuar Comprando</a>`;
         }
 
-        html += `</div></body></html>`;
+        html += `</div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+    fetch('/dados-usuario')
+        .then(res => res.json())
+        .then(data => {
+            document.getElementById('nome-usuario').textContent = data.usuario;
+        });
+    function realizarLogout(event) {
+   
+        event.preventDefault(); 
+    
+        sessionStorage.removeItem('usuarioLogado');
+        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
+    
+        window.location.href = '/sair'; 
+    } 
+</script>
+        </body>
+        </html>`;
+
         res.send(html);
     } catch (err) {
         console.error(err);
@@ -860,7 +926,9 @@ app.get('/resumo-compra', protegerRota, async (req, res) => {
         const carrinhoCollection = db.collection(collectionCarrinho);
 
         const carrinhoUsuario = await carrinhoCollection.findOne({ usuario });
-        const produtos = carrinhoUsuario ? carrinhoUsuario.produtos : [];
+
+        // Garante que 'produtos' seja um array plano e válido
+        const produtos = (carrinhoUsuario?.produtos || []).flat().filter(p => p && p.nome && p.preco && p.quantidade);
         const total = produtos.reduce((acc, p) => acc + p.preco * p.quantidade, 0);
 
         let html = `
@@ -871,68 +939,94 @@ app.get('/resumo-compra', protegerRota, async (req, res) => {
             <title>Resumo da Compra</title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
             <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+            <style>
+                .form-card { max-width: 700px; margin: 80px auto; background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
+                .card { border: none; border-radius: 15px; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 15px; }
+                .card:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(25, 135, 84, 0.3); }
+                .card-img-top { height: 220px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px; }
+                .page-title { text-align: center; color: #198754; font-weight: 800; margin: 50px 0 20px; }
+                .logo { width: 180px; border-radius: 12px; }
+            </style>
         </head>
-        <style>
-            .form-card { max-width: 700px; margin: 80px auto; background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1);}
-            .logo { width: 180px; border-radius: 12px; }
-            .section-title { color: #198754; font-weight: 700; margin-bottom: 30px; text-align: center; }
-            .page-title { text-align: center; color: #198754; font-weight: 800; margin: 50px 0 20px; }
-            .card { border: none; border-radius: 15px; box-shadow: 0 0 10px rgba(0,0,0,0.1); transition: transform 0.3s, box-shadow 0.3s; display: flex; flex-direction: column; height: 100%; }
-            .card-body { flex: 1; }
-            .card:hover { transform: scale(1.04); box-shadow: 0 0 20px rgba(25, 135, 84, 0.3); }
-            .card-img-top { height: 220px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px; width: 100%; }
-        </style>
         <body class="bg-light">
-         <!-- Navbar -->
-         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-            <div class="container-fluid px-4">
-                <a class="navbar-brand d-flex align-items-center" href="/">
-                    <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-end" id="navMenu">
-                    <ul class="navbar-nav align-items-center">
-                        <li class="nav-item"><a class="nav-link" href="/home">HOME</a></li>
+          <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+                  <div class="container-fluid px-4">
+                    <a class="navbar-brand d-flex align-items-center" href="/">
+                      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+                      <ul class="navbar-nav align-items-center">
+                        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
                         <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/user/#chatbot">CHATBOT</a></li>
                         <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
                         <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/carrinho">
-                                <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
-                            </a>
+                          <a class="nav-link" href="/carrinho">
+                            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+                          </a>
                         </li>
                         <!-- Menu de usuário -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle fs-4 me-1"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
-                                <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
-                                <li><a class="dropdown-item" href="#">Senha: ********</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
-                                <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
-                            </ul>
+                          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-4 me-1"></i>
+                          </a>
+                          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
+                            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
+                            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
+                            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
+                          </ul>
                         </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-   
-<script>
+                      </ul>
+                    </div>
+                  </div>
+                </nav>
+        <div class="container py-5">
+            <h1 class="page-title">Resumo da Compra</h1>`;
+
+        if (produtos.length === 0) {
+            html += `<h3>Seu carrinho está vazio.</h3>
+                     <a href="/produtos" class="btn btn-success mt-3">Voltar aos Produtos</a>`;
+        } else {
+            html += `<ul class="list-group mb-4">`;
+            produtos.forEach(p => {
+                const subtotal = p.preco * p.quantidade;
+                html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                            ${p.nome} 
+                            <span>R$ ${p.preco.toFixed(2)} x ${p.quantidade}</span>
+                            <span>Subtotal: R$ ${subtotal.toFixed(2)}</span>
+                         </li>`;
+            });
+            html += `</ul>
+                     <div class="d-flex justify-content-between mb-4">
+                        <h3>Total: R$ ${total.toFixed(2)}</h3>
+                     </div>
+                     <div class="d-flex gap-2">
+                        <form action="/finalizar-compra" method="POST" class="flex-fill">
+                            <button type="submit" class="btn btn-success w-100">Finalizar Compra</button>
+                        </form>
+                        <form action="/carrinho" method="GET" class="flex-fill">
+                            <button type="submit" class="btn btn-secondary w-100">Voltar ao Carrinho</button>
+                        </form>
+                     </div>`;
+        }
+
+        html += `</div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+             <script>
     fetch('/dados-usuario')
         .then(res => res.json())
         .then(data => {
             document.getElementById('nome-usuario').textContent = data.usuario;
-        }); 
+        });
     function realizarLogout(event) {
    
         event.preventDefault(); 
@@ -941,45 +1035,10 @@ app.get('/resumo-compra', protegerRota, async (req, res) => {
         sessionStorage.removeItem('logado'); // Se 'logado' também for usado
     
         window.location.href = '/sair'; 
-    }
+    } 
 </script>
-
-        
-        <div class="container py-5">
-            <h1 class="text-success mb-4">Resumo da Compra</h1>
-            <ul class="list-group mb-4">
-        `;
-
-        produtos.forEach(p => {
-            const subtotal = p.preco * p.quantidade;
-            html += `
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    ${p.nome} 
-                    <span>R$ ${p.preco.toFixed(2)} x ${p.quantidade}</span>
-                    <span>Subtotal: R$ ${subtotal.toFixed(2)}</span>
-                </li>
-            `;
-        });
-
-        html += `
-            </ul>
-            <div class="d-flex justify-content-between mb-4">
-                <h3>Total: R$ ${total.toFixed(2)}</h3>
-            </div>
-
-            <!-- Botões de navegação -->
-            <div class="d-flex justify-content-between">
-                <form action="/finalizar-compra" method="POST" class="w-48">
-                    <button type="submit" class="btn btn-success w-100">Finalizar Compra</button>
-                </form>
-                <form action="/carrinho" method="GET" class="w-48">
-                    <button type="submit" class="btn btn-secondary w-100">Voltar ao Carrinho</button>
-                </form>
-            </div>
-        </div>
         </body>
-        </html>
-        `;
+        </html>`;
 
         res.send(html);
     } catch (err) {
@@ -989,8 +1048,6 @@ app.get('/resumo-compra', protegerRota, async (req, res) => {
         client.close();
     }
 });
-
-
 
 app.post('/finalizar-compra', protegerRota, async (req, res) => {
     const usuario = req.session.usuario;
@@ -1004,17 +1061,23 @@ app.post('/finalizar-compra', protegerRota, async (req, res) => {
         const produtosCollection = db.collection(collectionProdutos);
 
         const carrinhoUsuario = await carrinhoCollection.findOne({ usuario });
-        if (!carrinhoUsuario || carrinhoUsuario.produtos.length === 0)
-            return res.redirect('/carrinho');
+
+        // Garante que 'produtos' seja um array plano e válido
+        const produtos = (carrinhoUsuario?.produtos || []).flat().filter(p => p && p.nome && p.preco && p.quantidade);
+
+        if (produtos.length === 0) return res.redirect('/carrinho');
 
         // Salva a compra
-        await comprasCollection.insertOne({ usuario, produtos: carrinhoUsuario.produtos, data: new Date() });
+        await comprasCollection.insertOne({ usuario, produtos, data: new Date() });
 
-        // Atualiza estoque (não-negativo)
-        for (const item of carrinhoUsuario.produtos) {
+        // Atualiza estoque de forma segura
+        for (const item of produtos) {
+            const quantidadeComprada = Number(item.quantidade) || 0;
+
+            // Subtrai do estoque, garantindo que não fique negativo
             await produtosCollection.updateOne(
                 { nome: item.nome },
-                [{ $set: { estoque: { $max: [{ $subtract: [{ $toInt: "$estoque" }, Number(item.quantidade)] }, 0] } } } ]
+                [{ $set: { estoque: { $max: [{ $subtract: [{ $toInt: "$estoque" }, quantidadeComprada] }, 0] } } }]
             );
         }
 
@@ -1030,85 +1093,80 @@ app.post('/finalizar-compra', protegerRota, async (req, res) => {
             <title>Compra Concluída</title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
             <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+            <style>
+                .form-card { max-width: 600px; margin: 80px auto; background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+                .logo { width: 180px; border-radius: 12px; }
+                .page-title { text-align: center; color: #198754; font-weight: 800; margin: 50px 0 20px; }
+                .btn-custom { width: 100%; }
+            </style>
         </head>
-        <style>
-            .form-card { max-width: 600px; margin: 80px auto; background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-            .logo { width: 180px; border-radius: 12px; }
-            .section-title { color: #198754; font-weight: 700; margin-bottom: 30px; text-align: center; }
-            .page-title { text-align: center; color: #198754; font-weight: 800; margin: 50px 0 20px; }
-            .btn-custom { width: 100%; }
-        </style>
         <body class="bg-light">
-         <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-            <div class="container-fluid px-4">
-                <a class="navbar-brand d-flex align-items-center" href="/">
-                    <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-end" id="navMenu">
-                    <ul class="navbar-nav align-items-center">
-                        <li class="nav-item"><a class="nav-link" href="/home">HOME</a></li>
+                 <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-dark bg-success">
+                  <div class="container-fluid px-4">
+                    <a class="navbar-brand d-flex align-items-center" href="/">
+                      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+                      <ul class="navbar-nav align-items-center">
+                        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
                         <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/user/#chatbot">CHATBOT</a></li>
                         <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
                         <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
                         <li class="nav-item">
-                            <a class="nav-link" href="/carrinho">
-                                <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
-                            </a>
+                          <a class="nav-link" href="/carrinho">
+                            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+                          </a>
                         </li>
                         <!-- Menu de usuário -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="bi bi-person-circle fs-4 me-1"></i>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
-                                <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
-                                <li><a class="dropdown-item" href="#">Senha: ********</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
-                                <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
-                            </ul>
+                          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person-circle fs-4 me-1"></i>
+                          </a>
+                          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
+                            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
+                            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
+                            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
+                          </ul>
                         </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
-        
+                      </ul>
+                    </div>
+                  </div>
+                </nav>
         <div class="container py-5 text-center">
-            <h1 class="text-success mb-4">Compra Finalizada com Sucesso!</h1>
+            <h1 class="page-title">Compra Finalizada com Sucesso!</h1>
             <p>Obrigado por comprar na BioEnergy. Seus produtos serão processados em breve.</p>
             <a href="/produtos" class="btn btn-success btn-custom mt-3">Voltar aos Produtos</a>
         </div>
-    
-<script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+                     <script>
     fetch('/dados-usuario')
         .then(res => res.json())
         .then(data => {
             document.getElementById('nome-usuario').textContent = data.usuario;
-        }); 
-
+        });
     function realizarLogout(event) {
    
-    event.preventDefault(); 
+        event.preventDefault(); 
     
-    sessionStorage.removeItem('usuarioLogado');
-    sessionStorage.removeItem('logado'); // Se 'logado' também for usado
+        sessionStorage.removeItem('usuarioLogado');
+        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
     
-    window.location.href = '/sair'; 
-    }
+        window.location.href = '/sair'; 
+    } 
 </script>
-
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         </body>
-        </html>`;
+        </html>
+        `;
+
         res.send(html);
     } catch (err) {
         console.error(err);
@@ -1118,28 +1176,6 @@ app.post('/finalizar-compra', protegerRota, async (req, res) => {
     }
 });
 
-//Rota para o usuário fazer feedbacks 
-
-app.post('/formulario_feedback', async (req,res)=>{
-   const novoFeedback = req.body
-   const client = new MongoClient(urlMongo)
-
-   try {
-       await client.connect()
-       const db = client.db(nomeBanco)
-       const collection = db.collection(collectionFeedback)
-
-       const result = await collection.insertOne(novoFeedback)
-       console.log(`Feedback cadastrado com sucesso. ID: ${result.insertedId}`)
-        
-   }catch(err){
-    console.error('Erro ao cadastrar o feedback: ', err)
-    res.status(500).send('Erro ao cadastrar o feedback. Por favor tente mais tarde ')
-   }finally{
-    client.close()
-    res.redirect('/')
-   }
-})
 
 //Crud de usuários dos administradores
 

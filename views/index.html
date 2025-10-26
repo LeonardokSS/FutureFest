@@ -633,6 +633,12 @@
         </li>
       </ul>
       `;
+      fetch('/dados-usuario')
+        .then(res => res.json())
+        .then(data => {
+          const spanUsuario = document.getElementById('nome-usuario');
+          if(spanUsuario) spanUsuario.textContent = data.usuario;
+        });
     } else {
       // Usuário não logado
       navbarItems.innerHTML = `
@@ -645,11 +651,6 @@
       `;
     }
   }
-  fetch('/dados-usuario')
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById('nome-usuario').textContent = data.usuario;
-    });
 
     // Novo script para forçar o logout e redirecionar
     function realizarLogout(event) {

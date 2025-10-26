@@ -116,6 +116,11 @@
     </section>
 
     <script>
+       fetch('/dados-usuario')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('nome-usuario').textContent = data.usuario;
+    });
     function realizarLogout(event) {
    
         event.preventDefault(); 
