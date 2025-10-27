@@ -187,14 +187,7 @@
       document.getElementById('nome-usuario').textContent = data.usuario;
     });
   let usuario = "visitante";
-
-fetch('/dados-usuario')
-  .then(res => res.json())
-  .then(data => {
-    usuario = data.usuario || "visitante";
-    document.getElementById('nome-usuario').textContent = usuario;
-  });
-  const input = document.getElementById("mensagem");
+const input = document.getElementById("mensagem");
 const enviar = document.getElementById("enviar");
 const chatMensagens = document.getElementById("chat-mensagens");
 
@@ -266,6 +259,63 @@ enviar.addEventListener("click", enviarMensagem);
 input.addEventListener("keypress", e => {
   if (e.key === "Enter") enviarMensagem();
 });
+document.addEventListener("DOMContentLoaded", async () => {
+  const linkManutencoes = document.querySelector('a[href="/manutencoes"]');
+  if (!linkManutencoes) return;
+
+  const card = linkManutencoes.querySelector(".card");
+  card.style.position = "relative";
+
+  try {
+    // Faz requisição para o servidor verificar se o usuário tem produtos
+    const res = await fetch("/tem-produto");
+    const data = await res.json();
+    const temProduto = data.temProduto;
+
+    if (!temProduto) {
+      // Cria o overlay bloqueando o acesso
+      const overlay = document.createElement("div");
+      overlay.classList.add("bloqueio-manutencao");
+      overlay.innerHTML = `
+        <div class="text-center">
+          <i class="bi bi-lock-fill text-warning fs-1"></i>
+          <p class="mt-2 fw-bold text-dark">Acesso restrito</p>
+        </div>
+      `;
+      Object.assign(overlay.style, {
+        position: "absolute",
+        top: "0",
+        left: "0",
+        width: "100%",
+        height: "100%",
+        background: "rgba(255, 255, 255, 0.7)",
+        borderRadius: "15px",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        zIndex: "10",
+        cursor: "not-allowed",
+      });
+
+      // Aplica efeito visual e bloqueia o clique
+      card.style.opacity = "0.7";
+      card.style.filter = "grayscale(40%)";
+      card.appendChild(overlay);
+
+      // 🔒 Impede qualquer clique no link
+      linkManutencoes.style.pointerEvents = "none";
+
+      // Opcional: exibir alerta ao clicar no overlay
+      overlay.addEventListener("click", () => {
+        alert("⚠️ Você precisa possuir um produto comprado para acessar as manutenções.");
+      });
+    }
+  } catch (err) {
+    console.error("Erro ao verificar produtos:", err);
+  }
+});
+
+
 </script>
 </body>
 </html>
