@@ -255,7 +255,6 @@ function realizarLogout(event) {
         event.preventDefault(); 
     
         sessionStorage.removeItem('usuarioLogado');
-        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
     
         window.location.href = '/sair'; 
 }

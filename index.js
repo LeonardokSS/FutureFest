@@ -84,16 +84,12 @@ app.post("/login", async (req, res) => {
     const banco = cliente.db(nomeBanco);
     const colecaoUsuarios = banco.collection(collectionName);
 
-    // Buscar o usuário no banco de dados
     const usuario = await colecaoUsuarios.findOne({ usuario: req.body.usuario });
 
-    // Verificar se a senha está correta
     if (usuario && await bcrypt.compare(req.body.senha, usuario.senha)) {
-      // Se o login for bem-sucedido, criamos a sessão
       req.session.usuario = req.body.usuario;
       req.session.tipo = usuario.tipo;
 
-      // Retorna um script para salvar as informações no sessionStorage para o frontend
       res.send(`
         <script>
           // Armazenar os dados de login no sessionStorage
@@ -107,7 +103,6 @@ app.post("/login", async (req, res) => {
         </script>
       `);
     } else {
-      // Caso o login falhe
       res.redirect("/erro");
     }
   } catch (erro) {
