@@ -466,7 +466,6 @@
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-    <!-- Chart Initialization (suavizado e rótulo indicando ilustrativo) -->
     <script>
       const ctx = document.getElementById('operationalCostChart').getContext('2d');
       const operationalCostChart = new Chart(ctx, {
@@ -556,14 +555,13 @@
         if (e.key === "Enter") sendMessage(); 
       });
 
-    const usuarioLogado = JSON.parse(sessionStorage.getItem('usuarioLogado'))
 
-  if (!usuarioLogado) {
+  if (1 < 2) {
     // Substitui o campo de entrada do chatbot por uma mensagem
     const chatInputContainer = document.querySelector('.chat-input-container');
     chatInputContainer.innerHTML = `
       <div class="alert alert-warning w-100 mb-0 text-center" role="alert">
-        ⚠️ Faça login para usar o chatbot.
+        ⚠️ Você só pode usar o chatbot na página dos usuários. <a href="/login" class="btn btn-danger">Login</a>
       </div>
     `;
   }
@@ -593,14 +591,45 @@
     }
   }
 // Função para atualizar a navbar com base no login
-  function atualizarNavbar() {
-    const navbarItems = document.getElementById('navbarItems');
-    const usuarioLogado = JSON.parse(sessionStorage.getItem('usuarioLogado'));  // Lê o estado do login no sessionStorage
+async function atualizarNavbar() {
+  const navbarItems = document.getElementById('navbarItems');
+  navbarItems.innerHTML = '';
 
-    navbarItems.innerHTML = '';  // Limpa os itens atuais da navbar
+  try {
+    const response = await fetch('/session', { credentials: 'include' });
+    if (!response.ok) throw new Error('Não autenticado');
 
-    if (usuarioLogado) {
-      // Usuário logado
+    const data = await response.json();
+    const usuario = data.usuario;
+    const tipo = data.tipo;
+
+    if (tipo === 'admin') {
+      navbarItems.innerHTML = `
+        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin">ADMIN</a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/usuarios">USUÁRIOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/manutencoes">MANUTENÇÕES</a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/servicos">SERVIÇOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/produtos">PRODUTOS</a></li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-person-circle fs-4 me-1"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
+            <li><a class="dropdown-item">Usuário: <span id="nome-usuario">${usuario}</span></a></li>
+            <li><a class="dropdown-item">Acesso: ADMIN</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
+            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
+          </ul>
+        </li>
+      `;
+    } else {
+      // Usuário comum
       navbarItems.innerHTML = `
         <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
         <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
@@ -608,49 +637,37 @@
         <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
-        <!-- Ícone do carrinho -->
-        <li class="nav-item">
-          <a class="nav-link" href="/carrinho">
-            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
-          </a>
-        </li>
+        <li class="nav-item"><a class="nav-link" href="/carrinho"><i class="bi bi-cart-fill fs-4"></i></a></li>
 
-        <!-- Menu de usuário -->
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
             <i class="bi bi-person-circle fs-4 me-1"></i>
           </a>
-          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+          <ul class="dropdown-menu dropdown-menu-end">
             <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
-            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
-            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
+            <li><a class="dropdown-item">Usuário: <span id="nome-usuario">${usuario}</span></a></li>
+            <li><a class="dropdown-item">Acesso: USUÁRIO</a></li>
             <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
             <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
           </ul>
         </li>
-      </ul>
-      `;
-      fetch('/dados-usuario')
-        .then(res => res.json())
-        .then(data => {
-          const spanUsuario = document.getElementById('nome-usuario');
-          if(spanUsuario) spanUsuario.textContent = data.usuario;
-        });
-    } else {
-      // Usuário não logado
-      navbarItems.innerHTML = `
-        <li class="nav-item"><a class="nav-link active fade-in-up" href="/">HOME</a></li>
-        <li class="nav-item"><a class="nav-link fade-in-up" href="/#sobre">SOBRE</a></li>
-        <li class="nav-item"><a class="nav-link fade-in-up" href="/#chatbot">CHATBOT</a></li>
-        <li class="nav-item"><a class="nav-link fade-in-up" href="/#servicos">SERVIÇOS</a></li>
-        <li class="nav-item"><a href="/login" class="btn btn-outline-light fw-semibold shadow-sm">Login</a></li>
-        <li class="nav-item"><a href="/registro" class="btn btn-outline-light fw-semibold shadow-sm">Registre-se</a></li>
       `;
     }
+
+  } catch {
+    // Visitante
+    navbarItems.innerHTML = `
+      <li class="nav-item"><a class="nav-link active fade-in-up" href="/">HOME</a></li>
+      <li class="nav-item"><a class="nav-link fade-in-up" href="/#sobre">SOBRE</a></li>
+      <li class="nav-item"><a class="nav-link fade-in-up" href="/#chatbot">CHATBOT</a></li>
+      <li class="nav-item"><a class="nav-link fade-in-up" href="/#servicos">SERVIÇOS</a></li>
+      <li class="nav-item"><a href="/login" class="btn btn-outline-light fw-semibold shadow-sm">Login</a></li>
+      <li class="nav-item"><a href="/registro" class="btn btn-outline-light fw-semibold shadow-sm">Registre-se</a></li>
+    `;
   }
+}
 
     // Novo script para forçar o logout e redirecionar
     function realizarLogout(event) {
@@ -658,6 +675,7 @@
         event.preventDefault(); 
     
         sessionStorage.removeItem('usuarioLogado');
+        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
     
         window.location.href = '/sair'; 
 }
@@ -665,6 +683,7 @@
   window.onload = atualizarNavbar;
 
     </script>
+
 
   </body>
   </html>

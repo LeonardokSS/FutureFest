@@ -27,7 +27,7 @@ app.use(session({
 app.use(methodOverride('_method'))
 
 //Configurações do mongodb usadas no código.
-const urlMongo = "mongodb+srv://admin:admin@cluster0.huwt4el.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+const urlMongo = "mongodb://localhost:27017"
 const nomeBanco = 'sistemaBioenergy'
 const collectionName = 'usuarios'
 const collectionServico = 'servicos'
@@ -154,7 +154,7 @@ app.get('/admin', protegerAdmin, (req, res) => {
 //Rotas para o usuário poder mudar seu usuário e sua senha
 
 app.get('/mudar-usuario', protegerRota, (req,res)=>{
-    res.sendFile(__dirname + '/views/user/html/mudarUsuário.html')
+    res.sendFile(__dirname + '/views/mudarUsuário.html')
 })
 
 app.post('/mudar-usuario', protegerRota, async (req, res) => {
@@ -188,7 +188,7 @@ app.post('/mudar-usuario', protegerRota, async (req, res) => {
 });
 
 app.get('/mudar-senha', protegerRota, (req, res) => {
-  res.sendFile(__dirname + '/views/user/html/mudarSenha.html')
+  res.sendFile(__dirname + '/views/mudarSenha.html')
 });
 
 app.post('/mudar-senha', protegerRota, async (req, res) => {
@@ -275,6 +275,17 @@ app.post('/assistente', (req, res) => {
     mensagem: `Olá ${nome}! ${recomendacao}`
   });
 });
+
+//Rota para pegar o tipo de acesso na navbar
+app.get('/session', (req, res) => {
+  if (req.session.usuario) {
+    res.json({ usuario: req.session.usuario, tipo: req.session.tipo }); // Retorna ambos os valores
+  } else {
+    res.status(401).json({ autenticado: false });
+  }
+});
+
+
 
 //Prompt de contexto para a Ia ser quem ela é.
 const systemPrompt = `
@@ -467,11 +478,51 @@ app.get('/manutencoes', protegerRota, async (req, res) => {
           </style>
         </head>
         <body class="bg-light">
-          <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-            <div class="container">
-              <img class="logo" src="/img/logo.png" alt="Logo BioEnergy">
-            </div>
-          </nav>
+ <!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand d-flex align-items-center" href="/">
+      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user/#chatbot">CHATBOT</a></li>
+        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
+        
+        <!-- Ícone do carrinho -->
+        <li class="nav-item">
+          <a class="nav-link" href="/carrinho">
+            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+          </a>
+        </li>
+
+        <!-- Menu de usuário -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle fs-4 me-1"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
+            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
+            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
+            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
           <section class="py-5">
             <div class="container">
@@ -489,7 +540,21 @@ app.get('/manutencoes', protegerRota, async (req, res) => {
               </div>
             </div>
           </section>
-
+        <script>
+          fetch('/dados-usuario')
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById('nome-usuario').textContent = data.usuario;
+    });
+        function realizarLogout(event) {
+   
+        event.preventDefault(); 
+    
+        sessionStorage.removeItem('usuarioLogado');
+    
+        window.location.href = '/sair'; 
+}
+        </script>
           <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
         </body>
         </html>
@@ -681,46 +746,50 @@ app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
                 </head>
                 <body class="bg-light">
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-                <!-- Navbar -->
-                <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-                  <div class="container-fluid px-4">
-                    <a class="navbar-brand d-flex align-items-center" href="/">
-                      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-                      <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
-                      <ul class="navbar-nav align-items-center">
-                        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
-                        <li class="nav-item">
-                          <a class="nav-link" href="/carrinho">
-                            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
-                          </a>
-                        </li>
-                        <!-- Menu de usuário -->
-                        <li class="nav-item dropdown">
-                          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle fs-4 me-1"></i>
-                          </a>
-                          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
-                            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
-                            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
-                            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
-                          </ul>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </nav>
+<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand d-flex align-items-center" href="/">
+      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user/#chatbot">CHATBOT</a></li>
+        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
+        
+        <!-- Ícone do carrinho -->
+        <li class="nav-item">
+          <a class="nav-link" href="/carrinho">
+            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+          </a>
+        </li>
+
+        <!-- Menu de usuário -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle fs-4 me-1"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
+            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
+            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
+            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
                 <section class="py-5">
                     <div class="container">
                         <div class="error-card bg-white p-4 rounded shadow-sm text-center">
@@ -818,46 +887,50 @@ app.get('/carrinho', protegerRota, async (req, res) => {
             </style>
         </head>
         <body class="bg-light">
-        <!-- Navbar -->
-                <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-                  <div class="container-fluid px-4">
-                    <a class="navbar-brand d-flex align-items-center" href="/">
-                      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-                      <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
-                      <ul class="navbar-nav align-items-center">
-                        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
-                        <li class="nav-item">
-                          <a class="nav-link" href="/carrinho">
-                            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
-                          </a>
-                        </li>
-                        <!-- Menu de usuário -->
-                        <li class="nav-item dropdown">
-                          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle fs-4 me-1"></i>
-                          </a>
-                          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
-                            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
-                            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
-                            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
-                          </ul>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </nav>
+<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand d-flex align-items-center" href="/">
+      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user/#chatbot">CHATBOT</a></li>
+        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
+        
+        <!-- Ícone do carrinho -->
+        <li class="nav-item">
+          <a class="nav-link" href="/carrinho">
+            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+          </a>
+        </li>
+
+        <!-- Menu de usuário -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle fs-4 me-1"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
+            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
+            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
+            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
         <div class="container py-5">
             <h1 class="page-title">Meu Carrinho</h1>`;
 
@@ -944,46 +1017,50 @@ app.get('/resumo-compra', protegerRota, async (req, res) => {
             </style>
         </head>
         <body class="bg-light">
-          <!-- Navbar -->
-                <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-                  <div class="container-fluid px-4">
-                    <a class="navbar-brand d-flex align-items-center" href="/">
-                      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-                      <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
-                      <ul class="navbar-nav align-items-center">
-                        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
-                        <li class="nav-item">
-                          <a class="nav-link" href="/carrinho">
-                            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
-                          </a>
-                        </li>
-                        <!-- Menu de usuário -->
-                        <li class="nav-item dropdown">
-                          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle fs-4 me-1"></i>
-                          </a>
-                          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
-                            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
-                            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
-                            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
-                          </ul>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </nav>
+<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand d-flex align-items-center" href="/">
+      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user/#chatbot">CHATBOT</a></li>
+        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
+        
+        <!-- Ícone do carrinho -->
+        <li class="nav-item">
+          <a class="nav-link" href="/carrinho">
+            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+          </a>
+        </li>
+
+        <!-- Menu de usuário -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle fs-4 me-1"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
+            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
+            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
+            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
         <div class="container py-5">
             <h1 class="page-title">Resumo da Compra</h1>`;
 
@@ -1096,46 +1173,50 @@ app.post('/finalizar-compra', protegerRota, async (req, res) => {
             </style>
         </head>
         <body class="bg-light">
-                 <!-- Navbar -->
-                <nav class="navbar navbar-expand-lg navbar-dark bg-success">
-                  <div class="container-fluid px-4">
-                    <a class="navbar-brand d-flex align-items-center" href="/">
-                      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-                      <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
-                      <ul class="navbar-nav align-items-center">
-                        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
-                        <li class="nav-item">
-                          <a class="nav-link" href="/carrinho">
-                            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
-                          </a>
-                        </li>
-                        <!-- Menu de usuário -->
-                        <li class="nav-item dropdown">
-                          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person-circle fs-4 me-1"></i>
-                          </a>
-                          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
-                            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
-                            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
-                            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
-                          </ul>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </nav>
+<nav class="navbar navbar-expand-lg navbar-dark bg-success">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand d-flex align-items-center" href="/">
+      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navMenu">
+      <ul class="navbar-nav align-items-center">
+        <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
+        <li class="nav-item"><a class="nav-link" href="/user/#chatbot">CHATBOT</a></li>
+        <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
+        <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
+        
+        <!-- Ícone do carrinho -->
+        <li class="nav-item">
+          <a class="nav-link" href="/carrinho">
+            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+          </a>
+        </li>
+
+        <!-- Menu de usuário -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle fs-4 me-1"></i>
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><h6 class="dropdown-header">Informações Pessoais</h6></li>
+            <li><a class="dropdown-item" href="#">Usuário: <span id="nome-usuario">Carregando...</span></a></li>
+            <li><a class="dropdown-item" href="#">Senha: ********</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/mudar-usuario">Mudar Usuário</a></li>
+            <li><a class="dropdown-item" href="/mudar-senha">Mudar Senha</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" href="#" onclick="realizarLogout(event)">Sair</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
         <div class="container py-5 text-center">
             <h1 class="page-title">Compra Finalizada com Sucesso!</h1>
             <p>Obrigado por comprar na BioEnergy. Seus produtos serão processados em breve.</p>
