@@ -248,7 +248,137 @@
       </div>
     </div>
 
+    <!-- 🌿 NOVA SEÇÃO: PLANOS BIOENERGY -->
+    <h3 class="section-title">Planos BioEnergy</h3>
+    <hr>
+
+    <div class="row justify-content-center g-4 mb-5">
+
+      <!-- PLANO BIOBRONZE -->
+      <div class="col-12 col-md-4">
+        <div class="card border-success h-100">
+          <div class="card-header bg-success text-white text-center fw-bold fs-4">
+            🟤 Plano BioBronze
+          </div>
+          <div class="card-body">
+            <ul class="list-unstyled">
+              <li>✅ Análise de Viabilidade de Projetos</li>
+              <li>✅ Implementação de Sistemas de Geração</li>
+              <li>✅ Manutenção Preventiva Programada</li>
+              <li>✅ Treinamentos Práticos</li>
+              <li>✅ Análise Detalhada de ROI</li>
+              <li>✅ Consultoria para Certificações Ambientais</li>
+            </ul>
+          </div>
+          <div class="card-footer bg-light text-center">
+            <button class="btn btn-success fw-bold">Saiba Mais</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLANO BIOGOLD -->
+      <div class="col-12 col-md-4">
+        <div class="card border-warning h-100">
+          <div class="card-header bg-warning text-dark text-center fw-bold fs-4">
+            🟡 Plano BioGold
+          </div>
+          <div class="card-body">
+            <ul class="list-unstyled">
+              <li>✅ Análise de Viabilidade de Projetos</li>
+              <li>✅ Customização de Sistemas de Energia</li>
+              <li>✅ Avaliação Técnica de Processos Existentes</li>
+              <li>✅ Implementação de Sistemas de Geração</li>
+              <li>✅ Serviço de Upgrade Tecnológico</li>
+              <li>✅ Monitoramento Pós-Instalação</li>
+              <li>✅ Manutenção Preventiva Programada</li>
+              <li>✅ Atendimento Corretivo Emergencial 24/7</li>
+              <li>✅ Relatórios de Desempenho</li>
+              <li>✅ Treinamentos Práticos</li>
+              <li>✅ Certificação Profissional</li>
+              <li>✅ Suporte Técnico Contínuo</li>
+              <li>✅ Análise Detalhada de ROI</li>
+              <li>✅ Projeções Financeiras Personalizadas</li>
+              <li>✅ Relatórios Detalhados de Impacto</li>
+              <li>✅ Consultoria para Certificações Ambientais</li>
+              <li>✅ Implementação de Práticas ESG</li>
+              <li>✅ Planos de Sustentabilidade Personalizados</li>
+            </ul>
+          </div>
+          <div class="card-footer bg-light text-center">
+            <button class="btn btn-warning text-dark fw-bold">Saiba Mais</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PLANO BIOPLATINUM -->
+      <div class="col-12 col-md-4">
+        <div class="card border-dark h-100">
+          <div class="card-header bg-dark text-white text-center fw-bold fs-4">
+            ⚫ Plano BioPlatinum
+          </div>
+          <div class="card-body">
+            <ul class="list-unstyled">
+              <li>✅ Análise de Viabilidade de Projetos</li>
+              <li>✅ Customização de Sistemas de Energia</li>
+              <li>✅ Implementação de Sistemas de Geração</li>
+              <li>✅ Serviço de Upgrade Tecnológico</li>
+              <li>✅ Manutenção Preventiva Programada</li>
+              <li>✅ Atendimento Corretivo Emergencial 24/7</li>
+              <li>✅ Treinamentos Práticos</li>
+              <li>✅ Certificação Profissional</li>
+              <li>✅ Análise Detalhada de ROI</li>
+              <li>✅ Projeções Financeiras Personalizadas</li>
+              <li>✅ Consultoria para Certificações Ambientais</li>
+              <li>✅ Implementação de Práticas ESG</li>
+            </ul>
+          </div>
+          <div class="card-footer bg-light text-center">
+            <button class="btn btn-dark fw-bold">Saiba Mais</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
+    <!-- Modal de Serviços -->
+  <div class="modal fade" id="servicoModal" tabindex="-1" aria-labelledby="servicoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title" id="servicoModalLabel">Solicitar Plano</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Seleção do tipo de serviço -->
+          <label for="tipoServico" class="form-label">Selecione o tipo de plano:</label>
+          <select id="tipoServico" class="form-select mb-3">
+            <option value="">Selecione...</option>
+            <option value="BioBronze">BioBronze</option>
+            <option value="BioPlatinum">BioPlatinum</option>
+            <option value="BioGold">BioGold</option>
+          </select>
+
+          <!-- Dados do serviço selecionado -->
+          <div id="dadosServico" style="display:none; background-color:#e9f5ee; border-radius:10px; padding:15px;">
+            <p><strong>Nome do usuário:</strong> <span id="usuarioServicoSpan"></span></p>
+            <p><strong>Serviço selecionado:</strong> <span id="servicoSpan"></span></p>
+            <p><strong>Descrição:</strong> <span id="descricaoServicoSpan"></span></p>
+            <p><strong>Duração estimada:</strong> <span id="duracaoServicoSpan"></span> dias</p>
+            <p><strong>Custo estimado:</strong> R$ <span id="custoServicoSpan"></span></p>
+            <p><strong>Disponível:</strong> Sim</p>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" id="confirmarServico" class="btn btn-success">Confirmar Solicitação</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <script>
      fetch('/dados-usuario')
     .then(res => res.json())
@@ -256,15 +386,95 @@
       document.getElementById('nome-usuario').textContent = data.usuario;
     });
     function realizarLogout(event) {
-   
         event.preventDefault(); 
-    
         sessionStorage.removeItem('usuarioLogado');
-        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
-    
+        sessionStorage.removeItem('logado');
         window.location.href = '/sair'; 
     }
+    // ---- Modal de Planos ----
+const tipoServicoSelect = document.getElementById("tipoServico");
+const dadosServicoDiv = document.getElementById("dadosServico");
+const usuarioServicoSpan = document.getElementById("usuarioServicoSpan");
+const servicoSpan = document.getElementById("servicoSpan");
+const descricaoServicoSpan = document.getElementById("descricaoServicoSpan");
+const duracaoServicoSpan = document.getElementById("duracaoServicoSpan");
+const custoServicoSpan = document.getElementById("custoServicoSpan");
+
+// Dados dos planos
+const planosInfo = {
+  "BioBronze": {
+    descricao: "Plano básico que inclui análise de viabilidade, instalação de sistemas de geração, manutenção preventiva e consultoria ambiental.",
+    duracao: 30,
+    custo: 2500
+  },
+  "BioGold": {
+    descricao: "Plano intermediário com soluções completas de geração, manutenção, suporte técnico e certificação profissional.",
+    duracao: 60,
+    custo: 4500
+  },
+  "BioPlatinum": {
+    descricao: "Plano premium com suporte total, personalização de sistemas, treinamentos exclusivos e implementação de práticas ESG.",
+    duracao: 90,
+    custo: 7000
+  }
+};
+
+// Exibir dados ao selecionar o plano
+tipoServicoSelect.addEventListener("change", () => {
+  const tipo = tipoServicoSelect.value;
+  if (!tipo) {
+    dadosServicoDiv.style.display = "none";
+    return;
+  }
+
+  const info = planosInfo[tipo];
+  usuarioServicoSpan.textContent = usuarioLogado || "Usuário";
+  servicoSpan.textContent = tipo;
+  descricaoServicoSpan.textContent = info.descricao;
+  duracaoServicoSpan.textContent = info.duracao;
+  custoServicoSpan.textContent = info.custo.toFixed(2);
+  dadosServicoDiv.style.display = "block";
+});
+
+// Confirmar solicitação de plano
+document.getElementById("confirmarServico").addEventListener("click", async () => {
+  const tipo = tipoServicoSelect.value;
+  if (!tipo) {
+    alert("Selecione um plano antes de confirmar.");
+    return;
+  }
+
+  const info = planosInfo[tipo];
+  const usuario = usuarioLogado || "Usuário";
+  const descricao = info.descricao;
+  const duracao = info.duracao;
+  const custo = info.custo;
+
+  try {
+    const res = await fetch('/adicionar-plano', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ usuario, tipo, descricao, duracao, custo })
+    });
+
+    const data = await res.json();
+    if (data.sucesso) {
+      alert("Plano solicitado com sucesso!");
+    } else {
+      alert("Erro ao registrar a solicitação do plano.");
+    }
+  } catch (err) {
+    console.error(err);
+    alert("Erro na conexão com o servidor.");
+  }
+});
+
   </script>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
