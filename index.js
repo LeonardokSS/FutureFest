@@ -27,7 +27,7 @@ app.use(session({
 app.use(methodOverride('_method'))
 
 //Configurações do mongodb usadas no código.
-const urlMongo = "mongodb://localhost:27017"
+const urlMongo = "mongodb+srv://admin:admin@cluster0.huwt4el.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 const nomeBanco = 'sistemaBioenergy'
 const collectionName = 'usuarios'
 const collectionServico = 'servicos'
@@ -92,13 +92,11 @@ app.post("/login", async (req, res) => {
 
       res.send(`
         <script>
-          // Armazenar os dados de login no sessionStorage
           sessionStorage.setItem("usuarioLogado", JSON.stringify({
             nome: "${req.body.usuario}",
             tipo: "${usuario.tipo}"
           }));
 
-          // Redireciona o usuário com base no tipo (admin ou usuário comum)
           window.location.href = "${usuario.tipo === 'admin' ? '/admin' : '/user'}";
         </script>
       `);
@@ -112,6 +110,29 @@ app.post("/login", async (req, res) => {
     cliente.close();
   }
 });
+
+//Rota para formulário e outras coisas
+
+app.post('/formulario_feedback', async (req,res)=>{
+   const novoFeedback = req.body
+   const client = new MongoClient(urlMongo)
+
+   try {
+       await client.connect()
+       const db = client.db(nomeBanco)
+       const collection = db.collection(collectionFeedback)
+
+       const result = await collection.insertOne(novoFeedback)
+       console.log(`Feedback cadastrado com sucesso. ID: ${result.insertedId}`)
+        
+   }catch(err){
+    console.error('Erro ao cadastrar o feedback: ', err)
+    res.status(500).send('Erro ao cadastrar o feedback. Por favor tente mais tarde ')
+   }finally{
+    client.close()
+    res.redirect('/')
+   }
+})
 
 app.get('/erro', (req,res)=>{
     res.sendFile(__dirname + '/views/erro.html')
@@ -279,7 +300,7 @@ app.post('/assistente', (req, res) => {
 //Rota para pegar o tipo de acesso na navbar
 app.get('/session', (req, res) => {
   if (req.session.usuario) {
-    res.json({ usuario: req.session.usuario, tipo: req.session.tipo }); // Retorna ambos os valores
+    res.json({ usuario: req.session.usuario, tipo: req.session.tipo }); 
   } else {
     res.status(401).json({ autenticado: false });
   }
@@ -298,7 +319,7 @@ Fale sempre em português.
 Seja educado, direto e claro.
 Dê respostas curtas e objetivas, evitando textos longos.
 Forneça informações sobre:
-- Serviços (consultoria, instalação, manutenção, capacitação e sustentabilidade)
+- Serviços (BioBronze, BioGold e BioPlatinum)
 - A empresa e sua missão
 - Energia renovável, biomassa e práticas ambientais
 
@@ -381,15 +402,23 @@ Preço estimado do equipamento: R$ 6.000
 
 Lembre-se que o tipo de biomassa não se restringe apenas aos citados, mas ao grupo que eles fazem parte. Ao recomendar máquina. Diga sempre assim: o nome, estatísticas de energia gerada por litro e minuto, custo para processar e capacidade. As outras informações você pode dizer caso o usuário pedir. A área em m² não manda na recomendação dos produtos, apenas o tipo de biomassa, por exemplo se o usuário tiver uma área pequena porém usar muita cana é preferível recomendar o EcoDrive ao invés do Cube. 
 
+Use esse banco de dados de planos para recomendar o melhor plano para um tipo de usuário
+
+Regras de recomendação de planos
+- BioBronze: básico, custo R$ 14.000 (mensal ≈ R$ 1.166, anual ≈ R$ 12.600). Indicado para iniciantes.
+- BioGold: completo, custo R$ 28.000 (mensal ≈ R$ 2.333, anual ≈ R$ 25.200). Indicado para empresas que querem soluções completas.
+- BioPlatinum: premium, custo R$ 34.000 (mensal ≈ R$ 2.833, anual ≈ R$ 30.600). Indicado para quem busca certificações e suporte total.
+
 Responda de forma clara, objetiva e bem organizada. Use frases completas e evite blocos de texto confusos. Para informações técnicas (como estatísticas de equipamentos), apresente os dados em parágrafos curtos, com medidas e valores destacados de forma natural no texto, sem excesso de negrito ou marcadores. Sempre inclua um resumo ou conclusão prática ao final. Se houver números importantes (como capacidade, energia, custo), inclua-os no corpo do texto de forma legível e fluida. Exemplo de estilo desejado:
 
 'O BioEnergyWooderPro é ideal para biomassa de madeira e possui capacidade para 2.000 litros. Ele gera 16 Wh de energia por minuto, o que equivale a 2,29 Wh por litro processado. O custo para processar cada litro de biomassa é de R$ 0,075. Esse equipamento fornece energia suficiente para atender necessidades médias em terrenos de 500 m², aproveitando resíduos de madeira de forma eficiente.'
 
-Para links de navegação dentro do site, use HTML, no formato <a href="rota">Texto do link</a>. Por exemplo:
+Para links de navegação dentro do site, use HTML, no formato <a href="rota">Texto do link</a>. 
+Por exemplo:
    - Para o usuário acessar produtos: <a href="/produtos">produtos</a>
    - Para serviços: <a href="/servicos">serviços</a>
    - Para manutenções: <a href="/manutencoes">manutenções</a>
-
+   - Para contanto : <a href="/#form-feedback">contato</a>
 Sempre utilize o histórico da conversa para responder de forma contextualizada, lembrando das mensagens anteriores do usuário. Diga as respostas com base no histórico e é isso.
 
 Seu objetivo é oferecer um atendimento simples, rápido e informativo, ajudando o cliente a entender as soluções da BioEnergy e tomar boas decisões.
@@ -460,11 +489,9 @@ app.get('/manutencoes', protegerRota, async (req, res) => {
     const db = client.db(nomeBanco);
     const comprasCollection = db.collection(collectionCompras);
 
-    // Verifica se o usuário já fez pelo menos uma compra
     const compra = await comprasCollection.findOne({ usuario });
 
     if (!compra) {
-      // Se não tiver produto comprado, exibe página de aviso
       return res.send(`
         <!DOCTYPE html>
         <html lang="pt-BR">
@@ -478,11 +505,10 @@ app.get('/manutencoes', protegerRota, async (req, res) => {
           </style>
         </head>
         <body class="bg-light">
- <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container-fluid px-4">
     <a class="navbar-brand d-flex align-items-center" href="/">
-      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+      <img src="/img/logo.svg" alt="Logo BioEnergy" class="logo me-2">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
@@ -495,15 +521,13 @@ app.get('/manutencoes', protegerRota, async (req, res) => {
         <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
-        
-        <!-- Ícone do carrinho -->
+  
         <li class="nav-item">
           <a class="nav-link" href="/carrinho">
-            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+            <i class="bi bi-cart-fill fs-4"></i> 
           </a>
         </li>
 
-        <!-- Menu de usuário -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle fs-4 me-1"></i>
@@ -561,7 +585,6 @@ app.get('/manutencoes', protegerRota, async (req, res) => {
       `);
     }
 
-    // Se o usuário tiver uma compra, permite acesso à página de manutenções
     res.sendFile(__dirname + '/views/user/manutencoes.html');
 
   } catch (err) {
@@ -572,7 +595,6 @@ app.get('/manutencoes', protegerRota, async (req, res) => {
   }
 });
 
-// Verifica se o usuário possui produtos comprados
 app.get('/tem-produto', protegerRota, async (req, res) => {
   const usuario = req.session.usuario;
   const client = new MongoClient(urlMongo);
@@ -583,7 +605,7 @@ app.get('/tem-produto', protegerRota, async (req, res) => {
     const comprasCollection = db.collection(collectionCompras);
 
     const compra = await comprasCollection.findOne({ usuario });
-    res.json({ temProduto: !!compra }); // true ou false
+    res.json({ temProduto: !!compra }); 
   } catch (err) {
     console.error(err);
     res.json({ temProduto: false });
@@ -592,7 +614,6 @@ app.get('/tem-produto', protegerRota, async (req, res) => {
   }
 });
 
-// Retorna produtos do usuário
 app.get('/produtos-usuario', protegerRota, async (req, res) => {
   const usuario = req.session.usuario;
   const client = new MongoClient(urlMongo);
@@ -604,15 +625,13 @@ app.get('/produtos-usuario', protegerRota, async (req, res) => {
 
     const compras = await comprasCollection.find({ usuario }).toArray();
 
-    // Extrai todos os produtos do array de compras
     const produtos = compras
-      .flatMap(c => c.produtos || []) // pega todos os produtos de todas as compras
+      .flatMap(c => c.produtos || []) 
       .map(p => ({
         nome: p.nome || 'Produto sem nome',
         id: p.produtoId || ''
       }))
-      .filter(p => p.id); // só produtos com id válido
-
+      .filter(p => p.id);
     res.json({ produtos });
   } catch (err) {
     console.error(err);
@@ -624,7 +643,7 @@ app.get('/produtos-usuario', protegerRota, async (req, res) => {
 
 // Registrar manutenção
 app.post('/adicionar-manutencao', async (req, res) => {
-  // Define client dentro da rota
+
   const client = new MongoClient(urlMongo);
 
   try {
@@ -634,7 +653,6 @@ app.post('/adicionar-manutencao', async (req, res) => {
       return res.status(400).json({ error: 'Dados incompletos' });
     }
 
-    // Conecta ao MongoDB
     await client.connect();
     const db = client.db(nomeBanco);
     const manutencoesCollection = db.collection(collectionManu);
@@ -657,10 +675,47 @@ app.post('/adicionar-manutencao', async (req, res) => {
     console.error(err);
     res.status(500).json({ erro: 'Erro ao salvar manutenção' });
   } finally {
-    // Fecha a conexão depois que terminar a operação
     await client.close();
   }
 });
+
+//Rota para adicionar serviços do usuário no mongodb
+
+app.post('/adicionar-servico', async (req, res) => {
+  const client = new MongoClient(urlMongo);
+
+  try {
+    const { usuario, plano, tipoPagamento, custo, duracao } = req.body;
+
+    if (!usuario || !plano || !tipoPagamento || !custo || !duracao) {
+      return res.status(400).json({ erro: 'Dados incompletos' });
+    }
+
+    await client.connect();
+    const db = client.db(nomeBanco);
+    const servicosCollection = db.collection(collectionServico); 
+
+    const servico = {
+      usuario,
+      plano,            
+      tipoPagamento,    
+      custo,            
+      duracao,          
+      disponivel: "Sim",
+      data: new Date()
+    };
+
+    const result = await servicosCollection.insertOne(servico);
+
+    res.json({ sucesso: true, id: result.insertedId });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ erro: 'Erro ao salvar serviço' });
+  } finally {
+    await client.close();
+  }
+});
+
 
 
 //Sistema de carrinho para o usuário.
@@ -672,7 +727,7 @@ app.get('/produto/:nome', protegerRota, async (req, res) => {
     try {
         await client.connect();
         const db = client.db(nomeBanco);
-        const collection = db.collection(collectionProdutos); // ou coleção de produtos, dependendo de como você estruturou
+        const collection = db.collection(collectionProdutos); 
 
         const produto = await collection.findOne({ nome });
         if (!produto) return res.status(404).send('Produto não encontrado');
@@ -708,15 +763,14 @@ app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
         const produtosCollection = db.collection(collectionProdutos);
         const carrinhoCollection = db.collection(collectionCarrinho);
 
-        // Busca o produto pelo ObjectId
+       
         const produto = await produtosCollection.findOne({ nome: req.body.nome });
         if (!produto) return res.status(404).send('Produto não encontrado.');
 
         const estoque = Number(produto.estoque) || 0;
-        const disponivel = produto.disponivel; // Garantir que é um valor booleano
+        const disponivel = produto.disponivel; 
         if (disponivel === 'Não') return res.sendFile(__dirname + '/views/user/html/produto/produtoIndisponível.html');
 
-        // Busca carrinho do usuário
         let carrinhoUsuario = await carrinhoCollection.findOne({ usuario });
         let qtdNoCarrinho = 0;
 
@@ -725,7 +779,6 @@ app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
             if (itemNoCarrinho) qtdNoCarrinho = itemNoCarrinho.quantidade;
         }
 
-        // Verifica se a quantidade desejada ultrapassa o estoque
         if (qtdDesejada + qtdNoCarrinho > estoque) {
             return res.send(`
                 <!DOCTYPE html>
@@ -749,7 +802,7 @@ app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container-fluid px-4">
     <a class="navbar-brand d-flex align-items-center" href="/">
-      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+      <img src="/img/logo.svg" alt="Logo BioEnergy" class="logo me-2">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
@@ -762,15 +815,13 @@ app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
         <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
-        
-        <!-- Ícone do carrinho -->
+ 
         <li class="nav-item">
           <a class="nav-link" href="/carrinho">
-            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+            <i class="bi bi-cart-fill fs-4"></i> 
           </a>
         </li>
 
-        <!-- Menu de usuário -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle fs-4 me-1"></i>
@@ -811,7 +862,7 @@ app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
         event.preventDefault(); 
     
         sessionStorage.removeItem('usuarioLogado');
-        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
+        sessionStorage.removeItem('logado'); 
     
         window.location.href = '/sair'; 
     } 
@@ -822,7 +873,6 @@ app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
             `);
         }
 
-        // Cria objeto do produto para o carrinho
         const produtoObj = {
             produtoId: produto._id.toString(),
             nome: produto.nome,
@@ -830,7 +880,6 @@ app.post('/adicionar-carrinho', protegerRota, async (req, res) => {
             quantidade: qtdDesejada
         };
 
-        // Atualiza ou cria carrinho
         if (carrinhoUsuario) {
             const index = carrinhoUsuario.produtos.findIndex(p => p.produtoId === produtoId);
             if (index >= 0) {
@@ -866,7 +915,6 @@ app.get('/carrinho', protegerRota, async (req, res) => {
 
         const carrinhoUsuario = await carrinhoCollection.findOne({ usuario });
         
-        // Garante que 'produtos' seja um array plano de objetos válidos
         const produtos = (carrinhoUsuario?.produtos || []).flat().filter(p => p && p.nome && p.preco && p.quantidade);
         
         const total = produtos.reduce((acc, p) => acc + p.preco * p.quantidade, 0);
@@ -890,7 +938,7 @@ app.get('/carrinho', protegerRota, async (req, res) => {
 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container-fluid px-4">
     <a class="navbar-brand d-flex align-items-center" href="/">
-      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+      <img src="/img/logo.svg" alt="Logo BioEnergy" class="logo me-2">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
@@ -903,15 +951,13 @@ app.get('/carrinho', protegerRota, async (req, res) => {
         <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
-        
-        <!-- Ícone do carrinho -->
+       
         <li class="nav-item">
           <a class="nav-link" href="/carrinho">
-            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+            <i class="bi bi-cart-fill fs-4"></i> 
           </a>
         </li>
 
-        <!-- Menu de usuário -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle fs-4 me-1"></i>
@@ -967,7 +1013,7 @@ app.get('/carrinho', protegerRota, async (req, res) => {
         event.preventDefault(); 
     
         sessionStorage.removeItem('usuarioLogado');
-        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
+        sessionStorage.removeItem('logado'); 
     
         window.location.href = '/sair'; 
     } 
@@ -995,7 +1041,6 @@ app.get('/resumo-compra', protegerRota, async (req, res) => {
 
         const carrinhoUsuario = await carrinhoCollection.findOne({ usuario });
 
-        // Garante que 'produtos' seja um array plano e válido
         const produtos = (carrinhoUsuario?.produtos || []).flat().filter(p => p && p.nome && p.preco && p.quantidade);
         const total = produtos.reduce((acc, p) => acc + p.preco * p.quantidade, 0);
 
@@ -1020,7 +1065,7 @@ app.get('/resumo-compra', protegerRota, async (req, res) => {
 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container-fluid px-4">
     <a class="navbar-brand d-flex align-items-center" href="/">
-      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+      <img src="/img/logo.svg" alt="Logo BioEnergy" class="logo me-2">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
@@ -1033,15 +1078,13 @@ app.get('/resumo-compra', protegerRota, async (req, res) => {
         <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
-        
-        <!-- Ícone do carrinho -->
+ 
         <li class="nav-item">
           <a class="nav-link" href="/carrinho">
-            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+            <i class="bi bi-cart-fill fs-4"></i> 
           </a>
         </li>
 
-        <!-- Menu de usuário -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle fs-4 me-1"></i>
@@ -1104,7 +1147,7 @@ app.get('/resumo-compra', protegerRota, async (req, res) => {
         event.preventDefault(); 
     
         sessionStorage.removeItem('usuarioLogado');
-        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
+        sessionStorage.removeItem('logado'); 
     
         window.location.href = '/sair'; 
     } 
@@ -1134,29 +1177,23 @@ app.post('/finalizar-compra', protegerRota, async (req, res) => {
 
         const carrinhoUsuario = await carrinhoCollection.findOne({ usuario });
 
-        // Garante que 'produtos' seja um array plano e válido
         const produtos = (carrinhoUsuario?.produtos || []).flat().filter(p => p && p.nome && p.preco && p.quantidade);
 
         if (produtos.length === 0) return res.redirect('/carrinho');
 
-        // Salva a compra
         await comprasCollection.insertOne({ usuario, produtos, data: new Date() });
 
-        // Atualiza estoque de forma segura
         for (const item of produtos) {
             const quantidadeComprada = Number(item.quantidade) || 0;
 
-            // Subtrai do estoque, garantindo que não fique negativo
             await produtosCollection.updateOne(
                 { nome: item.nome },
                 [{ $set: { estoque: { $max: [{ $subtract: [{ $toInt: "$estoque" }, quantidadeComprada] }, 0] } } }]
             );
         }
 
-        // Limpa carrinho
         await carrinhoCollection.updateOne({ usuario }, { $set: { produtos: [] } });
 
-        // Página de confirmação
         let html = `
         <!DOCTYPE html>
         <html lang="pt-BR">
@@ -1176,7 +1213,7 @@ app.post('/finalizar-compra', protegerRota, async (req, res) => {
 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container-fluid px-4">
     <a class="navbar-brand d-flex align-items-center" href="/">
-      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+      <img src="/img/logo.svg" alt="Logo BioEnergy" class="logo me-2">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
@@ -1189,15 +1226,13 @@ app.post('/finalizar-compra', protegerRota, async (req, res) => {
         <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
-        
-        <!-- Ícone do carrinho -->
+
         <li class="nav-item">
           <a class="nav-link" href="/carrinho">
-            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+            <i class="bi bi-cart-fill fs-4"></i> 
           </a>
         </li>
 
-        <!-- Menu de usuário -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle fs-4 me-1"></i>
@@ -1234,7 +1269,7 @@ app.post('/finalizar-compra', protegerRota, async (req, res) => {
         event.preventDefault(); 
     
         sessionStorage.removeItem('usuarioLogado');
-        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
+        sessionStorage.removeItem('logado'); 
     
         window.location.href = '/sair'; 
     } 
@@ -1546,30 +1581,43 @@ app.get('/admin/servicos_atualizar', protegerAdmin, async(req,res)=>{
     res.sendFile(__dirname + '/views/admin/html/servicos/atualizar.html')
 })
 
-app.post('/admin/servicos_atualizar', protegerAdmin, async(req,res)=>{
-    const { id, usuario, tipo, custoHora, custoTotal, dias, disponivel } = req.body
-    const client = new MongoClient(urlMongo)
+app.post('/admin/servicos_atualizar', protegerAdmin, async (req, res) => {
+  const { id, usuario, plano, tipoPagamento, custo, duracao, disponivel } = req.body;
+  const client = new MongoClient(urlMongo);
 
-    try {
-        await client.connect()
-        const db = client.db(nomeBanco)
-        const collection = db.collection(collectionServico)
-        const result = await collection.updateOne({ _id: new ObjectId(id)},{
-            $set: {usuario,  tipo, custoHora, custoTotal, dias, disponivel}
-        })
-        if(result.modifiedCount > 0){
-            console.log(`Serviço com o ID: ${id} atualizado com sucesso`)
-            res.redirect('/admin')
-        }else{
-            res.status(404).send('Serviço não encontrado')
+  try {
+    await client.connect();
+    const db = client.db(nomeBanco);
+    const collection = db.collection(collectionServico);
+
+    const result = await collection.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          usuario,
+          plano,
+          tipoPagamento,
+          custo: parseFloat(custo),
+          duracao,
+          disponivel
         }
-    }catch(err){
-        console.error('Erro ao atualizar o serviço: ', err)
-        res.status(500).send('Erro ao atualizar o Serviço. Por favor tente novamente mais tarde.')
-    }finally{
-        client.close()
+      }
+    );
+
+    if (result.modifiedCount > 0) {
+      console.log(`Serviço com o ID: ${id} atualizado com sucesso`);
+      res.redirect('/admin/servicos');
+    } else {
+      res.status(404).send('Serviço não encontrado');
     }
-})
+  } catch (err) {
+    console.error('Erro ao atualizar o serviço: ', err);
+    res.status(500).send('Erro ao atualizar o Serviço. Por favor tente novamente mais tarde.');
+  } finally {
+    client.close();
+  }
+});
+
 
 app.get('/admin/servico/:id', protegerAdmin, async (req,res)=>{
     const { id } = req.params
@@ -1619,23 +1667,34 @@ app.post('/admin/servicos_deletar', protegerAdmin, async(req,res)=>{
     }
 })
 
-app.get('/admin/listar_servicos', protegerAdmin, async(req,res)=>{
-    const cliente = new MongoClient(urlMongo)
+app.get('/admin/listar_servicos', protegerAdmin, async (req, res) => {
+  const cliente = new MongoClient(urlMongo);
 
-    try{
-        await cliente.connect()
-        const db = cliente.db(nomeBanco)
-        const collection = db.collection(collectionServico)
+  try {
+    await cliente.connect();
+    const db = cliente.db(nomeBanco);
+    const collection = db.collection(collectionServico);
 
-        const usuarios = await collection.find({}, {projection: {_id:1, usuario:1, tipo:1, custoHora:1, custoTotal:1, dias:1, disponivel:1 }}).toArray()
-        res.json(usuarios)
-    }catch(err){
-        console.error('Erro ao buscar servicos: ', err)
-        res.status(500).send('Erro ao buscar servicos. Por favor tente novamente mais tarde.')
-    }finally{
-        cliente.close()
-    }
-})
+    const servicos = await collection.find({}, {
+      projection: {
+        _id: 1,
+        usuario: 1,
+        plano: 1,
+        tipoPagamento: 1,
+        custo: 1,
+        duracao: 1,
+        disponivel: 1
+      }
+    }).toArray();
+
+    res.json(servicos);
+  } catch (err) {
+    console.error('Erro ao buscar serviços: ', err);
+    res.status(500).send('Erro ao buscar serviços. Por favor tente novamente mais tarde.');
+  } finally {
+    cliente.close();
+  }
+});
 
 //Crud de manutenções para administradores
 

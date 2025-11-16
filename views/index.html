@@ -20,25 +20,21 @@
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container">
-    <img class="logo" src="/img/logo2.svg" alt="imagem logo tipo">
+    <img class="logo" src="/img/logo.svg" alt="imagem logo tipo">
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="navMenu">
       <ul class="navbar-nav align-items-center" id="navbarItems">
-        <!-- Aqui os itens vão ser inseridos dinamicamente -->
+
       </ul>
     </div>
   </div>
 </nav>
 
-
-
-    <!-- HERO (substituir todo o <header id="home"> existente) -->
 <header id="home" class="py-5">
   <div class="container">
     <div class="row g-4 hero-row align-items-stretch">
-      <!-- coluna texto -->
       <div class="col-lg-7 d-flex">
         <div class="hero-card p-4 rounded-3 shadow-sm w-100">
           <h1 id="textoBiomassa" class="display-6 fw-bold mb-3">
@@ -54,9 +50,7 @@
         </div>
       </div>
 
-      <!-- coluna imagem: aparece só em lg+ -->
       <div class="col-lg-5 d-none d-lg-flex hero-image-col">
-        <!-- coloque o caminho correto da imagem -->
         <img src="/img/img_hero.jpg" class="hero-right-image" alt="Imagem Transformando biomassa em energia">
       </div>
     </div>
@@ -65,7 +59,6 @@
   <section id="sobre" class="py-5 bg-white">
     <div class="container">
       <div class="row align-items-center">
-        <!-- Coluna do texto (esquerda) -->
         <div class="col-lg-7">
           <div class="text-start mb-4">
             <h2 class="fw-bold text-success">Sobre Nós</h2>
@@ -103,13 +96,11 @@
           </div>
         </div>
 
-        <!-- Coluna do gráfico (direita) -->
         <div class="col-lg-5 mt-4 mt-lg-0">
           <div class="card shadow-sm card-accent-top h-100">
             <div class="card-body d-flex flex-column">
               <h5 class="card-title text-success mb-3">Custo operacional</h5>
 
-              <!-- Canvas do gráfico -->
               <div class="flex-fill d-flex align-items-center justify-content-center">
                 <canvas id="operationalCostChart" width="400" height="260" style="max-width:100%;"></canvas>
               </div>
@@ -123,81 +114,42 @@
     </div>
   </section>
 
-  <!-- Assistente Rápido e Chatbot -->
-  <section id="assistentes" class="py-5">
-    <div class="container">
-      <div class="row g-4">
-        
-        <!-- Assistente Rápido -->
-        <div class="col-lg-6">
-  <div class="card shadow-sm h-100" style="min-height: 420px;">
-    <div class="card-body d-flex flex-column justify-content-between p-3">
-      <div>
-        <div class="d-flex align-items-center mb-2">
-          <i class="bi bi-lightning-charge-fill text-success me-2"></i>
-          <h5 class="fw-semibold text-success mb-1">Assistente Rápido ⚡</h5>
-        </div>
-        <small class="text-muted">Informe os dados para recomendação:</small>
+<section id="assistentes" class="py-5">
+  <div class="container">
+    <div class="row g-4">
 
-        <input type="text" id="nome" class="form-control form-control-sm mt-2" placeholder="Seu nome">
-        <input type="number" id="area" class="form-control form-control-sm mt-2" placeholder="Área (m²)">
-
-        <select id="tipo" class="form-select form-select-sm mt-2">
-          <option value="">Tipo de biomassa</option>
-          <option value="organica">Cana, esterco, palha</option>
-          <option value="madeira">Madeira, cavacos, aparas</option>
-        </select>
-      </div>
-
-      <div>
-        <button class="btn btn-success btn-sm w-100 mt-3" onclick="analisar()">Analisar</button>
-        <div id="resultado" class="mt-2"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
-        <!-- Chatbot -->
-        <div class="col-lg-6" id="chatbot">
-          <div class="card h-100 chat-container shadow-sm">
-            <div class="chat-header d-flex align-items-center justify-content-between">
-              <div class="d-flex align-items-center">
-                <i class="bi bi-robot text-success me-2"></i>
-                <h5 class="mb-0 fw-bold">Chatbot BioEnergy</h5>
+      <div class="col-lg-12">
+        <div class="card shadow-sm h-100" style="min-height: 420px;">
+          <div class="card-body d-flex flex-column justify-content-between p-3">
+            <div>
+              <div class="d-flex align-items-center mb-2">
+                <i class="bi bi-lightning-charge-fill text-success me-2"></i>
+                <h5 class="fw-semibold text-success mb-1">Assistente Rápido ⚡</h5>
               </div>
-              <div class="chat-status">
-                <div class="status-dot bg-success"></div>
-                <span>Online</span>
-              </div>
+              <small class="text-muted">Informe os dados para recomendação:</small>
+
+              <input type="text" id="nome" class="form-control form-control-sm mt-2" placeholder="Seu nome">
+              <input type="number" id="area" class="form-control form-control-sm mt-2" placeholder="Área (m²)">
+
+              <select id="tipo" class="form-select form-select-sm mt-2">
+                <option value="">Tipo de biomassa</option>
+                <option value="organica">Cana, esterco, palha</option>
+                <option value="madeira">Madeira, cavacos, aparas</option>
+              </select>
             </div>
-            
-            <div class="chat-body">
-              <div id="chatbox" class="chat-messages border rounded p-2 mb-3">
-                <div class="message message-bot">
-                  <div class="message-content">
-                    Olá! Sou o assistente virtual da BioEnergy. Como posso ajudá-lo hoje?
-                  </div>
-                  <div class="message-time">Agora</div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="chat-input-container d-flex">
-              <input id="user-input" type="text" class="chat-input form-control" placeholder="Digite sua mensagem...">
-              <button id="send-btn" class="btn btn-success ms-2" type="button">
-                <i class="bi bi-send-fill"></i>
-              </button>
+
+            <div>
+              <button class="btn btn-success btn-sm w-100 mt-3" onclick="analisar()">Analisar</button>
+              <div id="resultado" class="mt-2"></div>
             </div>
           </div>
         </div>
+      </div>
 
-      </div> 
     </div> 
-  </section>
+  </div> 
+</section>
 
-      <!-- Serviços -->
       <section id="servicos" class="py-5">
         <br>
         <div class="container">
@@ -207,7 +159,7 @@
           </div>
 
         <div class="row g-5">
-          <!-- Serviço 1 - Consultoria em Biomassa -->
+
           <div class="col-md-4">
             <div class="card service-card h-100 border-0 shadow-lg">
               <div class="card-icon-wrapper">
@@ -231,7 +183,6 @@
             </div>
           </div>
 
-          <!-- Serviço 2 - Instalação de Equipamentos -->
           <div class="col-md-4">
             <div class="card service-card h-100 border-0 shadow-lg">
               <div class="card-icon-wrapper">
@@ -255,7 +206,6 @@
             </div>
           </div>
 
-          <!-- Serviço 3 - Manutenção Especializada -->
           <div class="col-md-4">
             <div class="card service-card h-100 border-0 shadow-lg">
               <div class="card-icon-wrapper">
@@ -279,7 +229,6 @@
             </div>
           </div>
 
-          <!-- Serviço 4 - Capacitação Técnica -->
           <div class="col-md-4">
             <div class="card service-card h-100 border-0 shadow-lg">
               <div class="card-icon-wrapper">
@@ -303,7 +252,6 @@
             </div>
           </div>
 
-          <!-- Serviço 5 - Estudos de Viabilidade -->
           <div class="col-md-4">
             <div class="card service-card h-100 border-0 shadow-lg">
               <div class="card-icon-wrapper">
@@ -327,7 +275,6 @@
             </div>
           </div>
 
-          <!-- Serviço 6 - Sustentabilidade e Certificação -->
           <div class="col-md-4">
             <div class="card service-card h-100 border-0 shadow-lg">
               <div class="card-icon-wrapper">
@@ -354,7 +301,7 @@
         </div>
       </div>
     </section>
-    <!-- Feedback de Clientes -->
+
 <section id="feedback" class="py-5 bg-white">
   <div class="container">
     <div class="text-center mb-5">
@@ -363,7 +310,7 @@
     </div>
 
     <div class="row g-4">
-      <!-- Feedback 1 -->
+
       <div class="col-md-4">
         <div class="card shadow-sm h-100 border-0">
           <div class="card-body">
@@ -374,7 +321,6 @@
         </div>
       </div>
 
-      <!-- Feedback 2 -->
       <div class="col-md-4">
         <div class="card shadow-sm h-100 border-0">
           <div class="card-body">
@@ -385,7 +331,6 @@
         </div>
       </div>
 
-      <!-- Feedback 3 -->
       <div class="col-md-4">
         <div class="card shadow-sm h-100 border-0">
           <div class="card-body">
@@ -399,13 +344,11 @@
   </div>
 </section>
 
-
-<!-- Formulário de Feedback -->
 <section id="form-feedback" class="py-5 bg-light">
   <div class="container">
     <div class="text-center mb-5">
-      <h2 class="fw-bold text-success display-6 mb-3">Deixe seu Feedback</h2>
-      <p class="lead text-muted">Sua opinião é muito importante para nós</p>
+      <h2 class="fw-bold text-success display-6 mb-3">Fale conosco</h2>
+      <p class="lead text-muted">Qualquer dúvida é só entrar em contato</p>
     </div>
 
     <div class="row justify-content-center">
@@ -415,28 +358,30 @@
             <label for="nome" class="form-label">Seu Nome</label>
             <input type="text" class="form-control" id="nome" name="nome" placeholder="Digite seu nome" required>
           </div>
+
           <div class="mb-3">
-            <label for="servico" class="form-label">Serviço Utilizado</label>
-            <select class="form-select" id="servico" name="servico">
-              <option selected>Selecione...</option>
-              <option value="consultoria">Consultoria em Biomassa</option>
-              <option value="instalação">Instalação de Equipamentos</option>
-              <option value="manutenção">Manutenção de Equipamentos</option>
-              <option value="capacitação">Capacitação Técnica</option>
-              <option value="estudo">Estudos de viabilidade</option>
-              <option value="certificação">Sustentabilidade e certificação</option>
+            <label for="plano" class="form-label">Plano Utilizado</label>
+            <select class="form-select" id="plano" name="plano">
+              <option value="Nenhum" selected>Nenhum plano</option>
+              <option value="BioBronze">Plano BioBronze</option>
+              <option value="BioGold">Plano BioGold</option>
+              <option value="BioPlatinum">Plano BioPlatinum</option>
             </select>
           </div>
+
           <div class="mb-3">
-            <label for="mensagem" class="form-label">Seu Feedback</label>
-            <textarea class="form-control" id="mensagem" rows="4" name="mensagem"placeholder="Escreva sua experiência..." required></textarea>
+            <label for="mensagem" class="form-label">Sua mensagem</label>
+            <textarea class="form-control" id="mensagem" rows="4" name="mensagem" placeholder="Escreva sua experiência..." required></textarea>
           </div>
-          <button type="submit" class="btn btn-success btn-lg">Enviar Feedback</button>
+
+          <button type="submit" class="btn btn-success btn-lg">Enviar Mensagem</button>
         </form>
       </div>
     </div>
   </div>
 </section>
+
+
 <br>
 <footer class="bg-dark text-light py-4">
   <div class="container">
@@ -451,10 +396,9 @@
         <small>Copyright © 2025 BioEnergy. Todos os direitos reservados.</small>
       </div>
     </div>
-    <!-- Linha separada para a logo, centralizada -->
     <div class="row mt-3">
       <div class="col-12 d-flex justify-content-center">
-        <img src="/img/logo2.svg" alt="Logo BioEnergy preta" style="max-width: 180px;">
+        <img src="/img/logo.svg" alt="Logo BioEnergy preta" style="max-width: 180px;">
       </div>
     </div>
   </div>
@@ -505,94 +449,85 @@
         }
       });
 
-      // JavaScript para o Chat
-      const chatbox = document.getElementById("chatbox");
-      const input = document.getElementById("user-input");
-      const sendBtn = document.getElementById("send-btn");
+const chatbox = document.getElementById("chatbox");
+const input = document.getElementById("user-input");
+const sendBtn = document.getElementById("send-btn");
 
-      function appendMessage(role, text) {
-        const messageDiv = document.createElement("div");
-        messageDiv.className = `message ${role === "user" ? "message-user" : "message-bot"}`;
-        
-        const contentDiv = document.createElement("div");
-        contentDiv.className = "message-content";
-        contentDiv.textContent = text;
-        
-        const timeDiv = document.createElement("div");
-        timeDiv.className = "message-time";
-        timeDiv.textContent = "Agora";
-        
-        messageDiv.appendChild(contentDiv);
-        messageDiv.appendChild(timeDiv);
-        chatbox.appendChild(messageDiv);
-        
-        // Scroll para a última mensagem
-        chatbox.scrollTop = chatbox.scrollHeight;
-      }
+if (chatbox && input && sendBtn) {
+  function appendMessage(role, text) {
+    const messageDiv = document.createElement("div");
+    messageDiv.className = `message ${role === "user" ? "message-user" : "message-bot"}`;
+    const contentDiv = document.createElement("div");
+    contentDiv.className = "message-content";
+    contentDiv.textContent = text;
+    const timeDiv = document.createElement("div");
+    timeDiv.className = "message-time";
+    timeDiv.textContent = "Agora";
+    messageDiv.appendChild(contentDiv);
+    messageDiv.appendChild(timeDiv);
+    chatbox.appendChild(messageDiv);
+    chatbox.scrollTop = chatbox.scrollHeight;
+  }
 
-      async function sendMessage() {
-        const text = input.value.trim();
-        if (!text) return;
-        
-        appendMessage("user", text);
-        input.value = "";
-
-        try {
-          const resp = await fetch("/chatbot", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text })
-          });
-          const data = await resp.json();
-          appendMessage("bot", data.reply);
-        } catch (err) {
-          appendMessage("bot", "Desculpe, ocorreu um erro ao conectar com o servidor. Tente novamente mais tarde.");
-        }
-      }
-
-      sendBtn.addEventListener("click", sendMessage);
-      input.addEventListener("keydown", e => { 
-        if (e.key === "Enter") sendMessage(); 
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+    appendMessage("user", text);
+    input.value = "";
+    try {
+      const resp = await fetch("/chatbot", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text })
       });
+      const data = await resp.json();
+      appendMessage("bot", data.reply);
+    } catch (err) {
+      appendMessage("bot", "Desculpe, ocorreu um erro ao conectar com o servidor. Tente novamente mais tarde.");
+    }
+  }
 
+  sendBtn.addEventListener("click", sendMessage);
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") sendMessage();
+  });
 
-  if (1 < 2) {
-    // Substitui o campo de entrada do chatbot por uma mensagem
-    const chatInputContainer = document.querySelector('.chat-input-container');
+  const chatInputContainer = document.querySelector('.chat-input-container');
+  if (chatInputContainer) {
     chatInputContainer.innerHTML = `
       <div class="alert alert-warning w-100 mb-0 text-center" role="alert">
         ⚠️ Você só pode usar o chatbot na página dos usuários. <a href="/login" class="btn btn-danger">Login</a>
       </div>
     `;
   }
+}
 
-  async function analisar() {
-    const nome = document.getElementById('nome').value;
-    const area = document.getElementById('area').value;
-    const tipo = document.getElementById('tipo').value;
-    const resultado = document.getElementById('resultado');
+async function analisar() {
+  const nome = document.getElementById('nome').value;
+  const area = document.getElementById('area').value;
+  const tipo = document.getElementById('tipo').value;
+  const resultado = document.getElementById('resultado');
 
-    try {
-      const resposta = await fetch('/assistente', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome, area, tipo })
-      });
-
-      const dados = await resposta.json();
-
-      if (resposta.ok) {
-        resultado.innerHTML = `<div class="alert alert-success">${dados.mensagem}</div>`;
-      } else {
-        resultado.innerHTML = `<div class="alert alert-danger">${dados.erro}</div>`;
-      }
-    } catch (err) {
-      resultado.innerHTML = `<div class="alert alert-danger">Erro ao processar: ${err.message}</div>`;
+  try {
+    const resposta = await fetch('/assistente', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nome, area, tipo })
+    });
+    const dados = await resposta.json();
+    if (resposta.ok) {
+      resultado.innerHTML = `<div class="alert alert-success">${dados.mensagem}</div>`;
+    } else {
+      resultado.innerHTML = `<div class="alert alert-danger">${dados.erro}</div>`;
     }
+  } catch (err) {
+    resultado.innerHTML = `<div class="alert alert-danger">Erro ao processar: ${err.message}</div>`;
   }
-// Função para atualizar a navbar com base no login
+}
+
 async function atualizarNavbar() {
   const navbarItems = document.getElementById('navbarItems');
+  if (!navbarItems) return;
   navbarItems.innerHTML = '';
 
   try {
@@ -611,7 +546,6 @@ async function atualizarNavbar() {
         <li class="nav-item"><a class="nav-link" href="/admin/manutencoes">MANUTENÇÕES</a></li>
         <li class="nav-item"><a class="nav-link" href="/admin/servicos">SERVIÇOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/admin/produtos">PRODUTOS</a></li>
-
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
             <i class="bi bi-person-circle fs-4 me-1"></i>
@@ -629,16 +563,13 @@ async function atualizarNavbar() {
         </li>
       `;
     } else {
-      // Usuário comum
       navbarItems.innerHTML = `
         <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
         <li class="nav-item"><a class="nav-link" href="/user">USER</a></li>
-        <li class="nav-item"><a class="nav-link" href="/user/#chatbot">CHATBOT</a></li>
         <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
         <li class="nav-item"><a class="nav-link" href="/carrinho"><i class="bi bi-cart-fill fs-4"></i></a></li>
-
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" data-bs-toggle="dropdown">
             <i class="bi bi-person-circle fs-4 me-1"></i>
@@ -655,33 +586,27 @@ async function atualizarNavbar() {
         </li>
       `;
     }
-
   } catch {
-    // Visitante
     navbarItems.innerHTML = `
       <li class="nav-item"><a class="nav-link active fade-in-up" href="/">HOME</a></li>
       <li class="nav-item"><a class="nav-link fade-in-up" href="/#sobre">SOBRE</a></li>
-      <li class="nav-item"><a class="nav-link fade-in-up" href="/#chatbot">CHATBOT</a></li>
+      <li class="nav-item"><a class="nav-link fade-in-up" href="/#assistentes">ASSISTENTE</a></li>
       <li class="nav-item"><a class="nav-link fade-in-up" href="/#servicos">SERVIÇOS</a></li>
-      <li class="nav-item"><a href="/login" class="btn btn-outline-light fw-semibold shadow-sm">Login</a></li>
-      <li class="nav-item"><a href="/registro" class="btn btn-outline-light fw-semibold shadow-sm">Registre-se</a></li>
+      <li class="nav-item"><a href="/login" class="btn btn-outline-light fw-semibold shadow-sm me-2">Login</a></li>
+      <li class="nav-item"><a href="/registro" class="btn btn-outline-light fw-semibold shadow-sm ms-1">Registre-se</a></li>
     `;
   }
 }
 
-    // Novo script para forçar o logout e redirecionar
-    function realizarLogout(event) {
-   
-        event.preventDefault(); 
-    
-        sessionStorage.removeItem('usuarioLogado');
-        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
-    
-        window.location.href = '/sair'; 
+// Logout
+function realizarLogout(event) {
+  event.preventDefault();
+  sessionStorage.removeItem('usuarioLogado');
+  sessionStorage.removeItem('logado');
+  window.location.href = '/sair';
 }
-  // Chama a função para atualizar a navbar quando a página carregar
-  window.onload = atualizarNavbar;
 
+window.onload = atualizarNavbar;
     </script>
 
 

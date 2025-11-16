@@ -55,11 +55,11 @@
 </head>
 <body>
 
- <!-- Navbar -->
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container-fluid px-4">
     <a class="navbar-brand d-flex align-items-center" href="/">
-      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+      <img src="/img/logo.svg" alt="Logo BioEnergy" class="logo me-2">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
@@ -73,14 +73,12 @@
         <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
         
-        <!-- Ícone do carrinho -->
         <li class="nav-item">
           <a class="nav-link" href="/carrinho">
-            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+            <i class="bi bi-cart-fill fs-4"></i> 
           </a>
         </li>
 
-        <!-- Menu de usuário -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle fs-4 me-1"></i>
@@ -100,18 +98,15 @@
     </div>
   </div>
 </nav>
-<!-- Conteúdo principal -->
+
 <div class="container py-5">
 
-  <!-- Título principal -->
   <h1 class="page-title">Página dos Produtos</h1>
   <hr class="mb-5" style="border: 2px solid #198754; width: 120px; margin: 0 auto; border-radius: 5px;">
 
-  <!-- Seção 1 -->
   <h3 class="text-success fw-bold mb-4 text-center">Produtos para Cana, Esterco e Palha</h3>
   <div class="row justify-content-center g-4 mb-5">
 
-    <!-- BioEnergyCube -->
     <div class="col-12 col-md-4">
       <div class="card">
         <img src="/img/produtos/BioEnergyCube.jpg" alt="BioEnergyCube">
@@ -138,7 +133,6 @@
       </div>
     </div>
 
-    <!-- BioEnergyEcoDrive -->
     <div class="col-12 col-md-4">
       <div class="card">
         <img src="/img/produtos/BioEnergyEcoDrive.jpg" alt="BioEnergyEcoDrive">
@@ -165,7 +159,6 @@
       </div>
     </div>
 
-    <!-- BioEnergyContainer -->
     <div class="col-12 col-md-4">
       <div class="card">
         <img src="/img/produtos/BioEnergyContainer.png" alt="BioEnergyContainer">
@@ -194,11 +187,9 @@
 
   </div>
 
-  <!-- Seção 2 -->
   <h3 class="section-title mt-5">Produtos para Madeira, Cavacos e Aparas</h3>
   <div class="row justify-content-center g-4 mb-5">
 
-    <!-- BioEnergyWoodX -->
     <div class="col-12 col-md-4">
       <div class="card">
         <img src="/img/produtos/BioEnergyWoodX.jpg" alt="BioEnergyWoodX">
@@ -225,7 +216,6 @@
       </div>
     </div>
 
-    <!-- BioEnergyWooderPro -->
     <div class="col-12 col-md-4">
       <div class="card">
         <img src="/img/produtos/BioEnergyWooderPro.jpg" alt="BioEnergyWooderPro">
@@ -266,7 +256,7 @@
         event.preventDefault(); 
     
         sessionStorage.removeItem('usuarioLogado');
-        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
+        sessionStorage.removeItem('logado'); 
     
         window.location.href = '/sair'; 
 }

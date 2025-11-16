@@ -15,11 +15,10 @@
     }
 </style>
 <body>
-   <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container-fluid px-4">
     <a class="navbar-brand d-flex align-items-center" href="/">
-      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+      <img src="/img/logo.svg" alt="Logo BioEnergy" class="logo me-2">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
@@ -33,7 +32,6 @@
         <li class="nav-item"><a class="nav-link" href="/admin/servicos">SERVIÇOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/admin/produtos">PRODUTOS</a></li>
 
-        <!-- Menu de usuário -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle fs-4 me-1"></i>
@@ -53,7 +51,7 @@
     </div>
   </div>
 </nav>
-  <!-- Conteúdo principal -->
+
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
@@ -61,18 +59,15 @@
           <div class="card-body">
             <h1 class="text-center mb-4">Atualizar Manutenção</h1>
 
-            <!-- Botões de navegação -->
             <div class="d-flex justify-content-center gap-3 mb-4">
               <a href="/" class="btn btn-primary">Página Inicial</a>
               <a href="/admin" class="btn btn-secondary">Página dos Administradores</a>
               <a href="/admin/manutencoes" class="btn btn-success">Lista de Manutenções</a>
             </div>
 
-            <!-- Formulário -->
             <form action="/admin/manutencoes_atualizar" method="post" id="formAtualizar">
               <input type="hidden" name="id" id="id">
 
-              <!-- Usuário -->
               <div class="mb-3">
                 <label for="usuario" class="form-label">Usuário:</label>
                 <select name="usuario" id="usuario" class="form-select" required>
@@ -80,7 +75,6 @@
                 </select>
               </div>
 
-              <!-- Tipo de manutenção -->
               <div class="mb-3">
                 <label for="tipo" class="form-label">Tipo de Manutenção:</label>
                 <select name="tipo" id="tipo" class="form-select" required>
@@ -93,25 +87,21 @@
                 </select>
               </div>
 
-              <!-- Custo por hora -->
               <div class="mb-3">
                 <label for="custoHora" class="form-label">Custo p/hora:</label>
                 <input type="number" step="0.01" name="custoHora" id="custoHora" class="form-control" required>
               </div>
 
-              <!-- Custo total -->
               <div class="mb-3">
                 <label for="custoTotal" class="form-label">Custo total:</label>
                 <input type="number" step="0.01" name="custoTotal" id="custoTotal" class="form-control" required>
               </div>
 
-              <!-- Quantidade de dias -->
               <div class="mb-3">
                 <label for="dias" class="form-label">Quantidade de Dias:</label>
                 <input type="number" name="dias" id="dias" class="form-control" required>
               </div>
 
-              <!-- Disponível -->
               <div class="mb-3">
                 <label for="disponivel" class="form-label">Disponível:</label>
                 <select name="disponivel" id="disponivel" class="form-select" required>
@@ -128,13 +118,11 @@
     </div>
   </div>
 
-  <!-- Script para preencher os dados -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
       const id = params.get("id");
 
-      // Preencher lista de usuários
       fetch('/admin/dropdown-usuarios')
         .then(res => res.json())
         .then(usuarios => {
@@ -147,7 +135,6 @@
           });
         });
 
-      // Preencher dados da manutenção
       if (id) {
         fetch(`/admin/manutencao/${id}`)
           .then(response => response.json())

@@ -1,9 +1,0 @@
-1. Criar rota de produtos - Feito, serviços - Parcialmente feito e manutenções
-2. Fazer o chatbot funcionar com histórico por usuário - Feito 
-3. Refazer o assistente da página inicial ( depois do primeiro item ) - Feito
-4. Criar estatísticas dos produtos - Feito, criar os serviços - Parcialmente feito e manutenções
-5. Fazer as alterações que o Dephoian falou - Feito
-6. Fazer com que o chatbot recomende produtos - Feito, serviços e manutenções
-7. Fazer o botão de carrinho quando a pessoa estiver logada - Feito
-8. Fazer o botão de usuário na página inicial quando a pessoa estiver logada - Feito
-9. Definir os planos (serviços)

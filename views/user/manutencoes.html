@@ -39,11 +39,10 @@
 </head>
 <body>
 
- <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container-fluid px-4">
     <a class="navbar-brand d-flex align-items-center" href="/">
-      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+      <img src="/img/logo.svg" alt="Logo BioEnergy" class="logo me-2">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
@@ -56,15 +55,13 @@
         <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
-        
-        <!-- Ícone do carrinho -->
+   
         <li class="nav-item">
           <a class="nav-link" href="/carrinho">
-            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+            <i class="bi bi-cart-fill fs-4"></i> 
           </a>
         </li>
 
-        <!-- Menu de usuário -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle fs-4 me-1"></i>
@@ -87,11 +84,10 @@
 <div class="container py-5">
   <h2 class="text-center text-success mb-4">Manutenções</h2>
   <div id="produtos-container" class="row g-4 justify-content-center">
-    <!-- Cards serão carregados aqui -->
+   
   </div>
 </div>
 
-<!-- Modal de Manutenção -->
 <div class="modal fade" id="manutencaoModal" tabindex="-1" aria-labelledby="manutencaoModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -138,9 +134,8 @@
   const diasSpan = document.getElementById("diasSpan");
 
   let produtoSelecionado = null;
-  let usuarioLogado = ""; // Agora será dinâmico
+  let usuarioLogado = ""; 
 
-  // Informações de manutenção
   const manutencoesInfo = {
     "BioEnergyCube": {
       "Preventiva": { custoHora: 50, dias: 2 },
@@ -223,12 +218,10 @@
 
   async function carregarProdutosUsuario() {
     try {
-      // Buscar usuário logado
       const resUsuario = await fetch('/dados-usuario');
       const dataUsuario = await resUsuario.json();
       usuarioLogado = dataUsuario.usuario || "Usuário";
 
-      // Buscar produtos do usuário
       const res = await fetch('/produtos-usuario');
       const data = await res.json();
 
@@ -254,9 +247,8 @@
   const produto = produtoSelecionado.nomeNumerado;
   const custoHora = info.custoHora;
   const dias = info.dias;
-  const custoTotal = custoHora * dias * 8; // 8h/dia
+  const custoTotal = custoHora * dias * 8; 
 
-  // Exibir no modal
   usuarioSpan.textContent = usuario;
   maquinaSpan.textContent = produto;
   manutencaoSpan.textContent = tipo;
@@ -265,7 +257,6 @@
   diasSpan.textContent = dias;
   dadosDiv.style.display = "block";
 
-  // Enviar para o backend
   try {
     const res = await fetch('/adicionar-manutencao', {
       method: 'POST',
@@ -298,7 +289,7 @@
         event.preventDefault(); 
     
         sessionStorage.removeItem('usuarioLogado');
-        sessionStorage.removeItem('logado'); // Se 'logado' também for usado
+        sessionStorage.removeItem('logado'); 
     
         window.location.href = '/sair'; 
 }

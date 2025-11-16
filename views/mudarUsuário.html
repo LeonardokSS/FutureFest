@@ -29,22 +29,19 @@
 </head>
 <body>
 
-<!-- ✅ Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container">
-    <img class="logo" src="/img/logo.png" alt="imagem logo tipo">
+    <img class="logo" src="/img/logo.svg" alt="imagem logo tipo">
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse justify-content-end" id="navMenu">
       <ul class="navbar-nav align-items-center" id="navbarItems">
-        <!-- Navbar dinâmica -->
       </ul>
     </div>
   </div>
 </nav>
 
-<!-- ✅ Formulário de troca de usuário -->
 <div class="form-card">
   <h4 class="text-success text-center mb-4">Alterar Nome de Usuário</h4>
   <form method="POST" action="/mudar-usuario">
@@ -70,7 +67,7 @@ function realizarLogout(event) {
 async function atualizarNavbar() {
   const navbarItems = document.getElementById('navbarItems');
   navbarItems.innerHTML = '';
-  const voltarLink = document.getElementById('voltarLink'); // Obter o link de "Voltar ao chatbot"
+  const voltarLink = document.getElementById('voltarLink'); 
 
   try {
     const response = await fetch('/session', { credentials: 'include' });
@@ -80,14 +77,13 @@ async function atualizarNavbar() {
     const usuario = data.usuario;
     const tipo = data.tipo;
 
-    // Alterar o link conforme o tipo de usuário
     if (voltarLink) {
       if (tipo === 'admin') {
         voltarLink.textContent = 'Voltar ao painel de administração';
-        voltarLink.href = '/admin';  // Link para a página de admin
+        voltarLink.href = '/admin';  
       } else {
         voltarLink.textContent = 'Voltar ao chatbot';
-        voltarLink.href = '/user';  // Link para a página de chatbot do usuário
+        voltarLink.href = '/user'; 
       }
     }
 
@@ -157,7 +153,6 @@ async function atualizarNavbar() {
   }
 }
 
-// ✅ Executa quando o DOM estiver pronto
 document.addEventListener('DOMContentLoaded', atualizarNavbar);
 </script>
 

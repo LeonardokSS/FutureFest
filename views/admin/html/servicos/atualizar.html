@@ -6,20 +6,15 @@
   <title>Atualizar Serviço</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
+  <style>
+    .logo { width: 180px; border-radius: 12px; }
+  </style>
 </head>
-<style>
-    .logo {
-      width: 180px;
-      border-radius: 12px;
-    }
-</style>
 <body>
-   <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container-fluid px-4">
     <a class="navbar-brand d-flex align-items-center" href="/">
-      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+      <img src="/img/logo.svg" alt="Logo BioEnergy" class="logo me-2">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
@@ -33,7 +28,6 @@
         <li class="nav-item"><a class="nav-link" href="/admin/servicos">SERVIÇOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/admin/produtos">PRODUTOS</a></li>
 
-        <!-- Menu de usuário -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle fs-4 me-1"></i>
@@ -54,7 +48,6 @@
   </div>
 </nav>
 
-  <!-- Conteúdo principal -->
   <div class="container mt-5">
     <div class="row justify-content-center">
       <div class="col-md-6">
@@ -62,18 +55,15 @@
           <div class="card-body">
             <h1 class="text-center mb-4">Atualizar Serviço</h1>
 
-            <!-- Botões de navegação -->
             <div class="d-flex justify-content-center gap-3 mb-4">
               <a href="/" class="btn btn-primary">Página Inicial</a>
               <a href="/admin" class="btn btn-secondary">Página dos Administradores</a>
               <a href="/admin/servicos" class="btn btn-success">Lista de Serviços</a>
             </div>
 
-            <!-- Formulário -->
             <form action="/admin/servicos_atualizar" method="post" id="formAtualizar">
               <input type="hidden" name="id" id="id">
 
-              <!-- Usuário -->
               <div class="mb-3">
                 <label for="usuario" class="form-label">Usuário:</label>
                 <select name="usuario" id="usuario" class="form-select" required>
@@ -81,38 +71,36 @@
                 </select>
               </div>
 
-              <!-- Tipo de serviço -->
               <div class="mb-3">
-                <label for="tipo" class="form-label">Tipo de Serviço:</label>
-                <select name="tipo" id="tipo" class="form-select" required>
-                  <option value="consultoria">Consultoria de Biomassa</option>
-                  <option value="instalação">Instalação de Equipamentos</option>
-                  <option value="manutenção">Manutenção Especializada</option>
-                  <option value="capacitação">Capacitação técnica</option>
-                  <option value="estudos">Estudos de viabilidade</option>
-                  <option value="certificação">Sustentabilidade e certificação</option>
+                <label for="plano" class="form-label">Plano:</label>
+                <select name="plano" id="plano" class="form-select" required>
+                  <option value="BioBronze">BioBronze</option>
+                  <option value="BioGold">BioGold</option>
+                  <option value="BioPlatinum">BioPlatinum</option>
                 </select>
               </div>
 
-              <!-- Custo por hora -->
               <div class="mb-3">
-                <label for="custoHora" class="form-label">Custo p/hora:</label>
-                <input type="number" step="0.01" name="custoHora" id="custoHora" class="form-control" required>
+                <label for="tipoPagamento" class="form-label">Tipo de Pagamento:</label>
+                <select name="tipoPagamento" id="tipoPagamento" class="form-select" required>
+                  <option value="Mensal">Mensal</option>
+                  <option value="Anual">Anual</option>
+                </select>
               </div>
 
-              <!-- Custo total -->
               <div class="mb-3">
-                <label for="custoTotal" class="form-label">Custo total:</label>
-                <input type="number" step="0.01" name="custoTotal" id="custoTotal" class="form-control" required>
+                <label for="custo" class="form-label">Custo:</label>
+                <input type="number" step="0.01" name="custo" id="custo" class="form-control" required>
               </div>
 
-              <!-- Quantidade de dias -->
               <div class="mb-3">
-                <label for="dias" class="form-label">Quantidade de Dias:</label>
-                <input type="number" name="dias" id="dias" class="form-control" required>
+                <label for="duracao" class="form-label">Duração:</label>
+                <select name="duracao" id="duracao" class="form-select" required>
+                  <option value="30 dias">30 dias</option>
+                  <option value="1 ano">1 ano</option>
+                </select>
               </div>
 
-              <!-- Disponível -->
               <div class="mb-3">
                 <label for="disponivel" class="form-label">Disponível:</label>
                 <select name="disponivel" id="disponivel" class="form-select" required>
@@ -129,13 +117,11 @@
     </div>
   </div>
 
-  <!-- Script para preencher os dados -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
       const id = params.get("id");
 
-      // Preencher lista de usuários
       fetch('/admin/dropdown-usuarios')
         .then(res => res.json())
         .then(usuarios => {
@@ -148,35 +134,62 @@
           });
         });
 
-      // Preencher dados do serviço
       if (id) {
         fetch(`/admin/servico/${id}`)
           .then(response => response.json())
           .then(servico => {
             document.getElementById("id").value = servico._id;
             document.getElementById("usuario").value = servico.usuario;
-            document.getElementById("tipo").value = servico.tipo;
-            document.getElementById("custoHora").value = servico.custoHora;
-            document.getElementById("custoTotal").value = servico.custoTotal;
-            document.getElementById("dias").value = servico.dias;
+            document.getElementById("plano").value = servico.plano;
+            document.getElementById("tipoPagamento").value = servico.tipoPagamento;
+            document.getElementById("custo").value = servico.custo;
+            document.getElementById("duracao").value = servico.duracao;
             document.getElementById("disponivel").value = servico.disponivel;
           })
           .catch(error => console.error('Erro ao carregar dados do serviço: ', error));
       }
     });
-        fetch('/dados-usuario')
-    .then(res => res.json())
-    .then(data => {
-      document.getElementById('nome-usuario').textContent = data.usuario;
-    });
-  function realizarLogout(event) {
-   
-        event.preventDefault(); 
-    
-        sessionStorage.removeItem('usuarioLogado');
-    
-        window.location.href = '/sair'; 
-}
+
+     const precosBase = {
+    BioBronze: 14000,
+    BioGold: 28000,
+    BioPlatinum: 34000
+  };
+
+  function atualizarCustoEDuracao() {
+    const plano = document.getElementById("plano").value;
+    const tipoPagamento = document.getElementById("tipoPagamento").value;
+
+    const precoBase = precosBase[plano] || 0;
+    let custo = 0;
+    let duracao = "";
+
+    if (tipoPagamento === "Mensal") {
+      custo = precoBase / 12;
+      duracao = "30 dias";
+    } else if (tipoPagamento === "Anual") {
+      custo = precoBase * 0.9;
+      duracao = "1 ano";
+    }
+
+    document.getElementById("custo").value = custo.toFixed(2);
+    document.getElementById("duracao").value = duracao;
+  }
+
+  document.getElementById("plano").addEventListener("change", atualizarCustoEDuracao);
+  document.getElementById("tipoPagamento").addEventListener("change", atualizarCustoEDuracao);
+
+    fetch('/dados-usuario')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('nome-usuario').textContent = data.usuario;
+      });
+
+    function realizarLogout(event) {
+      event.preventDefault(); 
+      sessionStorage.removeItem('usuarioLogado');
+      window.location.href = '/sair'; 
+    }
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

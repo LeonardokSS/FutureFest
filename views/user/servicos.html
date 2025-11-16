@@ -18,15 +18,38 @@
     .card:hover { transform: scale(1.04); box-shadow: 0 0 20px rgba(25, 135, 84, 0.3); }
     .card-img-top { height: 220px; object-fit: cover; border-top-left-radius: 15px; border-top-right-radius: 15px; width: 100%; }
     hr { border: 2px solid #198754; width: 120px; margin: 0 auto; border-radius: 5px; margin-bottom: 50px; }
+.extra-services {
+  display: none;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.25s ease, max-height 0.25s ease;
+}
+
+.extra-services.show {
+  display: block;
+  opacity: 1;
+  max-height: 800px; 
+}
+
+.card.bg-dark {
+  background-color: hsla(240, 15%, 9%, 0.85);
+  border-radius: 1rem;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.card:hover {
+  transform: translateZ(0); 
+}
+
   </style>
 </head>
 <body>
 
-  <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container-fluid px-4">
     <a class="navbar-brand d-flex align-items-center" href="/">
-      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+      <img src="/img/logo.svg" alt="Logo BioEnergy" class="logo me-2">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
@@ -40,14 +63,12 @@
         <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
         
-        <!-- Ícone do carrinho -->
         <li class="nav-item">
           <a class="nav-link" href="/carrinho">
-            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+            <i class="bi bi-cart-fill fs-4"></i> 
           </a>
         </li>
 
-        <!-- Menu de usuário -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle fs-4 me-1"></i>
@@ -68,13 +89,10 @@
   </div>
 </nav>
 
-
-  <!-- Conteúdo principal -->
   <div class="container py-5">
     <h1 class="page-title">Nossos Serviços</h1>
     <hr>
 
-    <!-- Seção 1: Consultoria em Biomassa -->
     <h3 class="section-title">Consultoria em Biomassa</h3>
     <div class="row justify-content-center g-4 mb-5">
       <div class="col-12 col-md-4">
@@ -103,7 +121,6 @@
       </div>
     </div>
 
-    <!-- Seção 2: Instalação de Equipamentos -->
     <h3 class="section-title">Instalação de Equipamentos</h3>
     <div class="row justify-content-center g-4 mb-5">
       <div class="col-12 col-md-4">
@@ -132,7 +149,6 @@
       </div>
     </div>
 
-    <!-- Seção 3: Manutenção Especializada -->
     <h3 class="section-title">Manutenção Especializada</h3>
     <div class="row justify-content-center g-4 mb-5">
       <div class="col-12 col-md-4">
@@ -161,7 +177,6 @@
       </div>
     </div>
 
-    <!-- Seção 4: Capacitação Técnica -->
     <h3 class="section-title">Capacitação Técnica</h3>
     <div class="row justify-content-center g-4 mb-5">
       <div class="col-12 col-md-4">
@@ -190,7 +205,6 @@
       </div>
     </div>
 
-    <!-- Seção 5: Estudos de Viabilidade -->
     <h3 class="section-title">Estudos de Viabilidade</h3>
     <div class="row justify-content-center g-4 mb-5">
       <div class="col-12 col-md-4">
@@ -219,7 +233,6 @@
       </div>
     </div>
 
-    <!-- Seção 6: Sustentabilidade e Certificação -->
     <h3 class="section-title">Sustentabilidade e Certificação</h3>
     <div class="row justify-content-center g-4 mb-5">
       <div class="col-12 col-md-4">
@@ -248,141 +261,114 @@
       </div>
     </div>
 
-    <!-- 🌿 NOVA SEÇÃO: PLANOS BIOENERGY -->
-    <h3 class="section-title">Planos BioEnergy</h3>
-    <hr>
+<h3 class="section-title">Planos BioEnergy</h3>
+<hr>
 
-    <div class="row justify-content-center g-4 mb-5">
+<div class="row justify-content-center g-4 mb-5">
 
-      <!-- PLANO BIOBRONZE -->
-      <div class="col-12 col-md-4">
-        <div class="card border-success h-100">
-          <div class="card-header bg-success text-white text-center fw-bold fs-4">
-            🟤 Plano BioBronze
-          </div>
-          <div class="card-body">
-            <ul class="list-unstyled">
-              <li>✅ Análise de Viabilidade de Projetos</li>
-              <li>✅ Implementação de Sistemas de Geração</li>
-              <li>✅ Manutenção Preventiva Programada</li>
-              <li>✅ Treinamentos Práticos</li>
-              <li>✅ Análise Detalhada de ROI</li>
-              <li>✅ Consultoria para Certificações Ambientais</li>
-            </ul>
-          </div>
-          <div class="card-footer bg-light text-center">
-            <button class="btn btn-success fw-bold">Saiba Mais</button>
-          </div>
-        </div>
+  <div class="col-12 col-md-4">
+    <div class="card bg-dark text-white h-100">
+      <div class="card-header bg-success text-white text-center fw-bold">
+        🟤 Plano BioBronze
       </div>
-
-      <!-- PLANO BIOGOLD -->
-      <div class="col-12 col-md-4">
-        <div class="card border-warning h-100">
-          <div class="card-header bg-warning text-dark text-center fw-bold fs-4">
-            🟡 Plano BioGold
-          </div>
-          <div class="card-body">
-            <ul class="list-unstyled">
-              <li>✅ Análise de Viabilidade de Projetos</li>
-              <li>✅ Customização de Sistemas de Energia</li>
-              <li>✅ Avaliação Técnica de Processos Existentes</li>
-              <li>✅ Implementação de Sistemas de Geração</li>
-              <li>✅ Serviço de Upgrade Tecnológico</li>
-              <li>✅ Monitoramento Pós-Instalação</li>
-              <li>✅ Manutenção Preventiva Programada</li>
-              <li>✅ Atendimento Corretivo Emergencial 24/7</li>
-              <li>✅ Relatórios de Desempenho</li>
-              <li>✅ Treinamentos Práticos</li>
-              <li>✅ Certificação Profissional</li>
-              <li>✅ Suporte Técnico Contínuo</li>
-              <li>✅ Análise Detalhada de ROI</li>
-              <li>✅ Projeções Financeiras Personalizadas</li>
-              <li>✅ Relatórios Detalhados de Impacto</li>
-              <li>✅ Consultoria para Certificações Ambientais</li>
-              <li>✅ Implementação de Práticas ESG</li>
-              <li>✅ Planos de Sustentabilidade Personalizados</li>
-            </ul>
-          </div>
-          <div class="card-footer bg-light text-center">
-            <button class="btn btn-warning text-dark fw-bold">Saiba Mais</button>
-          </div>
-        </div>
+      <div class="card-body">
+        <ul class="list-unstyled mb-0">
+          <li>✅ Análise de Viabilidade de Projetos</li>
+          <li>✅ Implementação de Sistemas de Geração</li>
+          <li>✅ Manutenção Preventiva Programada</li>
+          <li>✅ Treinamentos Práticos</li>
+          <li>✅ Análise Detalhada de ROI</li>
+          <li>✅ Consultoria para Certificações Ambientais</li>
+        </ul>
       </div>
-
-      <!-- PLANO BIOPLATINUM -->
-      <div class="col-12 col-md-4">
-        <div class="card border-dark h-100">
-          <div class="card-header bg-dark text-white text-center fw-bold fs-4">
-            ⚫ Plano BioPlatinum
-          </div>
-          <div class="card-body">
-            <ul class="list-unstyled">
-              <li>✅ Análise de Viabilidade de Projetos</li>
-              <li>✅ Customização de Sistemas de Energia</li>
-              <li>✅ Implementação de Sistemas de Geração</li>
-              <li>✅ Serviço de Upgrade Tecnológico</li>
-              <li>✅ Manutenção Preventiva Programada</li>
-              <li>✅ Atendimento Corretivo Emergencial 24/7</li>
-              <li>✅ Treinamentos Práticos</li>
-              <li>✅ Certificação Profissional</li>
-              <li>✅ Análise Detalhada de ROI</li>
-              <li>✅ Projeções Financeiras Personalizadas</li>
-              <li>✅ Consultoria para Certificações Ambientais</li>
-              <li>✅ Implementação de Práticas ESG</li>
-            </ul>
-          </div>
-          <div class="card-footer bg-light text-center">
-            <button class="btn btn-dark fw-bold">Saiba Mais</button>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-    <!-- Modal de Serviços -->
-  <div class="modal fade" id="servicoModal" tabindex="-1" aria-labelledby="servicoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content">
-        <div class="modal-header bg-success text-white">
-          <h5 class="modal-title" id="servicoModalLabel">Solicitar Plano</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
-        </div>
-
-        <div class="modal-body">
-          <!-- Seleção do tipo de serviço -->
-          <label for="tipoServico" class="form-label">Selecione o tipo de plano:</label>
-          <select id="tipoServico" class="form-select mb-3">
-            <option value="">Selecione...</option>
-            <option value="BioBronze">BioBronze</option>
-            <option value="BioPlatinum">BioPlatinum</option>
-            <option value="BioGold">BioGold</option>
-          </select>
-
-          <!-- Dados do serviço selecionado -->
-          <div id="dadosServico" style="display:none; background-color:#e9f5ee; border-radius:10px; padding:15px;">
-            <p><strong>Nome do usuário:</strong> <span id="usuarioServicoSpan"></span></p>
-            <p><strong>Serviço selecionado:</strong> <span id="servicoSpan"></span></p>
-            <p><strong>Descrição:</strong> <span id="descricaoServicoSpan"></span></p>
-            <p><strong>Duração estimada:</strong> <span id="duracaoServicoSpan"></span> dias</p>
-            <p><strong>Custo estimado:</strong> R$ <span id="custoServicoSpan"></span></p>
-            <p><strong>Disponível:</strong> Sim</p>
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" id="confirmarServico" class="btn btn-success">Confirmar Solicitação</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-        </div>
+      <div class="card-footer bg-light text-center">
+        <button class="btn btn-success fw-bold" data-bs-toggle="modal" data-bs-target="#planoModal" data-plano="BioBronze">Saiba Mais</button>
       </div>
     </div>
   </div>
+
+  <div class="col-12 col-md-4">
+    <div class="card bg-dark text-white h-100">
+      <div class="card-header bg-warning text-dark text-center fw-bold">
+        🟡 Plano BioGold
+      </div>
+      <div class="card-body">
+        <ul class="list-unstyled mb-0">
+          <li>✅ Inclui todos os serviços do BioBronze</li>
+          <li>✅ Customização de Sistemas de Energia</li>
+          <li>✅ Avaliação Técnica de Processos Existentes</li>
+          <li>✅ Serviço de Upgrade Tecnológico</li>
+          <li>✅ Monitoramento Pós-Instalação</li>
+          <li>✅ Atendimento Corretivo Emergencial 24/7</li>
+          <li>✅ Relatórios de Desempenho</li>
+          <li>✅ Certificação Profissional</li>
+          <li>✅ Suporte Técnico Contínuo</li>
+        </ul>
+      </div>
+      <div class="card-footer bg-light text-center">
+        <button class="btn btn-warning text-dark fw-bold" data-bs-toggle="modal" data-bs-target="#planoModal" data-plano="BioGold">Saiba Mais</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-4">
+    <div class="card bg-dark text-white h-100">
+      <div class="card-header bg-dark text-white text-center fw-bold">
+        ⚫ Plano BioPlatinum
+      </div>
+      <div class="card-body">
+        <ul class="list-unstyled mb-0">
+          <li>✅ Inclui todos os serviços do BioGold</li>
+          <li>✅ Projeções Financeiras Personalizadas</li>
+          <li>✅ Relatórios Detalhados de Impacto</li>
+          <li>✅ Implementação de Práticas ESG</li>
+          <li>✅ Planos de Sustentabilidade Personalizados</li>
+        </ul>
+      </div>
+      <div class="card-footer bg-light text-center">
+        <button class="btn btn-dark fw-bold" data-bs-toggle="modal" data-bs-target="#planoModal" data-plano="BioPlatinum">Saiba Mais</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal fade" id="planoModal" tabindex="-1" aria-labelledby="planoModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="planoModalLabel">Detalhes do Plano</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Nome do usuário:</strong> <span id="usuarioPlanoSpan"></span></p>
+        <p><strong>Plano selecionado:</strong> <span id="planoSpan"></span></p>
+        <p><strong>Descrição:</strong> <span id="descricaoPlanoSpan"></span></p>
+
+        <p><strong>Formas de pagamento:</strong></p>
+        <ul>
+          <li>Mensal (30 dias): R$ <span id="custoMensalSpan"></span></li>
+          <li>Anual (1 ano, 10% desconto): R$ <span id="custoAnualSpan"></span></li>
+        </ul>
+      </div>
+      <div class="modal-footer d-flex justify-content-between">
+        <button type="button" id="confirmarMensal" class="btn btn-success">Confirmar Mensal</button>
+        <button type="button" id="confirmarAnual" class="btn btn-primary">Confirmar Anual</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 
 
   <script>
+    let usuarioLogado = null
      fetch('/dados-usuario')
     .then(res => res.json())
     .then(data => {
+      usuarioLogado = data.usuario
       document.getElementById('nome-usuario').textContent = data.usuario;
     });
     function realizarLogout(event) {
@@ -391,90 +377,88 @@
         sessionStorage.removeItem('logado');
         window.location.href = '/sair'; 
     }
-    // ---- Modal de Planos ----
-const tipoServicoSelect = document.getElementById("tipoServico");
-const dadosServicoDiv = document.getElementById("dadosServico");
-const usuarioServicoSpan = document.getElementById("usuarioServicoSpan");
-const servicoSpan = document.getElementById("servicoSpan");
-const descricaoServicoSpan = document.getElementById("descricaoServicoSpan");
-const duracaoServicoSpan = document.getElementById("duracaoServicoSpan");
-const custoServicoSpan = document.getElementById("custoServicoSpan");
-
-// Dados dos planos
-const planosInfo = {
-  "BioBronze": {
-    descricao: "Plano básico que inclui análise de viabilidade, instalação de sistemas de geração, manutenção preventiva e consultoria ambiental.",
-    duracao: 30,
-    custo: 2500
-  },
-  "BioGold": {
-    descricao: "Plano intermediário com soluções completas de geração, manutenção, suporte técnico e certificação profissional.",
-    duracao: 60,
-    custo: 4500
-  },
-  "BioPlatinum": {
-    descricao: "Plano premium com suporte total, personalização de sistemas, treinamentos exclusivos e implementação de práticas ESG.",
-    duracao: 90,
-    custo: 7000
-  }
-};
-
-// Exibir dados ao selecionar o plano
-tipoServicoSelect.addEventListener("change", () => {
-  const tipo = tipoServicoSelect.value;
-  if (!tipo) {
-    dadosServicoDiv.style.display = "none";
-    return;
-  }
-
-  const info = planosInfo[tipo];
-  usuarioServicoSpan.textContent = usuarioLogado || "Usuário";
-  servicoSpan.textContent = tipo;
-  descricaoServicoSpan.textContent = info.descricao;
-  duracaoServicoSpan.textContent = info.duracao;
-  custoServicoSpan.textContent = info.custo.toFixed(2);
-  dadosServicoDiv.style.display = "block";
-});
-
-// Confirmar solicitação de plano
-document.getElementById("confirmarServico").addEventListener("click", async () => {
-  const tipo = tipoServicoSelect.value;
-  if (!tipo) {
-    alert("Selecione um plano antes de confirmar.");
-    return;
-  }
-
-  const info = planosInfo[tipo];
-  const usuario = usuarioLogado || "Usuário";
-  const descricao = info.descricao;
-  const duracao = info.duracao;
-  const custo = info.custo;
-
-  try {
-    const res = await fetch('/adicionar-plano', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ usuario, tipo, descricao, duracao, custo })
-    });
-
-    const data = await res.json();
-    if (data.sucesso) {
-      alert("Plano solicitado com sucesso!");
-    } else {
-      alert("Erro ao registrar a solicitação do plano.");
+    const planosInfo = {
+    "BioBronze": {
+      descricao: "Plano básico que inclui análise de viabilidade, instalação de sistemas de geração, manutenção preventiva e consultoria ambiental.",
+      custo: 14000
+    },
+    "BioGold": {
+      descricao: "Plano intermediário com soluções completas de geração, manutenção, suporte técnico e certificação profissional.",
+      custo: 28000
+    },
+    "BioPlatinum": {
+      descricao: "Plano premium com suporte total, personalização de sistemas, treinamentos exclusivos e implementação de práticas ESG.",
+      custo: 34000
     }
-  } catch (err) {
-    console.error(err);
-    alert("Erro na conexão com o servidor.");
-  }
-});
+  };
+
+  document.querySelectorAll('[data-bs-target="#planoModal"]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tipo = btn.getAttribute('data-plano');
+      const info = planosInfo[tipo];
+
+      const mensal = (info.custo / 12).toFixed(2);
+      const anual = (info.custo * 0.9).toFixed(2);
+
+      document.getElementById('usuarioPlanoSpan').textContent = usuarioLogado || "Usuário";
+      document.getElementById('planoSpan').textContent = tipo;
+      document.getElementById('descricaoPlanoSpan').textContent = info.descricao;
+      document.getElementById('custoMensalSpan').textContent = mensal;
+      document.getElementById('custoAnualSpan').textContent = anual;
+    });
+  });
+
+  // Confirmar Mensal
+  document.getElementById("confirmarMensal").addEventListener("click", async () => {
+    const plano = document.getElementById('planoSpan').textContent;
+    const usuario = usuarioLogado;
+    const custo = parseFloat(document.getElementById('custoMensalSpan').textContent);
+    const duracao = "30 dias";
+
+    try {
+      const res = await fetch('/adicionar-servico', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario, plano, tipoPagamento: "Mensal", custo, duracao })
+      });
+      const data = await res.json();
+      if (data.sucesso) {
+        alert("Plano mensal solicitado com sucesso!");
+      } else {
+        alert("Erro ao registrar a solicitação.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro na conexão com o servidor.");
+    }
+  });
+
+  // Confirmar Anual
+  document.getElementById("confirmarAnual").addEventListener("click", async () => {
+    const plano = document.getElementById('planoSpan').textContent;
+    const usuario = usuarioLogado; 
+    const custo = parseFloat(document.getElementById('custoAnualSpan').textContent);
+    const duracao = "1 ano";
+
+    try {
+      const res = await fetch('/adicionar-servico', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ usuario, plano, tipoPagamento: "Anual", custo, duracao })
+      });
+      const data = await res.json();
+      if (data.sucesso) {
+        alert("Plano anual solicitado com sucesso!");
+      } else {
+        alert("Erro ao registrar a solicitação.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erro na conexão com o servidor.");
+    }
+  });
 
   </script>
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
-
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>

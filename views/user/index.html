@@ -62,11 +62,10 @@
 </head>
 <body>
 
- <!-- Navbar -->
 <nav class="navbar navbar-expand-lg navbar-dark bg-success">
   <div class="container-fluid px-4">
     <a class="navbar-brand d-flex align-items-center" href="/">
-      <img src="/img/logo.png" alt="Logo BioEnergy" class="logo me-2">
+      <img src="/img/logo.svg" alt="Logo BioEnergy" class="logo me-2">
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
@@ -79,15 +78,13 @@
         <li class="nav-item"><a class="nav-link" href="/produtos">PRODUTOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/servicos">SERVIÇOS</a></li>
         <li class="nav-item"><a class="nav-link" href="/manutencoes">MANUTENÇÕES</a></li>
-        
-        <!-- Ícone do carrinho -->
+
         <li class="nav-item">
           <a class="nav-link" href="/carrinho">
-            <i class="bi bi-cart-fill fs-4"></i> <!-- Ícone do carrinho -->
+            <i class="bi bi-cart-fill fs-4"></i> 
           </a>
         </li>
 
-        <!-- Menu de usuário -->
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             <i class="bi bi-person-circle fs-4 me-1"></i>
@@ -108,7 +105,6 @@
   </div>
 </nav>
 
-<!-- Chatbot Interface -->
 <div class="container mt-5" id="chatbot">
   <div class="chatbot-card">
     <div class="chatbot-header">
@@ -118,19 +114,16 @@
     <div class="chatbot-body p-4" style="background-color: #eef3ef;">
   <div id="chat-mensagens" class="mb-4" style="max-height: 350px; overflow-y: auto;"></div>
 
-  <!-- Campo de mensagem + botão -->
   <div class="input-group mb-5">
     <input type="text" id="mensagem" class="form-control input-bot fs-5" placeholder="Digite sua mensagem...">
     <button id="enviar" class="btn btn-success text-white fw-bold w-100 fs-5">Enviar</button>
   </div>
 
-  <!-- Seção de navegação -->
   <div class="text-center mt-4">
     <h2 class="mb-5 text-success fw-bold">Navegue por seção</h2>
     <div class="container">
       <div class="row justify-content-center g-4">
 
-        <!-- Card Produtos -->
         <div class="col-12 col-md-4">
           <a href="/produtos" class="text-decoration-none text-dark">
             <div class="card shadow-lg border-0 rounded-4 h-100" style="transition: transform 0.3s, box-shadow 0.3s;">
@@ -143,7 +136,6 @@
           </a>
         </div>
 
-        <!-- Card Serviços -->
         <div class="col-12 col-md-4">
           <a href="/servicos" class="text-decoration-none text-dark">
             <div class="card shadow-lg border-0 rounded-4 h-100" style="transition: transform 0.3s, box-shadow 0.3s;">
@@ -156,7 +148,6 @@
           </a>
         </div>
 
-        <!-- Card Manutenções -->
         <div class="col-12 col-md-4">
           <a href="/manutencoes" class="text-decoration-none text-dark">
             <div class="card shadow-lg border-0 rounded-4 h-100" style="transition: transform 0.3s, box-shadow 0.3s;">
@@ -191,20 +182,18 @@ const input = document.getElementById("mensagem");
 const enviar = document.getElementById("enviar");
 const chatMensagens = document.getElementById("chat-mensagens");
 
-// Função para converter Markdown em HTML
 function formatarMarkdown(texto) {
   if (!texto) return "";
 
   let html = texto
-    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // negrito
-    .replace(/\*(.*?)\*/g, "<em>$1</em>") // itálico
-    .replace(/__(.*?)__/g, "<u>$1</u>") // sublinhado
-    .replace(/\n/g, "<br>"); // quebra de linha
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") 
+    .replace(/\*(.*?)\*/g, "<em>$1</em>") 
+    .replace(/__(.*?)__/g, "<u>$1</u>") 
+    .replace(/\n/g, "<br>"); 
 
   return html;
 }
 
-// Adiciona mensagem no chat
 function adicionarMensagem(texto, tipo) {
   const msg = document.createElement("div");
   msg.className = `p-2 mb-2 rounded ${
@@ -223,7 +212,6 @@ function adicionarMensagem(texto, tipo) {
   chatMensagens.scrollTop = chatMensagens.scrollHeight;
 }
 
-// Função para enviar mensagem ao bot
 async function enviarMensagem() {
   const texto = input.value.trim();
   if (!texto || !usuario) return;
@@ -252,10 +240,8 @@ function realizarLogout(event) {
         window.location.href = '/sair'; 
 }
 
-// Evento do botão enviar
 enviar.addEventListener("click", enviarMensagem);
 
-// Enviar ao pressionar Enter
 input.addEventListener("keypress", e => {
   if (e.key === "Enter") enviarMensagem();
 });
@@ -267,13 +253,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   card.style.position = "relative";
 
   try {
-    // Faz requisição para o servidor verificar se o usuário tem produtos
     const res = await fetch("/tem-produto");
     const data = await res.json();
     const temProduto = data.temProduto;
 
     if (!temProduto) {
-      // Cria o overlay bloqueando o acesso
       const overlay = document.createElement("div");
       overlay.classList.add("bloqueio-manutencao");
       overlay.innerHTML = `
@@ -297,15 +281,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         cursor: "not-allowed",
       });
 
-      // Aplica efeito visual e bloqueia o clique
       card.style.opacity = "0.7";
       card.style.filter = "grayscale(40%)";
       card.appendChild(overlay);
 
-      // 🔒 Impede qualquer clique no link
       linkManutencoes.style.pointerEvents = "none";
 
-      // Opcional: exibir alerta ao clicar no overlay
       overlay.addEventListener("click", () => {
         alert("⚠️ Você precisa possuir um produto comprado para acessar as manutenções.");
       });

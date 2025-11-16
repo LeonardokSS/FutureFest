@@ -1,34 +1,34 @@
-/* RESET GLOBAL - mantém tudo colado nas bordas */
 *{box-sizing:border-box;margin:0;padding:0}
 
-
-/* garante 100 da viewport sem barras brancas laterais */
 html,body{
   width:100%;
   height:100%;
-  overflow-x:hidden; /* evita rolagem lateral */
+  overflow-x:hidden; 
   background:#f8f9fa;
   -webkit-font-smoothing:antialiased;
   -moz-osx-font-smoothing:grayscale;
+  overflow-y: scroll;
 }
 
-/* ajusta containers do Bootstrap para não criar margens laterais "visíveis" */
 .container{
   max-width:100%;
   width:100%;
-  padding-left:1rem;  /* mantém um espaçamento interior agradável */
+  padding-left:1rem;  
   padding-right:1rem;
   margin-left:auto;
   margin-right:auto;
 }
 
-/* navbar e footer ocupam 100% sem arredondar cantos */
+.container, .row {
+  margin: 0 auto;
+  max-width: 100%;
+}
+
 .navbar, footer{
   width:100%;
   border-radius:0;
 }
 
-/* HERO - mantém padding e aparência, sem esticar o canvas */
 header#home{
   width:100%;
   padding-top:3.5rem;
@@ -37,7 +37,6 @@ header#home{
   color:#fff;
 }
 
-/* cartão do hero */
 .hero-card{
   background:rgba(255,255,255,0.08);
   backdrop-filter:blur(6px);
@@ -45,29 +44,22 @@ header#home{
   border-radius:12px;
 }
 
-/* evita que imagens e cards "ultrapassem" a tela */
 img, .card, .card-img-top{
   max-width:100%;
   height:auto;
   display:block;
 }
 
-/* GARANTE QUE O CANVAS NÃO QUEBRE: responsivo e mantém proporção */
-#operationalCostChart{
-  display:block;
-  width:100% !important;   /* preenche a largura do pai */
-  max-width:100%;
-  height:auto !important;  /* permite que Chart.js controle a altura sem distorcer */
+#operationalCostChart {
+  display: block;       
+  max-width: 100%;
+  height: 260px !important; 
 }
 
-/* Mantém o card do gráfico com espaço interno e sem overflow oculto */
 .card .card-body{
   overflow:visible;
 }
 
-
-
-/* Bolhas de mensagem */
 .message-bubble{
   padding:.5rem .75rem;
   border-radius:.5rem;
@@ -78,20 +70,14 @@ img, .card, .card-img-top{
 .user-bubble{background:#fff3cd;color:#664d03}
 .bot-bubble{background:#d1e7dd;color:#0f5132}
 
-/* logo */
 .logo{width:250px;border-radius:12px}
 
-/* seções ocupam largura total e não causam overflow */
 section{width:100%;overflow-x:hidden;scroll-margin-top: 80px;}
 
-/* responsividade: limita largura de bolhas em telas grandes */
 @media(min-width:768px){
   .message-bubble{max-width:75%}
 }
 
-/* ESTILOS ADICIONAIS PARA MELHORAR A SEÇÃO SOBRE NÓS E CHAT */
-
-/* Melhorias para a seção Sobre Nós */
 .sobre-card {
   border: none;
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -158,7 +144,6 @@ section{width:100%;overflow-x:hidden;scroll-margin-top: 80px;}
   font-size: 1.2rem;
 }
 
-/* Melhorias para a área do Chat */
 .chat-container {
   border: none;
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
@@ -253,7 +238,6 @@ section{width:100%;overflow-x:hidden;scroll-margin-top: 80px;}
   transform: scale(1.05);
 }
 
-/* Melhorias para as mensagens do chat */
 .message {
   margin-bottom: 1rem;
   display: flex;
@@ -322,7 +306,6 @@ section{width:100%;overflow-x:hidden;scroll-margin-top: 80px;}
   transform: translateY(-2px);
 }
 
-/* FUNDO DA SEÇÃO SERVIÇOS - PRETO COM DEGRADE VERDE */
 #servicos {
   background: linear-gradient(135deg, #000000 0%, #0a1f17 30%, #0d2e1f 70%, #145c32 100%);
   position: relative;
@@ -343,7 +326,6 @@ section{width:100%;overflow-x:hidden;scroll-margin-top: 80px;}
   pointer-events: none;
 }
 
-/* Ajustes para o texto na seção de serviços */
 #servicos .text-success {
   color: #ffffff !important;
 }
@@ -356,17 +338,16 @@ section{width:100%;overflow-x:hidden;scroll-margin-top: 80px;}
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
-/* Estilos para os cards de serviços modernos - CORRIGIDO */
 .service-card {
   transition: all 0.3s ease;
   border-radius: 20px;
-  overflow: visible; /* Mudei para visible para não cortar o ícone */
+  overflow: visible; 
   background: linear-gradient(135deg, #000000 0%, #0a2e1d 50%, #145c32 100%);
-  min-height: 480px; /* Aumentei um pouco a altura mínima */
+  min-height: 480px; 
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
-  padding-top: 60px; /* Adicionei padding top para dar espaço ao ícone */
+  padding-top: 60px; 
 }
 
 .service-card:hover {
@@ -385,7 +366,7 @@ section{width:100%;overflow-x:hidden;scroll-margin-top: 80px;}
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: -80px auto 25px; /* Ajustei a margem superior */
+  margin: -80px auto 25px; 
   position: relative;
   z-index: 2;
   box-shadow: 
