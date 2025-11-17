@@ -75,43 +75,44 @@
             </div>
 
               <div class="mb-3">
-                <label for="tipo" class="form-label">Tipo de Serviço:</label>
-                <select name="tipo" id="tipo" class="form-select" required>
-                  <option value="">Selecione o tipo</option>
-                  <option value="consultoria">Consultoria de Biomassa</option>
-                  <option value="instalação">Instalação de Equipamentos</option>
-                  <option value="manutenção">Manutenção Especializada</option>
-                  <option value="capacitação">Capacitação técnica</option>
-                  <option value="estudos">Estudos de viabilidade</option>
-                  <option value="certificação">Sustentabilidade e certificação</option>
+                <label for="plano" class="form-label">Plano:</label>
+                <select name="plano" id="plano" class="form-select" required>
+                  <option value="BioBronze">BioBronze</option>
+                  <option value="BioGold">BioGold</option>
+                  <option value="BioPlatinum">BioPlatinum</option>
+                </select>
+              </div>
+
+             <div class="mb-3">
+                <label for="tipoPagamento" class="form-label">Tipo de Pagamento:</label>
+                <select name="tipoPagamento" id="tipoPagamento" class="form-select" required>
+                  <option value="Mensal">Mensal</option>
+                  <option value="Anual">Anual</option>
                 </select>
               </div>
 
               <div class="mb-3">
-                <label for="custoHora" class="form-label">Custo p/hora:</label>
-                <input type="number" step="0.01" name="custoHora" id="custoHora" class="form-control" required>
+                <label for="custo" class="form-label">Custo:</label>
+                <input type="number" step="0.01" name="custo" id="custo" class="form-control" required>
               </div>
 
               <div class="mb-3">
-                <label for="custoTotal" class="form-label">Custo total:</label>
-                <input type="number" step="0.01" name="custoTotal" id="custoTotal" class="form-control" required>
-              </div>
-
-              <div class="mb-3">
-                <label for="dias" class="form-label">Quantidade de Dias:</label>
-                <input type="number" name="dias" id="dias" class="form-control" required>
+                <label for="duracao" class="form-label">Duração:</label>
+                <select name="duracao" id="duracao" class="form-select" required>
+                  <option value="30 dias">30 dias</option>
+                  <option value="1 ano">1 ano</option>
+                </select>
               </div>
 
               <div class="mb-3">
                 <label for="disponivel" class="form-label">Disponível:</label>
                 <select name="disponivel" id="disponivel" class="form-select" required>
-                  <option value="">Selecione</option>
                   <option value="Sim">Sim</option>
                   <option value="Não">Não</option>
                 </select>
               </div>
 
-              <button type="submit" class="btn btn-primary w-100">Salvar Serviço</button>
+              <button type="submit" class="btn btn-primary w-100">Cadastrar Serviço</button>
             </form>
           </div>
         </div>
@@ -138,6 +139,35 @@
     .then(data => {
       document.getElementById('nome-usuario').textContent = data.usuario;
     });
+
+       const precosBase = {
+    BioBronze: 14000,
+    BioGold: 28000,
+    BioPlatinum: 34000
+  };
+
+  function atualizarCustoEDuracao() {
+    const plano = document.getElementById("plano").value;
+    const tipoPagamento = document.getElementById("tipoPagamento").value;
+
+    const precoBase = precosBase[plano] || 0;
+    let custo = 0;
+    let duracao = "";
+
+    if (tipoPagamento === "Mensal") {
+      custo = precoBase / 12;
+      duracao = "30 dias";
+    } else if (tipoPagamento === "Anual") {
+      custo = precoBase * 0.9;
+      duracao = "1 ano";
+    }
+
+    document.getElementById("custo").value = custo.toFixed(2);
+    document.getElementById("duracao").value = duracao;
+  }
+
+  document.getElementById("plano").addEventListener("change", atualizarCustoEDuracao);
+  document.getElementById("tipoPagamento").addEventListener("change", atualizarCustoEDuracao);
   function realizarLogout(event) {
    
         event.preventDefault(); 

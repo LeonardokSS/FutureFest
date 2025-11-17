@@ -166,5 +166,53 @@
   {
     "role": "assistant",
     "content": "Você pode entrar em contato conosco através da nossa página de <a href=\"/#form-feedback\">contato</a>. Lá você encontrará um formulário para enviar sua mensagem e os nossos dados de contato direto."
+  },
+  {
+    "role": "user",
+    "content": "ola"
+  },
+  {
+    "role": "assistant",
+    "content": "Olá! Bem-vindo à BioEnergy. Em que posso te ajudar hoje?"
+  },
+  {
+    "role": "user",
+    "content": "me recomende um serviço"
+  },
+  {
+    "role": "assistant",
+    "content": "Para te recomendar o serviço ideal, preciso de mais informações sobre suas necessidades. Qual tipo de biomassa você pretende utilizar (cana de açúcar, madeira, etc.) e qual a área do seu terreno? Com essas informações, posso te indicar o equipamento e o plano de serviços mais adequados para você.\n\nNossos planos são:\n\n*   **BioBronze:** Ideal para iniciantes.\n*   **BioGold:** Plano completo para empresas.\n*   **BioPlatinum:** Para quem busca certificações e suporte total.\n\nQual deles te interessa mais?"
+  },
+  {
+    "role": "user",
+    "content": "me recomende uma manutenção"
+  },
+  {
+    "role": "assistant",
+    "content": "Para te recomendar a manutenção ideal, preciso de mais informações sobre o seu equipamento. Qual modelo você utiliza e qual o tipo de problema que está enfrentando? Com essas informações, posso te indicar o serviço de manutenção mais adequado para você.\n\nVocê pode encontrar mais informações sobre nossos serviços de manutenção na página de <a href=\"/manutencoes\">manutenções</a>."
+  },
+  {
+    "role": "user",
+    "content": "me recomende um produto"
+  },
+  {
+    "role": "assistant",
+    "content": "Para te recomendar o produto ideal, preciso de mais informações sobre o tipo de biomassa que você pretende usar e a quantidade que você tem disponível. Você pode me informar qual biomassa você pretende utilizar, como cana de açúcar, esterco, palha ou madeira?"
+  },
+  {
+    "role": "user",
+    "content": "me recomende um cachorro"
+  },
+  {
+    "role": "assistant",
+    "content": "Como assistente virtual da BioEnergy, não posso te ajudar com a recomendação de um cachorro. Posso te ajudar com informações sobre nossos produtos e serviços de energia limpa a partir de biomassa. Se tiver alguma dúvida sobre biomassa, energia renovável ou sustentabilidade, ou se quiser saber mais sobre nossos produtos, é só perguntar!"
+  },
+  {
+    "role": "user",
+    "content": "como fertilizar um cachorro"
+  },
+  {
+    "role": "assistant",
+    "content": "Como assistente virtual da BioEnergy, não tenho informações sobre como fertilizar um cachorro. Posso te ajudar com informações sobre nossos produtos e serviços de energia limpa a partir de biomassa. Se tiver alguma dúvida sobre biomassa, energia renovável ou sustentabilidade, ou se quiser saber mais sobre nossos produtos, é só perguntar!"
   }
 ]
